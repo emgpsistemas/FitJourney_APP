@@ -1,20 +1,45 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as SystemUI from 'expo-system-ui';
+import { Text, View } from 'react-native';
+
+import {
+  OpenSans_300Light,
+  OpenSans_400Regular,
+  OpenSans_500Medium,
+  OpenSans_600SemiBold,
+  OpenSans_700Bold,
+  OpenSans_800ExtraBold,
+  useFonts,
+} from '@expo-google-fonts/open-sans';
+import { useEffect } from 'react';
+import { Loading } from './src/Loading';
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    OpenSans_300Light,
+    OpenSans_400Regular,
+    OpenSans_500Medium,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold,
+    OpenSans_800ExtraBold,
+  });
+
+  async function SetBackgroundColor() {
+    await SystemUI.setBackgroundColorAsync('#FAFAFA');
+  }
+
+  useEffect(() => {
+    SetBackgroundColor();
+  }, []);
+
+  if (!fontsLoaded) {
+    return <Loading />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <View className="flex h-screen w-screen items-center justify-center">
       <StatusBar style="auto" />
+      <Text className="font-openBold text-xl">Hello World</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
