@@ -37,9 +37,9 @@ export default function App() {
   }
 
   return (
-    <View className="flex h-screen w-screen items-center justify-center">
+    <View className="flex h-screen w-screen items-center justify-center bg-yellow-400">
       <StatusBar style="auto" />
-      <Text className="font-openBold text-xl">Hello World</Text>
+      <Text className="font-openBold text-xl text-zinc-900">Hello World</Text>
     </View>
   );
 }
