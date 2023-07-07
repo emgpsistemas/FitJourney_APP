@@ -29,7 +29,7 @@ export default function TabRoutes() {
         options={{
           tabBarIcon: ({ focused }) => (
             <House
-              size={28}
+              size={focused ? 28 : 24}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
               weight={focused ? 'fill' : 'bold'}
             />
@@ -42,7 +42,7 @@ export default function TabRoutes() {
         options={{
           tabBarIcon: ({ focused }) => (
             <ListPlus
-              size={28}
+              size={focused ? 28 : 24}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
               weight={focused ? 'fill' : 'bold'}
             />
@@ -55,7 +55,7 @@ export default function TabRoutes() {
         options={{
           tabBarIcon: ({ focused }) => (
             <Barbell
-              size={28}
+              size={focused ? 28 : 24}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
               weight={focused ? 'fill' : 'bold'}
             />
@@ -68,7 +68,7 @@ export default function TabRoutes() {
         options={{
           tabBarIcon: ({ focused }) => (
             <UserCircle
-              size={28}
+              size={focused ? 28 : 24}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
               weight={focused ? 'fill' : 'bold'}
             />
