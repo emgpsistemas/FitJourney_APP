@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import colors from 'tailwindcss/colors';
 
+import { Barbell, House, ListPlus, UserCircle } from 'phosphor-react-native';
 import Exercises from '../screens/Exercises';
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
@@ -15,17 +15,23 @@ export default function TabRoutes() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: colors.zinc[900],
+          borderTopColor: colors.yellow[400],
+          borderTopWidth: 4,
+          height: 80,
+        },
       }}
     >
       <Tab.Screen
         name="Home"
         component={Home}
         options={{
-          tabBarIcon: ({ focused, size, color }) => (
-            <Ionicons
-              name="home"
-              size={size}
+          tabBarIcon: ({ focused }) => (
+            <House
+              size={28}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
+              weight={focused ? 'fill' : 'bold'}
             />
           ),
         }}
@@ -34,11 +40,11 @@ export default function TabRoutes() {
         name="Exercises"
         component={Exercises}
         options={{
-          tabBarIcon: ({ focused, size, color }) => (
-            <Ionicons
-              name="list"
-              size={size}
+          tabBarIcon: ({ focused }) => (
+            <ListPlus
+              size={28}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
+              weight={focused ? 'fill' : 'bold'}
             />
           ),
         }}
@@ -47,11 +53,11 @@ export default function TabRoutes() {
         name="Trainings"
         component={Trainings}
         options={{
-          tabBarIcon: ({ focused, size, color }) => (
-            <Ionicons
-              name="barbell"
-              size={size}
+          tabBarIcon: ({ focused }) => (
+            <Barbell
+              size={28}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
+              weight={focused ? 'fill' : 'bold'}
             />
           ),
         }}
@@ -60,11 +66,11 @@ export default function TabRoutes() {
         name="Profile"
         component={Profile}
         options={{
-          tabBarIcon: ({ focused, size, color }) => (
-            <Ionicons
-              name="person-circle"
-              size={size}
+          tabBarIcon: ({ focused }) => (
+            <UserCircle
+              size={28}
               color={focused ? colors.yellow[400] : colors.zinc[700]}
+              weight={focused ? 'fill' : 'bold'}
             />
           ),
         }}
