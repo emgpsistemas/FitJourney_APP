@@ -1,6 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
-import { Text, View } from 'react-native';
 
 import {
   OpenSans_300Light,
@@ -12,7 +10,8 @@ import {
   useFonts,
 } from '@expo-google-fonts/open-sans';
 import { useEffect } from 'react';
-import { Loading } from './src/Loading';
+import { Loading } from './src/components/Loading';
+import Routes from './src/routes';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -36,10 +35,5 @@ export default function App() {
     return <Loading />;
   }
 
-  return (
-    <View className="flex h-screen w-screen items-center justify-center bg-yellow-400">
-      <StatusBar style="auto" />
-      <Text className="font-openBold text-xl text-zinc-900">Hello World</Text>
-    </View>
-  );
+  return <Routes />;
 }
