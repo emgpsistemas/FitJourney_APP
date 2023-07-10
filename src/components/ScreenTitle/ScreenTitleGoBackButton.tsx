@@ -3,7 +3,7 @@ import { CaretLeft } from 'phosphor-react-native';
 import { TouchableOpacity } from 'react-native';
 import colors from 'tailwindcss/colors';
 
-export function GoBackButton() {
+export function ScreenTitleGoBackButton() {
   const { goBack } = useNavigation();
 
   return (
