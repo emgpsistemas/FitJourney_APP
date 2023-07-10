@@ -20,12 +20,12 @@ export function Select({
     <>
       <View className="flex flex-row gap-1">
         {required ? (
-          <Text className="font-poppinsBold text-status-red text-sm leading-4">
+          <Text className="text-status-red font-openBold text-sm leading-4">
             *
           </Text>
         ) : null}
         {label.length > 0 ? (
-          <Text className="font-poppinsBold text-sm leading-4 text-neutral-900">
+          <Text className="font-openBold text-sm leading-4 text-neutral-900">
             {label.toLocaleUpperCase()}
           </Text>
         ) : null}

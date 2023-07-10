@@ -1,3 +1,4 @@
+import { Check } from "phosphor-react-native";
 import { View } from "react-native";
 import { FitButton } from "../../../components/ui/FitButton";
 import { Input } from "../../../components/ui/Input";
@@ -18,20 +19,30 @@ const muscleGroups = [
 
 export function RegisterExercise() {
   return (
-    <View className="flex flex-1 justify-center bg-gray-400 p-6">
-      <View>
-        <Input label="Nome" />
-        <Select
-          label="Grupo Muscular"
-          options={muscleGroups}
-          selected="Peitoral"
-          setSelected={() => console.log("selecionou")}
-        />
-        <TextArea label="Descrição" />
+    <View className="flex flex-1 justify-between bg-white p-6">
+      <View className="flex flex-1 justify-center space-y-4">
+        <View>
+          <Input label="Nome" />
+        </View>
+        <View>
+          <Select
+            label="Grupo Muscular"
+            options={muscleGroups}
+            selected=""
+            setSelected={() => console.log("selecionou")}
+          />
+        </View>
+        <View>
+          <TextArea label="Descrição" />
+        </View>
       </View>
-      <FitButton.Root variant="primary">
-        <FitButton.Text>Finalizar Cadastro</FitButton.Text>
-      </FitButton.Root>
+
+      <View>
+        <FitButton.Root variant="primary">
+          <FitButton.Icon icon={Check} />
+          <FitButton.Text>Finalizar Cadastro</FitButton.Text>
+        </FitButton.Root>
+      </View>
     </View>
   );
 }
