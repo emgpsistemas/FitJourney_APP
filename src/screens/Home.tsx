@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { Barbell, ListPlus, UserCircle } from 'phosphor-react-native';
-import { Image, ScrollView, Text, View } from 'react-native';
-import HomeImage from '../assets/images/png/home.png';
+import { ScrollView, Text, View } from 'react-native';
+import HomeImageSVG from '../assets/images/svg/home.svg';
 import { FitButton } from '../components/FitButton';
 import { LogoutButton } from '../components/LogoutButton';
 
@@ -14,8 +14,9 @@ export default function Home() {
       <View className="w-24 self-end ">
         <LogoutButton />
       </View>
-
-      <Image source={HomeImage} className="mx-auto mb-10 mt-4" />
+      <View className="mb-10 mt-4">
+        <HomeImageSVG width={'100%'} />
+      </View>
 
       <Text className="font-openBold text-2xl text-zinc-900">
         Olá {user}, bem vindo!
