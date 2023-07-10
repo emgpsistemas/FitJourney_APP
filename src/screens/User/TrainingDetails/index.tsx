@@ -7,7 +7,7 @@ export function TrainingDetails() {
 
   return (
     <SafeAreaView className="flex flex-1 bg-red-200">
-      <Text>{id}</Text>
+      <Text>Teste{id}</Text>
     </SafeAreaView>
   );
 }
