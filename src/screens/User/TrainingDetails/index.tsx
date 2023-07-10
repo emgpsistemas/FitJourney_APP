@@ -6,7 +6,7 @@ export function TrainingDetails() {
   const { id } = route.params as { id: number };
 
   return (
-    <SafeAreaView className="flex flex-1 bg-red-200">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
       <Text>Teste{id}</Text>
     </SafeAreaView>
   );
