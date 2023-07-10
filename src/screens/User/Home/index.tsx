@@ -10,7 +10,7 @@ export default function Home() {
   const { navigate } = useNavigation();
 
   return (
-    <View className="flex flex-1 flex-col px-5 py-10">
+    <View className="flex flex-1 flex-col bg-neutral-50 px-5 py-10">
       <View className="w-24 self-end ">
         <LogoutButton />
       </View>
