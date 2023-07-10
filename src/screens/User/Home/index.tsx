@@ -32,7 +32,10 @@ export default function Home() {
           <FitButton.Text content="Perfil" />
         </FitButton.Root>
 
-        <FitButton.Root variant="primary" onPress={() => navigate('Trainings')}>
+        <FitButton.Root
+          variant="primary"
+          onPress={() => navigate('RegisteredTrainings')}
+        >
           <FitButton.Icon icon={Barbell} />
           <FitButton.Text content="Treinos" />
         </FitButton.Root>
