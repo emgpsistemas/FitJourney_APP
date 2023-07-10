@@ -37,7 +37,7 @@ export default function TabRoutes() {
         }}
       />
       <Tab.Screen
-        name="Exercises"
+        name="RegisteredExercises"
         component={Exercises}
         options={{
           tabBarIcon: ({ focused }) => (

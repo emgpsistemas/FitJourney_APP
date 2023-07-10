@@ -1,6 +1,7 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import TabRoutes from './tab.routes';
+import { RegisterExercise } from "../screens/Common/RegisterExercise";
+import TabRoutes from "./tab.routes";
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,7 @@ export default function StackRoutes() {
       }}
     >
       <Stack.Screen name="Tabs" component={TabRoutes} />
+      <Stack.Screen name="RegisterExercise" component={RegisterExercise} />
     </Stack.Navigator>
   );
 }

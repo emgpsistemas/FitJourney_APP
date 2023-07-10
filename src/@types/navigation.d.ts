@@ -5,6 +5,7 @@ export declare global {
       Exercises: unknown;
       Trainings: unknown;
       Profile: unknown;
+      RegisterExercise: unknown;
     }
   }
 }
