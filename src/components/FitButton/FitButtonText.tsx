@@ -5,7 +5,7 @@ interface FitButtonTextProps {
 }
 
 function FitButtonText({ content }: FitButtonTextProps) {
-  return <Text className="flex font-openBold text-base">{content}</Text>;
+  return <Text className="flex px-2 font-openBold text-base">{content}</Text>;
 }
 
 export default FitButtonText;

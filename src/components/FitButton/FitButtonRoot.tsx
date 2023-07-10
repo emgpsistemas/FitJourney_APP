@@ -9,7 +9,6 @@ interface FitButtonRootProps extends TouchableOpacityProps {
 function FitButtonRoot({ children, variant, ...rest }: FitButtonRootProps) {
   return (
     <TouchableOpacity
-      style={{ gap: 8 }}
       className={clsx(
         'flex w-full flex-row items-center justify-center rounded-full p-4',
         {
