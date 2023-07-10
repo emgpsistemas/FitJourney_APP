@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import clsx from 'clsx';
 import {
   Text,
@@ -16,6 +17,7 @@ export function TrainingCard({
   trainingName,
   muscleGroups,
 }: TrainingCardProps) {
+  const { navigate } = useNavigation();
   return (
     <TouchableOpacity
       className={clsx(
@@ -29,6 +31,11 @@ export function TrainingCard({
         },
       )}
       activeOpacity={0.7}
+      onPress={() =>
+        navigate('TrainingDetails', {
+          id: 1,
+        })
+      }
     >
       <Text className="font-openBold text-lg text-zinc-900">
         {trainingName}

@@ -3,7 +3,7 @@ import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import { FitButton } from '../../../components/FitButton';
 import { TrainingCard } from '../../../components/TrainingCard';
 
-export default function Trainings() {
+export default function RegisteredTrainings() {
   const mock = [
     {
       name: 'Treino A',

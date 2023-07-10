@@ -2,10 +2,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import colors from 'tailwindcss/colors';
 
 import { Barbell, House, ListPlus, UserCircle } from 'phosphor-react-native';
-import Exercises from '../screens/User/Exercises';
-import Home from '../screens/User/Home';
-import Profile from '../screens/User/Profile';
-import Trainings from '../screens/User/Trainings';
+import ExerciseStackRoutes from './exerciseStack.routes';
+import HomeStackRoutes from './homeStack.routes';
+import ProfileStackRoutes from './profileStack.routes';
+import TrainingStackRoutes from './trainingStack.routes';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,8 +24,8 @@ export default function TabRoutes() {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="HomeStack"
+        component={HomeStackRoutes}
         options={{
           tabBarIcon: ({ focused }) => (
             <House
@@ -37,8 +37,8 @@ export default function TabRoutes() {
         }}
       />
       <Tab.Screen
-        name="Exercises"
-        component={Exercises}
+        name="ExercisesStack"
+        component={ExerciseStackRoutes}
         options={{
           tabBarIcon: ({ focused }) => (
             <ListPlus
@@ -50,8 +50,8 @@ export default function TabRoutes() {
         }}
       />
       <Tab.Screen
-        name="Trainings"
-        component={Trainings}
+        name="TrainingsStack"
+        component={TrainingStackRoutes}
         options={{
           tabBarIcon: ({ focused }) => (
             <Barbell
@@ -63,8 +63,8 @@ export default function TabRoutes() {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="ProfileStack"
+        component={ProfileStackRoutes}
         options={{
           tabBarIcon: ({ focused }) => (
             <UserCircle

@@ -3,8 +3,9 @@ export declare global {
     interface RootParamList {
       Home: unknown;
       Exercises: unknown;
-      Trainings: unknown;
+      RegisteredTrainings: unknown;
       Profile: unknown;
+      TrainingDetails: { id: number };
     }
   }
 }
