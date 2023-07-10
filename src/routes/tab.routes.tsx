@@ -2,10 +2,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import colors from 'tailwindcss/colors';
 
 import { Barbell, House, ListPlus, UserCircle } from 'phosphor-react-native';
-import Exercises from '../screens/Exercises';
-import Home from '../screens/Home';
-import Profile from '../screens/Profile';
-import Trainings from '../screens/Trainings';
+import Exercises from '../screens/Customer/Exercises';
+import Home from '../screens/Customer/Home';
+import Profile from '../screens/Customer/Profile';
+import Trainings from '../screens/Customer/Trainings';
 
 const Tab = createBottomTabNavigator();
 
