@@ -1,6 +1,7 @@
 import { useRoute } from '@react-navigation/native';
 import clsx from 'clsx';
-import { SafeAreaView, ScrollView, View } from 'react-native';
+import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import { Accordion } from '../../../components/Accordion';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 
@@ -10,6 +11,134 @@ export function TrainingDetails() {
   const training = {
     name: 'Treino A',
   };
+
+  const exercises = [
+    {
+      id: 1,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+    {
+      id: 5,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+  ];
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
@@ -27,9 +156,21 @@ export function TrainingDetails() {
         <ScreenTitle.Text>Treino {id}</ScreenTitle.Text>
         <ScreenTitle.TrainProgress>0/10</ScreenTitle.TrainProgress>
       </ScreenTitle.Root>
-      <ScrollView className="flex flex-1 pt-10">
-        <TrainingInfo />
-      </ScrollView>
+      <FlatList
+        className="flex flex-1 pt-10"
+        ListHeaderComponent={() => <TrainingInfo />}
+        ListFooterComponent={() => <View className="h-10" />}
+        showsVerticalScrollIndicator={false}
+        data={exercises}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => (
+          <Accordion.Root title={item.name}>
+            <Accordion.Content>
+              <Text>Teste</Text>
+            </Accordion.Content>
+          </Accordion.Root>
+        )}
+      />
     </SafeAreaView>
   );
 }
