@@ -4,8 +4,8 @@ interface AccordionContetProps {
   children: React.ReactNode;
 }
 
-function AccordionContet({ children }: AccordionContetProps) {
+function AccordionContent({ children }: AccordionContetProps) {
   return <View className="mt-3">{children}</View>;
 }
 
-export default AccordionContet;
+export default AccordionContent;

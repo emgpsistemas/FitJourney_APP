@@ -1,7 +1,9 @@
 import { useRoute } from '@react-navigation/native';
 import clsx from 'clsx';
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import { FlatList, SafeAreaView, View } from 'react-native';
 import { Accordion } from '../../../components/Accordion';
+import AccordionContentText from '../../../components/Accordion/AccordionContentText';
+import AccordionContentTitle from '../../../components/Accordion/AccordionContentTitle';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 
@@ -166,7 +168,14 @@ export function TrainingDetails() {
         renderItem={({ item }) => (
           <Accordion.Root title={item.name}>
             <Accordion.Content>
-              <Text>Teste</Text>
+              <View className="mb-4 flex flex-col">
+                <AccordionContentTitle>Descrição: </AccordionContentTitle>
+                <AccordionContentText>{item.description}</AccordionContentText>
+              </View>
+              <View className="mb-4 flex flex-col">
+                <AccordionContentTitle>Observações: </AccordionContentTitle>
+                <AccordionContentText>{item.observations}</AccordionContentText>
+              </View>
             </Accordion.Content>
           </Accordion.Root>
         )}
