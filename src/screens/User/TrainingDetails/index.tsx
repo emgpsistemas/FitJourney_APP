@@ -32,6 +32,31 @@ export function TrainingDetails() {
           weight: 20,
         },
         {
+          isChecked: true,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
           isChecked: false,
           repetitions: 10,
           weight: 20,
@@ -43,106 +68,81 @@ export function TrainingDetails() {
         },
       ],
     },
-    // {
-    //   id: 2,
-    //   name: 'Supino Reto',
-    //   description:
-    //     'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-    //   observations:
-    //     'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
-    //   series: [
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: 3,
-    //   name: 'Supino Reto',
-    //   description:
-    //     'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-    //   observations:
-    //     'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
-    //   series: [
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: 4,
-    //   name: 'Supino Reto',
-    //   description:
-    //     'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-    //   observations:
-    //     'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
-    //   series: [
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: 5,
-    //   name: 'Supino Reto',
-    //   description:
-    //     'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-    //   observations:
-    //     'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
-    //   series: [
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //     {
-    //       isChecked: false,
-    //       repetitions: 10,
-    //       weight: 20,
-    //     },
-    //   ],
-    // },
+    {
+      id: 3,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
+    {
+      id: 5,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        'Mantenha os pés apoiados no chão e o quadril encostado no banco durante todo o exercício.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+        {
+          isChecked: false,
+          repetitions: 10,
+          weight: 20,
+        },
+      ],
+    },
   ];
 
   return (
@@ -178,8 +178,14 @@ export function TrainingDetails() {
                 <AccordionContentTitle>Observações: </AccordionContentTitle>
                 <AccordionContentText>{item.observations}</AccordionContentText>
               </View>
-              <Checkbox title="teste" />
-              <Checkbox title="Teste" />
+              {item.series.map((serie, index) => (
+                <Checkbox.Root key={index}>
+                  <Checkbox.Toggle
+                    checked={serie.isChecked}
+                    onPress={() => {}}
+                  />
+                </Checkbox.Root>
+              ))}
             </Accordion.Content>
           </Accordion.Root>
         )}
