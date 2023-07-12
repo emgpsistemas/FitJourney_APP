@@ -1,6 +1,6 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import Exercises from '../screens/User/Exercises';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RegisterExercise } from "../screens/Common/RegisterExercise";
+import RegisteredExercises from "../screens/Common/RegisteredExercises";
 
 const Stack = createNativeStackNavigator();
 
@@ -11,7 +11,11 @@ export default function ExerciseStackRoutes() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Exercices" component={Exercises} />
+      <Stack.Screen
+        name="RegisteredExercices"
+        component={RegisteredExercises}
+      />
+      <Stack.Screen name="RegisterExercise" component={RegisterExercise} />
     </Stack.Navigator>
   );
 }

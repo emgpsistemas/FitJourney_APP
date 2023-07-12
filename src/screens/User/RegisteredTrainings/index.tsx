@@ -1,20 +1,21 @@
-import { Plus } from 'phosphor-react-native';
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
-import { FitButton } from '../../../components/FitButton';
-import { TrainingCard } from '../../../components/TrainingCard';
+import { Plus } from "phosphor-react-native";
+import { FlatList, SafeAreaView, Text, View } from "react-native";
+
+import { TrainingCard } from "../../../components/TrainingCard";
+import { FitButton } from "../../../components/ui/FitButton";
 
 export default function RegisteredTrainings() {
   const mock = [
     {
       id: 1,
-      name: 'Treino A',
-      muscleGroups: ['Peito', 'Bíceps'],
+      name: "Treino A",
+      muscleGroups: ["Peito", "Bíceps"],
     },
-    { id: 2, name: 'Treino B', muscleGroups: ['Costas', 'Tríceps'] },
-    { id: 3, name: 'Treino C', muscleGroups: ['Ombro', 'Abdômen'] },
-    { id: 4, name: 'Treino D', muscleGroups: ['Pernas', 'Panturrilhas'] },
-    { id: 5, name: 'Treino E', muscleGroups: ['Glúteos', 'Abdômen'] },
-    { id: 6, name: 'Treino F', muscleGroups: ['Corpo Inteiro', 'Cardio'] },
+    { id: 2, name: "Treino B", muscleGroups: ["Costas", "Tríceps"] },
+    { id: 3, name: "Treino C", muscleGroups: ["Ombro", "Abdômen"] },
+    { id: 4, name: "Treino D", muscleGroups: ["Pernas", "Panturrilhas"] },
+    { id: 5, name: "Treino E", muscleGroups: ["Glúteos", "Abdômen"] },
+    { id: 6, name: "Treino F", muscleGroups: ["Corpo Inteiro", "Cardio"] },
   ];
 
   return (
@@ -35,7 +36,7 @@ export default function RegisteredTrainings() {
           <View className="py-7">
             <FitButton.Root variant="primary" onPress={() => {}}>
               <FitButton.Icon icon={Plus} />
-              <FitButton.Text content="Cadastrar Treino" />
+              <FitButton.Text>Cadastrar Treino</FitButton.Text>
             </FitButton.Root>
           </View>
         )}

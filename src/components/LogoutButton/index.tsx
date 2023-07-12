@@ -1,5 +1,5 @@
-import { SignOut } from 'phosphor-react-native';
-import { FitButton } from '../FitButton';
+import { SignOut } from "phosphor-react-native";
+import { FitButton } from "../ui/FitButton";
 
 export function LogoutButton() {
   return (

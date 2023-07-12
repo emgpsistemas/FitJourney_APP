@@ -1,12 +1,12 @@
-import { useNavigation } from '@react-navigation/native';
-import { Barbell, ListPlus, UserCircle } from 'phosphor-react-native';
-import { Text, View } from 'react-native';
-import HomeImageSVG from '../../../assets/images/svg/home.svg';
-import { FitButton } from '../../../components/FitButton';
-import { LogoutButton } from '../../../components/LogoutButton';
+import { useNavigation } from "@react-navigation/native";
+import { Barbell, ListPlus, UserCircle } from "phosphor-react-native";
+import { Text, View } from "react-native";
+import HomeImageSVG from "../../../assets/images/svg/home.svg";
+import { LogoutButton } from "../../../components/LogoutButton";
+import { FitButton } from "../../../components/ui/FitButton";
 
 export default function Home() {
-  const user = 'Fulano';
+  const user = "Fulano";
   const { navigate } = useNavigation();
 
   return (
@@ -15,29 +15,29 @@ export default function Home() {
         <LogoutButton />
       </View>
       <View className="mb-10 mt-8">
-        <HomeImageSVG width={'100%'} />
+        <HomeImageSVG width={"100%"} />
       </View>
 
       <Text className="font-openBold text-2xl text-zinc-900">
         Olá {user}, bem vindo!
       </Text>
       <View className="mt-10 flex flex-1 items-center justify-center space-y-3 ">
-        <FitButton.Root variant="primary" onPress={() => navigate('Exercises')}>
+        <FitButton.Root variant="primary" onPress={() => navigate("Exercises")}>
           <FitButton.Icon icon={ListPlus} />
-          <FitButton.Text content="Exercícios" />
+          <FitButton.Text>Exercícios</FitButton.Text>
         </FitButton.Root>
 
-        <FitButton.Root variant="primary" onPress={() => navigate('Profile')}>
+        <FitButton.Root variant="primary" onPress={() => navigate("Profile")}>
           <FitButton.Icon icon={UserCircle} />
-          <FitButton.Text content="Perfil" />
+          <FitButton.Text>Perfil</FitButton.Text>
         </FitButton.Root>
 
         <FitButton.Root
           variant="primary"
-          onPress={() => navigate('RegisteredTrainings')}
+          onPress={() => navigate("RegisteredTrainings")}
         >
           <FitButton.Icon icon={Barbell} />
-          <FitButton.Text content="Treinos" />
+          <FitButton.Text>Treinos</FitButton.Text>
         </FitButton.Root>
       </View>
     </View>
