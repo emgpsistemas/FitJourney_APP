@@ -1,10 +1,10 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "phosphor-react-native";
 import { useEffect, useState } from "react";
-import {
-  NativeSyntheticEvent,
-  TextInputChangeEventData,
-  View,
-} from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import { View } from "react-native";
+import { ErrorText } from "../../../components/ErrorText";
+import { ScreenTitle } from "../../../components/ScreenTitle";
 import { FitButton } from "../../../components/ui/FitButton";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
@@ -12,24 +12,28 @@ import { TextArea } from "../../../components/ui/Textarea/index";
 import { MuscleGroup } from "../../../services/get/muscle-groups/interface";
 import { fetchMuscleGroups } from "../../../services/get/muscle-groups/muscle-groups";
 import { createExercise } from "../../../services/post/exercises/createExercise";
+import {
+  NewExerciseFormData,
+  newExerciseFormSchema,
+} from "../../../validations/common/CreateExercise";
 
 export function RegisterExercise() {
   const [muscleGroups, setMuscleGroups] = useState([] as MuscleGroup[]);
-  const [name, setName] = useState("");
-  const [muscleGroup, setMuscleGroup] = useState("");
-  const [description, setDescription] = useState("");
 
-  function handleChangeName(
-    event: NativeSyntheticEvent<TextInputChangeEventData>
-  ) {
-    setName(event.nativeEvent.text);
-  }
-
-  function handleChangeDescription(
-    event: NativeSyntheticEvent<TextInputChangeEventData>
-  ) {
-    setDescription(event.nativeEvent.text);
-  }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    getValues,
+  } = useForm<NewExerciseFormData>({
+    defaultValues: {
+      name: "",
+      muscleGroup: "",
+      description: "",
+    },
+    resolver: zodResolver(newExerciseFormSchema),
+  });
 
   useEffect(() => {
     fetchMuscleGroups(setMuscleGroups);
@@ -42,20 +46,14 @@ export function RegisterExercise() {
     ...muscleGroupsNames,
   ];
 
-  function clearFormFields() {
-    setName("");
-    setMuscleGroup("");
-    setDescription("");
-  }
-
-  async function handleRegisterExercise() {
+  async function handleRegisterExercise(data: NewExerciseFormData) {
     const muscleGroupId =
-      muscleGroups.find((group) => group.name === muscleGroup)?.id || 0;
+      muscleGroups.find((group) => group.name === data.muscleGroup)?.id || 0;
 
     const newExercise = {
-      name,
+      name: data.name,
       muscle_group: muscleGroupId,
-      description,
+      description: data.description,
     };
 
     try {
@@ -65,34 +63,76 @@ export function RegisterExercise() {
       console.error("Error creating exercise:", error);
     }
 
-    clearFormFields();
+    reset();
   }
 
   return (
-    <View className="flex flex-1 justify-between bg-white p-6">
-      <View className="flex flex-1 justify-center space-y-4">
+    <View className="flex flex-1 justify-between border border-red-600 bg-white px-5 pb-7 pt-16">
+      <ScreenTitle.Root>
+        <ScreenTitle.GoBackButton />
+        <ScreenTitle.Text>Cadastrar Exercício</ScreenTitle.Text>
+      </ScreenTitle.Root>
+
+      <View className="mt-10 flex flex-1 justify-start space-y-4">
         <View>
-          <Input label="Nome" value={name} onChange={handleChangeName} />
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Nome"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+            name="name"
+          />
+          {errors.name?.message ? (
+            <ErrorText>{errors.name?.message}</ErrorText>
+          ) : null}
         </View>
         <View>
-          <Select
-            label="Grupo Muscular"
-            options={muscleGroupsOptions}
-            selected={muscleGroup}
-            setSelected={setMuscleGroup}
+          <Controller
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                label="Grupo Muscular"
+                options={muscleGroupsOptions}
+                selected={value}
+                setSelected={onChange}
+              />
+            )}
+            name="muscleGroup"
           />
+          {errors.muscleGroup?.message ||
+          getValues().description === "Selecione o Grupo Muscular" ? (
+            <ErrorText>Um grupo muscular deve ser selecionado</ErrorText>
+          ) : null}
         </View>
         <View>
-          <TextArea
-            label="Descrição"
-            value={description}
-            onChange={handleChangeDescription}
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextArea
+                label="Descrição"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+            name="description"
           />
+          {errors.description?.message ? (
+            <ErrorText>{errors.description?.message}</ErrorText>
+          ) : null}
         </View>
       </View>
 
       <View>
-        <FitButton.Root variant="primary" onPress={handleRegisterExercise}>
+        <FitButton.Root
+          variant="primary"
+          onPress={handleSubmit(handleRegisterExercise)}
+        >
           <FitButton.Icon icon={Check} />
           <FitButton.Text>Finalizar Cadastro</FitButton.Text>
         </FitButton.Root>
