@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RegisterNewTraining } from "../screens/User/RegisterNewTraining";
 
 import RegisteredTrainings from "../screens/User/RegisteredTrainings";
 import { TrainingDetails } from "../screens/User/TrainingDetails";
@@ -17,6 +18,10 @@ export default function TrainingStackRoutes() {
         component={RegisteredTrainings}
       />
       <Stack.Screen name="TrainingDetails" component={TrainingDetails} />
+      <Stack.Screen
+        name="RegisterNewTraining"
+        component={RegisterNewTraining}
+      />
     </Stack.Navigator>
   );
 }

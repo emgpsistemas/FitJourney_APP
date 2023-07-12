@@ -1,10 +1,13 @@
 import { Plus } from "phosphor-react-native";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
+import { useNavigation } from "@react-navigation/native";
 import { TrainingCard } from "../../../components/TrainingCard";
 import { FitButton } from "../../../components/ui/FitButton";
 
 export default function RegisteredTrainings() {
+  const navigation = useNavigation();
+
   const mock = [
     {
       id: 1,
@@ -34,7 +37,10 @@ export default function RegisteredTrainings() {
         )}
         ListFooterComponent={() => (
           <View className="py-7">
-            <FitButton.Root variant="primary" onPress={() => {}}>
+            <FitButton.Root
+              variant="primary"
+              onPress={() => navigation.navigate("RegisterNewTraining")}
+            >
               <FitButton.Icon icon={Plus} />
               <FitButton.Text>Cadastrar Treino</FitButton.Text>
             </FitButton.Root>
