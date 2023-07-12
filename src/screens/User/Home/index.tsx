@@ -10,7 +10,7 @@ export default function Home() {
   const { navigate } = useNavigation();
 
   return (
-    <View className="flex flex-1 flex-col px-5 py-10">
+    <View className="flex flex-1 flex-col bg-neutral-50 px-5 py-10">
       <View className="w-24 self-end ">
         <LogoutButton />
       </View>
@@ -24,17 +24,20 @@ export default function Home() {
       <View className="mt-10 flex flex-1 items-center justify-center space-y-3 ">
         <FitButton.Root variant="primary" onPress={() => navigate("Exercises")}>
           <FitButton.Icon icon={ListPlus} />
-          <FitButton.Text content="Exercícios" />
+          <FitButton.Text>Exercícios</FitButton.Text>
         </FitButton.Root>
 
         <FitButton.Root variant="primary" onPress={() => navigate("Profile")}>
           <FitButton.Icon icon={UserCircle} />
-          <FitButton.Text content="Perfil" />
+          <FitButton.Text>Perfil</FitButton.Text>
         </FitButton.Root>
 
-        <FitButton.Root variant="primary" onPress={() => navigate("Trainings")}>
+        <FitButton.Root
+          variant="primary"
+          onPress={() => navigate("RegisteredTrainings")}
+        >
           <FitButton.Icon icon={Barbell} />
-          <FitButton.Text content="Treinos" />
+          <FitButton.Text>Treinos</FitButton.Text>
         </FitButton.Root>
       </View>
     </View>
