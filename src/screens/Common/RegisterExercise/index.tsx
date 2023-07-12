@@ -3,6 +3,7 @@ import { Check } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
+import { ErrorText } from "../../../components/ErrorText";
 import { ScreenTitle } from "../../../components/ScreenTitle";
 import { FitButton } from "../../../components/ui/FitButton";
 import { Input } from "../../../components/ui/Input";
@@ -24,6 +25,7 @@ export function RegisterExercise() {
     handleSubmit,
     formState: { errors },
     reset,
+    getValues,
   } = useForm<NewExerciseFormData>({
     defaultValues: {
       name: "",
@@ -85,6 +87,9 @@ export function RegisterExercise() {
             )}
             name="name"
           />
+          {errors.name?.message ? (
+            <ErrorText>{errors.name?.message}</ErrorText>
+          ) : null}
         </View>
         <View>
           <Controller
@@ -99,6 +104,10 @@ export function RegisterExercise() {
             )}
             name="muscleGroup"
           />
+          {errors.muscleGroup?.message ||
+          getValues().description === "Selecione o Grupo Muscular" ? (
+            <ErrorText>Um grupo muscular deve ser selecionado</ErrorText>
+          ) : null}
         </View>
         <View>
           <Controller
@@ -113,6 +122,9 @@ export function RegisterExercise() {
             )}
             name="description"
           />
+          {errors.description?.message ? (
+            <ErrorText>{errors.description?.message}</ErrorText>
+          ) : null}
         </View>
       </View>
 
