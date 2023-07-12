@@ -1,7 +1,7 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import RegisteredTrainings from '../screens/User/RegisteredTrainings';
-import { TrainingDetails } from '../screens/User/TrainingDetails';
+import RegisteredTrainings from "../screens/User/RegisteredTrainings";
+import { TrainingDetails } from "../screens/User/TrainingDetails";
 
 const Stack = createNativeStackNavigator();
 
