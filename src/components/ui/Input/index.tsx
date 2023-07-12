@@ -1,8 +1,8 @@
-import { TextInputProps } from "react-native";
+import { TextInputProps } from 'react-native';
 import {
   TextInputMaskOptionProp,
   TextInputMaskTypeProp,
-} from "react-native-masked-text";
+} from 'react-native-masked-text';
 
 export interface InputProps extends TextInputProps {
   label: string;
@@ -12,26 +12,26 @@ export interface InputProps extends TextInputProps {
   maskOptions?: TextInputMaskOptionProp;
 }
 
-import { Text, TextInput, View } from "react-native";
-import { TextInputMask } from "react-native-masked-text";
+import { Text, TextInput, View } from 'react-native';
+import { TextInputMask } from 'react-native-masked-text';
 
 export function Input({
   label,
   required,
   maskedInput = false,
-  maskType = "custom",
+  maskType = 'custom',
   maskOptions,
   ...rest
 }: InputProps) {
   return (
-    <>
+    <View className="flex flex-col">
       <View className="flex flex-row gap-1">
         {required ? (
-          <Text className="text-status-red font-openBold text-sm leading-4">
+          <Text className="font-openBold text-sm leading-4 text-red-600">
             *
           </Text>
         ) : null}
-        <Text className="font-openBold text-sm leading-4 text-neutral-900">
+        <Text className="font-openBold text-xs leading-4 text-zinc-900">
           {label.toLocaleUpperCase()}
         </Text>
       </View>
@@ -39,16 +39,16 @@ export function Input({
         <TextInputMask
           type={maskType}
           options={maskOptions}
-          className="font-poppinsSemibold m-0 h-14 rounded-lg bg-neutral-100 px-5 py-2"
+          className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
           {...rest}
         />
       ) : (
         <TextInput
-          className="font-poppinsSemibold m-0 h-14 rounded-lg bg-neutral-100 px-5 py-2"
+          className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
           placeholder="Digite"
           {...rest}
         />
       )}
-    </>
+    </View>
   );
 }
