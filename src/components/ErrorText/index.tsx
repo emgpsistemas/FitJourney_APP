@@ -6,6 +6,6 @@ interface ErrorTextProps extends TextProps {
 
 export function ErrorText({ children }: ErrorTextProps) {
   return (
-    <Text className="font-poppinsRegular text-xs text-red-500">{children}</Text>
+    <Text className="font-openNormal text-xs text-red-500">{children}</Text>
   );
 }
