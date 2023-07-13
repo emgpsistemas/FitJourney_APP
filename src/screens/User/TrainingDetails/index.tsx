@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import clsx from 'clsx';
 import { Check } from 'phosphor-react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, Text, View } from 'react-native';
 import { Accordion } from '../../../components/Accordion';
 import { Checkbox } from '../../../components/Checkbox';
 import { ScreenTitle } from '../../../components/ScreenTitle';
@@ -108,6 +108,7 @@ const training = {
 
 export function TrainingDetails() {
   const route = useRoute();
+  const { goBack } = useNavigation();
   const { id } = route.params as { id: number };
 
   const {
@@ -125,16 +126,24 @@ export function TrainingDetails() {
   });
 
   const onSubmit = (data: TrainingDetailsFormData) => {
-    const payload = {
-      exercises: data.exercises.map((exercise) => ({
-        id: exercise.id,
-        series: exercise.series.map((serie) => ({
-          repetitions: serie.repetitions.actual,
-          weight: serie.weight.actual,
+    try {
+      const payload = {
+        exercises: data.exercises.map((exercise) => ({
+          id: exercise.id,
+          series: exercise.series.map((serie) => ({
+            repetitions: serie.repetitions.actual,
+            weight: serie.weight.actual,
+          })),
         })),
-      })),
-    };
-    console.log('PAYLOAD =>', payload);
+      };
+      console.log('PAYLOAD =>', payload);
+      Alert.alert('Treino finalizado com sucesso!');
+    } catch (error: any) {
+      Alert.alert('Erro ao finalizar treino', error.message);
+    } finally {
+      reset();
+      goBack();
+    }
   };
 
   return (
