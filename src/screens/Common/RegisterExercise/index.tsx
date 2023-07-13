@@ -78,19 +78,13 @@ export function RegisterExercise() {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              // <Input
-              //   label="Nome"
-              //   value={value}
-              //   onChangeText={onChange}
-              //   onBlur={onBlur}
-              // />
               <Input.Root>
                 <Input.Label label="Nome" />
                 <Input.Text
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                /> 
+                />
               </Input.Root>
             )}
             name="name"
