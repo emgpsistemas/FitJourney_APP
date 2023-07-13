@@ -1,111 +1,141 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRoute } from '@react-navigation/native';
 import clsx from 'clsx';
 import { Check } from 'phosphor-react-native';
-import { useState } from 'react';
-import { FlatList, SafeAreaView, View } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import { Accordion } from '../../../components/Accordion';
 import { Checkbox } from '../../../components/Checkbox';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 import { FitButton } from '../../../components/ui/FitButton';
-
-const exercisesMock = [
-  {
-    id: 1,
-    name: 'Supino Reto',
-    description:
-      'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-    observations:
-      '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-    series: [
-      {
-        isChecked: true,
-        repetitions: {
-          actual: 10,
-          lastTraining: 10,
-        },
-        weight: {
-          actual: 20,
-          lastTraining: 18,
-        },
-      },
-      {
-        isChecked: false,
-        repetitions: {
-          actual: 0,
-          lastTraining: 10,
-        },
-        weight: {
-          actual: 0,
-          lastTraining: 18,
-        },
-      },
-      {
-        isChecked: false,
-        repetitions: {
-          actual: 0,
-          lastTraining: 10,
-        },
-        weight: {
-          actual: 0,
-          lastTraining: 18,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Supino Declinado',
-    description:
-      'Deite-se em um banco declinado, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-    observations:
-      '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-    series: [
-      {
-        isChecked: true,
-        repetitions: {
-          actual: 10,
-          lastTraining: 10,
-        },
-        weight: {
-          actual: 20,
-          lastTraining: 18,
-        },
-      },
-      {
-        isChecked: false,
-        repetitions: {
-          actual: 0,
-          lastTraining: 10,
-        },
-        weight: {
-          actual: 0,
-          lastTraining: 18,
-        },
-      },
-      {
-        isChecked: false,
-        repetitions: {
-          actual: 0,
-          lastTraining: 10,
-        },
-        weight: {
-          actual: 0,
-          lastTraining: 18,
-        },
-      },
-    ],
-  },
-];
+import {
+  TrainingDetailsFormData,
+  trainingDetailsSchema,
+} from '../../../validations/User/TrainingDetails';
 
 const training = {
   name: 'Treino A',
+  exercises: [
+    {
+      id: 1,
+      name: 'Supino Reto',
+      description:
+        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: {
+            actual: '0',
+            lastTraining: '0',
+          },
+          weight: {
+            actual: '0',
+            lastTraining: '0',
+          },
+        },
+        {
+          isChecked: false,
+          repetitions: {
+            actual: '0',
+            lastTraining: '0',
+          },
+          weight: {
+            actual: '0',
+            lastTraining: '0',
+          },
+        },
+        {
+          isChecked: false,
+          repetitions: {
+            actual: '0',
+            lastTraining: '0',
+          },
+          weight: {
+            actual: '0',
+            lastTraining: '0',
+          },
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Supino Declinado',
+      description:
+        'Deite-se em um banco declinado, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+      observations:
+        '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
+      series: [
+        {
+          isChecked: false,
+          repetitions: {
+            actual: '0',
+            lastTraining: '0',
+          },
+          weight: {
+            actual: '0',
+            lastTraining: '0',
+          },
+        },
+        {
+          isChecked: false,
+          repetitions: {
+            actual: '0',
+            lastTraining: '0',
+          },
+          weight: {
+            actual: '0',
+            lastTraining: '0',
+          },
+        },
+        {
+          isChecked: false,
+          repetitions: {
+            actual: '0',
+            lastTraining: '0',
+          },
+          weight: {
+            actual: '0',
+            lastTraining: '0',
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export function TrainingDetails() {
-  const [exercises, setExercises] = useState(exercisesMock);
   const route = useRoute();
   const { id } = route.params as { id: number };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    getValues,
+  } = useForm<TrainingDetailsFormData>({
+    defaultValues: {
+      name: training.name,
+      exercises: training.exercises,
+    },
+    resolver: zodResolver(trainingDetailsSchema),
+  });
+
+  const onSubmit = (data: TrainingDetailsFormData) => {
+    const payload = {
+      exercises: data.exercises.map((exercise) => ({
+        id: exercise.id,
+        series: exercise.series.map((serie) => ({
+          repetitions: serie.repetitions.actual,
+          weight: serie.weight.actual,
+        })),
+      })),
+    };
+    console.log('PAYLOAD =>', payload);
+  };
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
@@ -127,9 +157,9 @@ export function TrainingDetails() {
         className="flex flex-1 pt-10"
         ListHeaderComponent={() => <TrainingInfo />}
         showsVerticalScrollIndicator={false}
-        data={exercises}
+        data={training.exercises}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <Accordion.Root title={item.name}>
             <Accordion.Content>
               <View className="mb-4 flex flex-col">
@@ -144,35 +174,73 @@ export function TrainingDetails() {
                   {item.observations}
                 </Accordion.ContentText>
               </View>
-              {item.series.map((serie, index) => (
-                <View className="flex flex-col" key={index}>
+              {item.series.map((serie, serieIndex) => (
+                <View className="flex flex-col" key={serieIndex}>
                   <Accordion.ContentTitle>
-                    SÉRIE {index + 1}:
+                    SÉRIE {serieIndex + 1}:
                   </Accordion.ContentTitle>
-                  <Checkbox.Root key={index}>
+                  <Checkbox.Root key={serieIndex}>
                     <View
                       className="flex flex-row items-center"
                       style={{ gap: 12 }}
                     >
-                      <Checkbox.Toggle
-                        checked={serie.isChecked}
-                        onPress={() => {}}
+                      <Controller
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <Checkbox.Toggle
+                            checked={value}
+                            onPress={() => onChange(!value)}
+                          />
+                        )}
+                        name={`exercises.${index}.series.${serieIndex}.isChecked`}
                       />
                       <View
                         className="flex flex-1 flex-row"
                         style={{ gap: 12 }}
                       >
-                        <Checkbox.Input
-                          label="Repetições"
-                          value={String(serie.repetitions.actual)}
-                          lastTraining={`${serie.repetitions.lastTraining}x`}
+                        <Controller
+                          control={control}
+                          render={({ field: { onChange, onBlur, value } }) => (
+                            <Checkbox.Input
+                              onBlur={onBlur}
+                              label="Repetições"
+                              onChangeText={onChange}
+                              value={value?.toString()}
+                              lastTraining={`${serie.repetitions.lastTraining}x`}
+                              error={
+                                errors.exercises?.[index]?.series?.[serieIndex]
+                                  ?.weight?.actual?.message
+                              }
+                            />
+                          )}
+                          name={`exercises.${index}.series.${serieIndex}.repetitions.actual`}
                         />
-                        <Checkbox.Input
-                          label="Peso"
-                          value={String(serie.weight.actual)}
-                          lastTraining={`${serie.weight.lastTraining}kg`}
+                        <Controller
+                          control={control}
+                          render={({ field: { onChange, onBlur, value } }) => (
+                            <Checkbox.Input
+                              onBlur={onBlur}
+                              label="Peso"
+                              onChangeText={onChange}
+                              value={value?.toString()}
+                              lastTraining={`${serie.weight.lastTraining}kg`}
+                              error={
+                                errors.exercises?.[index]?.series?.[serieIndex]
+                                  ?.weight?.actual?.message
+                              }
+                            />
+                          )}
+                          name={`exercises.${index}.series.${serieIndex}.weight.actual`}
                         />
                       </View>
+                      {errors.exercises?.[index]?.series?.[serieIndex] ? (
+                        <Text>
+                          {
+                            errors.exercises?.[index]?.series?.[serieIndex]
+                              ?.message
+                          }
+                        </Text>
+                      ) : null}
                     </View>
                   </Checkbox.Root>
                 </View>
@@ -182,7 +250,7 @@ export function TrainingDetails() {
         )}
         ListFooterComponent={() => (
           <View className="mb-12 pb-7 pt-5">
-            <FitButton.Root variant="primary" onPress={() => {}}>
+            <FitButton.Root variant="primary" onPress={handleSubmit(onSubmit)}>
               <FitButton.Icon icon={Check} />
               <FitButton.Text>Finalizar Treino</FitButton.Text>
             </FitButton.Root>
