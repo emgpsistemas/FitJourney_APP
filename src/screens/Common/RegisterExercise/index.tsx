@@ -10,7 +10,7 @@ import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { TextArea } from "../../../components/ui/Textarea/index";
 import { MuscleGroup } from "../../../services/get/muscle-groups/interface";
-import { fetchMuscleGroups } from "../../../services/get/muscle-groups/muscle-groups";
+import { fetchMuscleGroups } from "../../../services/get/muscle-groups/fetchAllMuscleGroups";
 import { createExercise } from "../../../services/post/exercises/createExercise";
 import {
   NewExerciseFormData,
