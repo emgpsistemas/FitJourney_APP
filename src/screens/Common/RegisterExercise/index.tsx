@@ -67,7 +67,7 @@ export function RegisterExercise() {
   }
 
   return (
-    <View className="flex flex-1 justify-between border border-red-600 bg-white px-5 pb-7 pt-16">
+    <View className="flex flex-1 justify-between bg-white px-5 pb-7 pt-16">
       <ScreenTitle.Root>
         <ScreenTitle.GoBackButton />
         <ScreenTitle.Text>Cadastrar Exercício</ScreenTitle.Text>
@@ -78,12 +78,20 @@ export function RegisterExercise() {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Nome"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
+              // <Input
+              //   label="Nome"
+              //   value={value}
+              //   onChangeText={onChange}
+              //   onBlur={onBlur}
+              // />
+              <Input.Root>
+                <Input.Label label="Nome" />
+                <Input.Text
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                /> 
+              </Input.Root>
             )}
             name="name"
           />
