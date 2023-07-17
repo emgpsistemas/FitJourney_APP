@@ -166,7 +166,6 @@ export function TrainingDetails() {
 
   const defineBorderColor = () => {
     const exercises = getValues().exercises;
-    console.log('Teste');
     const updatedBorderColors = exercises.reduce((borderColors, exercise) => {
       const series = exercise.series;
       const isAllSeriesChecked = series.every(
@@ -184,7 +183,6 @@ export function TrainingDetails() {
         exerciseBorderColor = 'yellow';
       }
 
-      console.log('borderColors', borderColors);
       if (exercise.id) {
         return {
           ...borderColors,
