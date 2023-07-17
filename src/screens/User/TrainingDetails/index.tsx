@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import clsx from 'clsx';
 import { Check } from 'phosphor-react-native';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Alert, FlatList, SafeAreaView, Text, View } from 'react-native';
 import { Accordion } from '../../../components/Accordion';
@@ -106,7 +107,21 @@ const training = {
   ],
 };
 
+interface Serie {
+  isChecked: boolean;
+  repetitions: {
+    actual: string;
+    lastTraining: string;
+  };
+  weight: {
+    actual: string;
+    lastTraining: string;
+  };
+}
+
 export function TrainingDetails() {
+  const [exerciseBorderColors, setExerciseBorderColors] = useState<any>({});
+
   const route = useRoute();
   const { goBack } = useNavigation();
   const { id } = route.params as { id: number };
@@ -117,6 +132,7 @@ export function TrainingDetails() {
     formState: { errors },
     reset,
     getValues,
+    watch,
   } = useForm<TrainingDetailsFormData>({
     defaultValues: {
       name: training.name,
@@ -124,6 +140,8 @@ export function TrainingDetails() {
     },
     resolver: zodResolver(trainingDetailsSchema),
   });
+
+  const exercises = watch('exercises', []);
 
   const onSubmit = (data: TrainingDetailsFormData) => {
     try {
@@ -146,6 +164,46 @@ export function TrainingDetails() {
     }
   };
 
+  const defineBorderColor = () => {
+    const exercises = getValues().exercises;
+    console.log('Teste');
+    const updatedBorderColors = exercises.reduce((borderColors, exercise) => {
+      const series = exercise.series;
+      const isAllSeriesChecked = series.every(
+        (serie: Serie) => serie.isChecked,
+      );
+      const isSomeSeriesChecked = series.some(
+        (serie: Serie) => serie.isChecked,
+      );
+
+      let exerciseBorderColor = 'transparent';
+
+      if (isAllSeriesChecked) {
+        exerciseBorderColor = 'green';
+      } else if (isSomeSeriesChecked) {
+        exerciseBorderColor = 'yellow';
+      }
+
+      console.log('borderColors', borderColors);
+      if (exercise.id) {
+        return {
+          ...borderColors,
+          [exercise.id]: exerciseBorderColor,
+        };
+      } else {
+        return {
+          ...borderColors,
+        };
+      }
+    }, {});
+
+    setExerciseBorderColors(updatedBorderColors);
+  };
+
+  useEffect(() => {
+    defineBorderColor();
+  }, [exercises]);
+
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
       <ScreenTitle.Root>
@@ -165,98 +223,118 @@ export function TrainingDetails() {
       <FlatList
         className="flex flex-1 pt-10"
         ListHeaderComponent={() => <TrainingInfo />}
+        ItemSeparatorComponent={() => <View className="h-4" />}
         showsVerticalScrollIndicator={false}
         data={training.exercises}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item, index }) => (
-          <Accordion.Root title={item.name}>
-            <Accordion.Content>
-              <View className="mb-4 flex flex-col">
-                <Accordion.ContentTitle>DESCRIÇÃO: </Accordion.ContentTitle>
-                <Accordion.ContentText>
-                  {item.description}
-                </Accordion.ContentText>
-              </View>
-              <View className="mb-4 flex flex-col">
-                <Accordion.ContentTitle>OBSERVAÇÕES: </Accordion.ContentTitle>
-                <Accordion.ContentText>
-                  {item.observations}
-                </Accordion.ContentText>
-              </View>
-              {item.series.map((serie, serieIndex) => (
-                <View className="flex flex-col" key={serieIndex}>
-                  <Accordion.ContentTitle>
-                    SÉRIE {serieIndex + 1}:
-                  </Accordion.ContentTitle>
-                  <Checkbox.Root key={serieIndex}>
-                    <View
-                      className="flex flex-row items-center"
-                      style={{ gap: 12 }}
-                    >
-                      <Controller
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <Checkbox.Toggle
-                            checked={value}
-                            onPress={() => onChange(!value)}
+        renderItem={({ item, index }) => {
+          return (
+            <View
+              className={clsx('rounded-[8px] border-2', {
+                'border-transparent':
+                  exerciseBorderColors[item.id] === 'transparent',
+                'border-yellow-400': exerciseBorderColors[item.id] === 'yellow',
+                'border-green-500': exerciseBorderColors[item.id] === 'green',
+              })}
+            >
+              <Accordion.Root title={item.name}>
+                <Accordion.Content>
+                  <View className="mb-4 flex flex-col">
+                    <Accordion.ContentTitle>DESCRIÇÃO: </Accordion.ContentTitle>
+                    <Accordion.ContentText>
+                      {item.description}
+                    </Accordion.ContentText>
+                  </View>
+                  <View className="mb-4 flex flex-col">
+                    <Accordion.ContentTitle>
+                      OBSERVAÇÕES:{' '}
+                    </Accordion.ContentTitle>
+                    <Accordion.ContentText>
+                      {item.observations}
+                    </Accordion.ContentText>
+                  </View>
+                  {item.series.map((serie, serieIndex) => (
+                    <View className="flex flex-col" key={serieIndex}>
+                      <Accordion.ContentTitle>
+                        SÉRIE {serieIndex + 1}:
+                      </Accordion.ContentTitle>
+                      <Checkbox.Root key={serieIndex}>
+                        <View
+                          className="flex flex-row items-center"
+                          style={{ gap: 12 }}
+                        >
+                          <Controller
+                            control={control}
+                            render={({ field: { onChange, value } }) => (
+                              <Checkbox.Toggle
+                                checked={value}
+                                onPress={() => onChange(!value)}
+                              />
+                            )}
+                            name={`exercises.${index}.series.${serieIndex}.isChecked`}
                           />
-                        )}
-                        name={`exercises.${index}.series.${serieIndex}.isChecked`}
-                      />
-                      <View
-                        className="flex flex-1 flex-row"
-                        style={{ gap: 12 }}
-                      >
-                        <Controller
-                          control={control}
-                          render={({ field: { onChange, onBlur, value } }) => (
-                            <Checkbox.Input
-                              onBlur={onBlur}
-                              label="Repetições"
-                              onChangeText={onChange}
-                              value={value?.toString()}
-                              lastTraining={`${serie.repetitions.lastTraining}x`}
-                              error={
-                                errors.exercises?.[index]?.series?.[serieIndex]
-                                  ?.weight?.actual?.message
-                              }
+                          <View
+                            className="flex flex-1 flex-row"
+                            style={{ gap: 12 }}
+                          >
+                            <Controller
+                              control={control}
+                              render={({
+                                field: { onChange, onBlur, value },
+                              }) => (
+                                <Checkbox.Input
+                                  onBlur={onBlur}
+                                  label="Repetições"
+                                  onChangeText={onChange}
+                                  value={value?.toString()}
+                                  lastTraining={`${serie.repetitions.lastTraining}x`}
+                                  error={
+                                    errors.exercises?.[index]?.series?.[
+                                      serieIndex
+                                    ]?.weight?.actual?.message
+                                  }
+                                />
+                              )}
+                              name={`exercises.${index}.series.${serieIndex}.repetitions.actual`}
                             />
-                          )}
-                          name={`exercises.${index}.series.${serieIndex}.repetitions.actual`}
-                        />
-                        <Controller
-                          control={control}
-                          render={({ field: { onChange, onBlur, value } }) => (
-                            <Checkbox.Input
-                              onBlur={onBlur}
-                              label="Peso"
-                              onChangeText={onChange}
-                              value={value?.toString()}
-                              lastTraining={`${serie.weight.lastTraining}kg`}
-                              error={
-                                errors.exercises?.[index]?.series?.[serieIndex]
-                                  ?.weight?.actual?.message
-                              }
+                            <Controller
+                              control={control}
+                              render={({
+                                field: { onChange, onBlur, value },
+                              }) => (
+                                <Checkbox.Input
+                                  onBlur={onBlur}
+                                  label="Peso"
+                                  onChangeText={onChange}
+                                  value={value?.toString()}
+                                  lastTraining={`${serie.weight.lastTraining}kg`}
+                                  error={
+                                    errors.exercises?.[index]?.series?.[
+                                      serieIndex
+                                    ]?.weight?.actual?.message
+                                  }
+                                />
+                              )}
+                              name={`exercises.${index}.series.${serieIndex}.weight.actual`}
                             />
-                          )}
-                          name={`exercises.${index}.series.${serieIndex}.weight.actual`}
-                        />
-                      </View>
-                      {errors.exercises?.[index]?.series?.[serieIndex] ? (
-                        <Text>
-                          {
-                            errors.exercises?.[index]?.series?.[serieIndex]
-                              ?.message
-                          }
-                        </Text>
-                      ) : null}
+                          </View>
+                          {errors.exercises?.[index]?.series?.[serieIndex] ? (
+                            <Text>
+                              {
+                                errors.exercises?.[index]?.series?.[serieIndex]
+                                  ?.message
+                              }
+                            </Text>
+                          ) : null}
+                        </View>
+                      </Checkbox.Root>
                     </View>
-                  </Checkbox.Root>
-                </View>
-              ))}
-            </Accordion.Content>
-          </Accordion.Root>
-        )}
+                  ))}
+                </Accordion.Content>
+              </Accordion.Root>
+            </View>
+          );
+        }}
         ListFooterComponent={() => (
           <View className="mb-12 pb-7 pt-5">
             <FitButton.Root variant="primary" onPress={handleSubmit(onSubmit)}>

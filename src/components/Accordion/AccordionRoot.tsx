@@ -38,7 +38,7 @@ function AccordionRoot({ children, title }: AccordionRootProps) {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      className="mb-4 flex flex-col overflow-hidden rounded-lg bg-zinc-100 p-6"
+      className="flex flex-col overflow-hidden rounded-lg bg-zinc-100 p-6"
       onPress={() => toggleListItem()}
     >
       <View className="flex flex-row justify-between">
