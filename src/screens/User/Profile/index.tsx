@@ -11,8 +11,12 @@ export default function Profile() {
           <LogoutButton />
         </View>
       </View>
-
-      <ProfilePicture />
+      <View className="mb-7">
+        <ProfilePicture />
+        <Text className="text-center font-openBold text-xl">
+          Eduardo Muchak
+        </Text>
+      </View>
     </View>
   );
 }
