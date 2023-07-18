@@ -11,9 +11,11 @@ export declare global {
 
       // Exercises
       Exercises: unknown;
+      RegisteredExercices: unknown;
 
       // Profile
       Profile: unknown;
+      EditProfile: unknown;
 
       // Training
       RegisteredTrainings: unknown;

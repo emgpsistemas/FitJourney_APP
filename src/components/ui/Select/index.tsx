@@ -1,5 +1,5 @@
-import { Picker } from "@react-native-picker/picker";
-import { Text, View } from "react-native";
+import { Picker } from '@react-native-picker/picker';
+import { Text, View } from 'react-native';
 
 interface SelectProps {
   label: string;
@@ -20,7 +20,7 @@ export function Select({
     <>
       <View className="flex flex-row gap-1">
         {required ? (
-          <Text className="text-status-red font-openBold text-sm leading-4">
+          <Text className="font-openBold text-sm leading-4 text-red-600">
             *
           </Text>
         ) : null}
@@ -35,7 +35,7 @@ export function Select({
           selectedValue={selected}
           onValueChange={(itemValue) => setSelected(itemValue)}
           style={{
-            position: "absolute",
+            position: 'absolute',
             left: 6,
             right: 0,
             top: 0,
@@ -52,7 +52,7 @@ export function Select({
                 style={{
                   fontSize: 14,
                   lineHeight: 24,
-                  color: "#212529",
+                  color: '#212529',
                 }}
               />
             ))
