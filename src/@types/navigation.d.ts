@@ -15,6 +15,7 @@ export declare global {
 
       // Profile
       Profile: unknown;
+      EditProfile: unknown;
 
       // Training
       RegisteredTrainings: unknown;

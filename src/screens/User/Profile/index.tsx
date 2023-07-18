@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { PencilSimple } from 'phosphor-react-native';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { LogoutButton } from '../../../components/LogoutButton';
@@ -5,37 +6,40 @@ import { ProfilePicture } from '../../../components/ProfilePicture';
 import { UserInfo } from '../../../components/UserInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 
+const userInfo = {
+  totalTrainings: 212,
+  memberSince: new Date('2022-08-22').toISOString(),
+  registerInfo: [
+    {
+      title: 'Gênero',
+      content: 'Masculino',
+    },
+    {
+      title: 'Idade',
+      content: '27 Anos',
+    },
+    {
+      title: 'Peso',
+      content: '72 Kg',
+    },
+    {
+      title: 'Altura',
+      content: '1,82 m',
+    },
+    {
+      title: 'Objetivo',
+      content: 'Hipertrofia',
+    },
+    {
+      title: 'Condicionamento Físico',
+      content: 'Intermediário',
+    },
+  ],
+};
+
 export default function Profile() {
-  const userInfo = {
-    totalTrainings: 212,
-    memberSince: new Date('2022-08-22').toISOString(),
-    registerInfo: [
-      {
-        title: 'Gênero',
-        content: 'Masculino',
-      },
-      {
-        title: 'Idade',
-        content: '27 Anos',
-      },
-      {
-        title: 'Peso',
-        content: '72 Kg',
-      },
-      {
-        title: 'Altura',
-        content: '1,82 m',
-      },
-      {
-        title: 'Objetivo',
-        content: 'Hipertrofia',
-      },
-      {
-        title: 'Condicionamento Físico',
-        content: 'Intermediário',
-      },
-    ],
-  };
+  const { navigate } = useNavigation();
+
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-10">
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -91,7 +95,10 @@ export default function Profile() {
         </UserInfo.Root>
 
         <View className="py-7">
-          <FitButton.Root variant="primary" onPress={() => {}}>
+          <FitButton.Root
+            variant="primary"
+            onPress={() => navigate('EditProfile')}
+          >
             <FitButton.Icon icon={PencilSimple} />
             <FitButton.Text>Editar Perfil</FitButton.Text>
           </FitButton.Root>
