@@ -1,7 +1,49 @@
 import { useNavigation } from '@react-navigation/native';
 import { Plus } from 'phosphor-react-native';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import { Accordion } from '../../../components/Accordion';
 import { FitButton } from '../../../components/ui/FitButton';
+
+const categories = [
+  {
+    id: 1,
+    name: 'Peito',
+    exercises: [
+      {
+        id: 1,
+        name: 'Supino Reto',
+        description: 'Teste',
+      },
+      {
+        id: 2,
+        name: 'Supino Inclinado',
+        description: 'Teste',
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Ombros',
+    exercises: [
+      {
+        id: 3,
+        name: 'Elevação Lateral',
+        description: 'Teste',
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: 'Pernas',
+    exercises: [
+      {
+        id: 4,
+        name: 'Leg Press 45º',
+        description: 'Teste',
+      },
+    ],
+  },
+];
 
 export default function RegisteredExercises() {
   const { navigate } = useNavigation();
@@ -10,9 +52,21 @@ export default function RegisteredExercises() {
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={[]}
-        renderItem={({ item, index }) => {
-          return null;
+        data={categories}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => {
+          return (
+            <Accordion.Root title={item.name}>
+              <Accordion.Content>
+                {item.exercises.map((exercise) => (
+                  <Accordion.Exercise
+                    key={`${exercise.id}-${exercise.name}`}
+                    exercise={exercise}
+                  />
+                ))}
+              </Accordion.Content>
+            </Accordion.Root>
+          );
         }}
         ItemSeparatorComponent={() => <View className="h-3" />}
         ListHeaderComponent={() => (
