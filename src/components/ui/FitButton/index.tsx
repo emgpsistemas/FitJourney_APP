@@ -7,4 +7,3 @@ export const FitButton = {
   Icon: FitButtonIcon,
   Text: FitButtonText,
 };
- 
