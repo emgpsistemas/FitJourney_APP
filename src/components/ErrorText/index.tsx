@@ -1,7 +1,7 @@
-import { Text, TextProps } from "react-native";
+import { Text, TextProps } from 'react-native';
 
 interface ErrorTextProps extends TextProps {
-  children: string;
+  children: React.ReactNode;
 }
 
 export function ErrorText({ children }: ErrorTextProps) {

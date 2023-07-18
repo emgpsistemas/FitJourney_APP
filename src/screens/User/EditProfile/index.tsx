@@ -1,8 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Check } from 'phosphor-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { ErrorText } from '../../../components/ErrorText';
 import { ScreenTitle } from '../../../components/ScreenTitle';
+import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
+import { Select } from '../../../components/ui/Select';
+import { TextArea } from '../../../components/ui/Textarea';
 import {
   EditProfileFormData,
   editProfileSchema,
@@ -29,6 +34,16 @@ function EditProfile() {
     resolver: zodResolver(editProfileSchema),
   });
 
+  const onSubmit = (data: EditProfileFormData) => {
+    try {
+      console.log('PAYLOAD =>', data);
+    } catch (error: any) {
+      console.log('ERROR =>', error);
+    } finally {
+      reset();
+    }
+  };
+
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
       <ScreenTitle.Root>
@@ -39,7 +54,7 @@ function EditProfile() {
         showsVerticalScrollIndicator={false}
         className="flex flex-1 pt-10"
       >
-        <View className="mb-3 flex flex-col">
+        <View className="flex flex-col pb-3">
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -115,6 +130,81 @@ function EditProfile() {
             />
             {errors.height && <Text>{errors.height.message}</Text>}
           </View>
+        </View>
+        <View className="mb-3 flex flex-col">
+          <Controller
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                label="Gênero"
+                options={['Masculino', 'Feminino']}
+                selected={value}
+                setSelected={onChange}
+              />
+            )}
+            name="gender"
+          />
+          {errors.gender ? (
+            <ErrorText>{errors.gender.message}</ErrorText>
+          ) : null}
+        </View>
+        <View className="mb-3 flex flex-col">
+          <Controller
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                label="Objetivo"
+                options={['Masculino', 'Feminino']}
+                selected={value}
+                setSelected={onChange}
+              />
+            )}
+            name="objective"
+          />
+          {errors.objective ? (
+            <ErrorText>{errors.objective.message}</ErrorText>
+          ) : null}
+        </View>
+        <View className="mb-3 flex flex-col">
+          <Controller
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                label="Condicionamento Físico"
+                options={['Masculino', 'Feminino']}
+                selected={value}
+                setSelected={onChange}
+              />
+            )}
+            name="activityLevel"
+          />
+          {errors.activityLevel ? (
+            <ErrorText>{errors.activityLevel.message}</ErrorText>
+          ) : null}
+        </View>
+        <View className="flex flex-col">
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextArea
+                label="Observações"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+            name="observations"
+          />
+          {errors.observations?.message ? (
+            <ErrorText>{errors.observations?.message}</ErrorText>
+          ) : null}
+        </View>
+
+        <View className="mb-11 pb-6 pt-6">
+          <FitButton.Root variant="primary" onPress={handleSubmit(onSubmit)}>
+            <FitButton.Icon icon={Check} />
+            <FitButton.Text>Salvar</FitButton.Text>
+          </FitButton.Root>
         </View>
       </ScrollView>
     </SafeAreaView>
