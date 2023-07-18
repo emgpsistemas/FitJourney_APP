@@ -3,6 +3,7 @@ import {
   TextInputMaskOptionProp,
   TextInputMaskTypeProp,
 } from 'react-native-masked-text';
+import { twMerge } from 'tailwind-merge';
 
 export interface InputProps extends TextInputProps {
   label: string;
@@ -31,7 +32,7 @@ export function Input({
             *
           </Text>
         ) : null}
-        <Text className="font-openBold text-xs leading-4 text-zinc-900">
+        <Text className="font-openBold text-sm leading-4 text-neutral-900">
           {label.toLocaleUpperCase()}
         </Text>
       </View>
@@ -39,12 +40,18 @@ export function Input({
         <TextInputMask
           type={maskType}
           options={maskOptions}
-          className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
+          className={twMerge(
+            'm-0 h-14 rounded-lg bg-neutral-100 px-5 py-2 font-openSemibold',
+            rest.className,
+          )}
           {...rest}
         />
       ) : (
         <TextInput
-          className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
+          className={twMerge(
+            'm-0 h-14 rounded-lg bg-neutral-100 px-5 py-2 font-openSemibold',
+            rest.className,
+          )}
           placeholder="Digite"
           {...rest}
         />
