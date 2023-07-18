@@ -147,7 +147,7 @@ function EditProfile() {
             render={({ field: { onChange, value } }) => (
               <Select
                 label="Gênero"
-                options={['Masculino', 'Feminino']}
+                options={['Selecione', 'Masculino', 'Feminino']}
                 selected={value}
                 setSelected={onChange}
               />
@@ -164,7 +164,14 @@ function EditProfile() {
             render={({ field: { onChange, value } }) => (
               <Select
                 label="Objetivo"
-                options={['Masculino', 'Feminino']}
+                options={[
+                  'Selecione',
+                  'Hipertrofia',
+                  'Emagrecimento',
+                  'Saúde',
+                  'Definição Muscular',
+                  'Outros',
+                ]}
                 selected={value}
                 setSelected={onChange}
               />
@@ -181,7 +188,14 @@ function EditProfile() {
             render={({ field: { onChange, value } }) => (
               <Select
                 label="Condicionamento Físico"
-                options={['Masculino', 'Feminino']}
+                options={[
+                  'Selecione',
+                  'Sedentário',
+                  'Iniciante',
+                  'Intermediário',
+                  'Avançado',
+                  'Atleta',
+                ]}
                 selected={value}
                 setSelected={onChange}
               />
