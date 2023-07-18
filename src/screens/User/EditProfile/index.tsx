@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check } from 'phosphor-react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
 import { ErrorText } from '../../../components/ErrorText';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { FitButton } from '../../../components/ui/FitButton';
@@ -67,7 +67,9 @@ function EditProfile() {
             )}
             name={'name'}
           />
-          {errors.name && <Text>{errors.name.message}</Text>}
+          {errors.name?.message ? (
+            <ErrorText>{errors.name?.message}</ErrorText>
+          ) : null}
         </View>
         <View className="mb-3 flex flex-col">
           <Controller
@@ -82,7 +84,9 @@ function EditProfile() {
             )}
             name={'email'}
           />
-          {errors.email && <Text>{errors.email.message}</Text>}
+          {errors.email?.message ? (
+            <ErrorText>{errors.email?.message}</ErrorText>
+          ) : null}
         </View>
         <View className="mb-3 flex flex-col">
           <Controller
@@ -97,7 +101,9 @@ function EditProfile() {
             )}
             name={'age'}
           />
-          {errors.age && <Text>{errors.age.message}</Text>}
+          {errors.age?.message ? (
+            <ErrorText>{errors.age?.message}</ErrorText>
+          ) : null}
         </View>
         <View className="mb-3 flex w-full flex-row space-x-3">
           <View className="flex flex-1 flex-col">
@@ -113,7 +119,9 @@ function EditProfile() {
               )}
               name={'weight'}
             />
-            {errors.weight && <Text>{errors.weight.message}</Text>}
+            {errors.weight?.message ? (
+              <ErrorText>{errors.weight?.message}</ErrorText>
+            ) : null}
           </View>
           <View className="flex flex-1 flex-col">
             <Controller
@@ -128,7 +136,9 @@ function EditProfile() {
               )}
               name={'height'}
             />
-            {errors.height && <Text>{errors.height.message}</Text>}
+            {errors.height?.message ? (
+              <ErrorText>{errors.height?.message}</ErrorText>
+            ) : null}
           </View>
         </View>
         <View className="mb-3 flex flex-col">
