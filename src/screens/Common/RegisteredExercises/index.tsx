@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Plus } from 'phosphor-react-native';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import { Accordion } from '../../../components/Accordion';
+import { DeleteExerciseModal } from '../../../components/DeleteExerciseModal';
 import { EditExerciseModal } from '../../../components/EditExerciseModal';
 import { FitButton } from '../../../components/ui/FitButton';
 
@@ -68,7 +69,7 @@ export default function RegisteredExercises() {
                     })}
                   >
                     <View className="mr-2">
-                      <EditExerciseModal />
+                      <DeleteExerciseModal />
                     </View>
                     <View className="mr-3">
                       <EditExerciseModal />

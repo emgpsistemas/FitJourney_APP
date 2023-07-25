@@ -1,4 +1,5 @@
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { twMerge } from 'tailwind-merge';
 
 interface IconButtonProps extends TouchableOpacityProps {
   children: React.ReactNode;
@@ -7,9 +8,10 @@ interface IconButtonProps extends TouchableOpacityProps {
 export function IconButton({ children, ...rest }: IconButtonProps) {
   return (
     <TouchableOpacity
-      className={
-        'flex flex-row items-center justify-center rounded-lg border-2 border-yellow-400 p-1'
-      }
+      className={twMerge(
+        'flex flex-row items-center justify-center rounded-lg border-2 border-yellow-400 p-1',
+        rest.className,
+      )}
       activeOpacity={0.7}
       {...rest}
     >
