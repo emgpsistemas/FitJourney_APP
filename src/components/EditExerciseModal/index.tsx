@@ -16,7 +16,20 @@ import { CustomModal } from '../ui/Modal';
 import { Select } from '../ui/Select';
 import { TextArea } from '../ui/Textarea';
 
-export function EditExerciseModal() {
+interface Exercise {
+  id: number;
+  name: string;
+  category: string;
+  description: string;
+}
+
+interface EditExerciseModalProps {
+  exercise: Exercise;
+}
+
+export function EditExerciseModal({
+  exercise: { category, description, name },
+}: EditExerciseModalProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const {
@@ -26,9 +39,9 @@ export function EditExerciseModal() {
     reset,
   } = useForm<EditExerciseModalFormData>({
     defaultValues: {
-      name: '',
-      category: '',
-      description: '',
+      name: name,
+      category: category,
+      description: description,
     },
     resolver: zodResolver(editExerciseModalSchema),
   });
@@ -40,10 +53,9 @@ export function EditExerciseModal() {
       console.log('ERROR =>', error);
     } finally {
       reset();
+      setIsModalVisible(false);
     }
   };
-
-  console.log('errors =>', errors);
 
   return (
     <>
@@ -85,7 +97,7 @@ export function EditExerciseModal() {
               render={({ field: { onChange, value } }) => (
                 <Select
                   label="Categoria"
-                  options={['Selecione', 'Peito', 'Perna']}
+                  options={['Selecione', 'Peito', 'Ombros', 'Pernas']}
                   selected={value}
                   setSelected={onChange}
                 />

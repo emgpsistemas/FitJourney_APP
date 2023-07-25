@@ -6,8 +6,30 @@ import { FitButton } from '../ui/FitButton';
 import { IconButton } from '../ui/IconButton';
 import { CustomModal } from '../ui/Modal';
 
-export function DeleteExerciseModal() {
+interface DeleteExerciseModalProps {
+  categoryId: number;
+  exerciseId: number;
+}
+
+export function DeleteExerciseModal({
+  categoryId,
+  exerciseId,
+}: DeleteExerciseModalProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const onSubmit = () => {
+    const payload = {
+      categoryId,
+      exerciseId,
+    };
+    try {
+      console.log('PAYLOAD =>', payload);
+    } catch (error: any) {
+      console.log('ERROR =>', error);
+    } finally {
+      setIsModalVisible(false);
+    }
+  };
 
   return (
     <>
@@ -23,14 +45,14 @@ export function DeleteExerciseModal() {
       <CustomModal.Root isOpen={isModalVisible} onClose={setIsModalVisible}>
         {/* Header */}
         <CustomModal.Header>
-          <CustomModal.Title>Deletar Exercício</CustomModal.Title>
+          <CustomModal.Title>Excluir Exercício</CustomModal.Title>
           <CustomModal.CloseButton onClose={setIsModalVisible} />
         </CustomModal.Header>
 
         {/* Body */}
         <CustomModal.Body>
-          <Text className="text-center font-openBold text-base text-zinc-900">
-            Você tem certeza que deseja deletar este exercício?
+          <Text className="px-4 text-center font-openBold text-base text-zinc-900">
+            Você tem certeza que deseja excluir este exercício?
           </Text>
         </CustomModal.Body>
 
@@ -46,10 +68,7 @@ export function DeleteExerciseModal() {
             </FitButton.Root>
           </CustomModal.FooterButtonContainer>
           <CustomModal.FooterButtonContainer>
-            <FitButton.Root
-              variant="primary"
-              onPress={() => setIsModalVisible(false)}
-            >
+            <FitButton.Root variant="primary" onPress={onSubmit}>
               <FitButton.Icon icon={Check} />
               <FitButton.Text>Confirmar</FitButton.Text>
             </FitButton.Root>

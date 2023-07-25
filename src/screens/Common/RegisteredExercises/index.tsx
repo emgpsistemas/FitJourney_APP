@@ -69,10 +69,18 @@ export default function RegisteredExercises() {
                     })}
                   >
                     <View className="mr-2">
-                      <DeleteExerciseModal />
+                      <DeleteExerciseModal
+                        categoryId={item.id}
+                        exerciseId={exercise.id}
+                      />
                     </View>
                     <View className="mr-3">
-                      <EditExerciseModal />
+                      <EditExerciseModal
+                        exercise={{
+                          ...exercise,
+                          category: item.name,
+                        }}
+                      />
                     </View>
                     <Accordion.Exercise exercise={exercise} />
                   </View>
