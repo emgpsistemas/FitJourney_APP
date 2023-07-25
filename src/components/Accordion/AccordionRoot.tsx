@@ -37,16 +37,19 @@ function AccordionRoot({ children, title }: AccordionRootProps) {
 
   return (
     <View className="flex flex-col overflow-hidden rounded-lg bg-zinc-100 p-6">
-      <View className="flex flex-row justify-between">
+      <TouchableOpacity
+        onPress={() => toggleListItem()}
+        activeOpacity={0.7}
+        className="flex flex-row justify-between"
+      >
         <Text className="font-openBold text-base text-zinc-900">
           {title.toLocaleUpperCase()}
         </Text>
-        <TouchableOpacity onPress={() => toggleListItem()} activeOpacity={0.7}>
-          <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
-            <CaretDown size={24} color={colors.zinc[900]} weight="bold" />
-          </Animated.View>
-        </TouchableOpacity>
-      </View>
+
+        <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
+          <CaretDown size={24} color={colors.zinc[900]} weight="bold" />
+        </Animated.View>
+      </TouchableOpacity>
       {showContent ? children : null}
     </View>
   );
