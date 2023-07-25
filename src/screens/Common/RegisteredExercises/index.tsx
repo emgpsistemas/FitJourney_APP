@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
+import clsx from 'clsx';
 import { Plus } from 'phosphor-react-native';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import { Accordion } from '../../../components/Accordion';
+import { EditExerciseModal } from '../../../components/EditExerciseModal';
 import { FitButton } from '../../../components/ui/FitButton';
 
 const categories = [
@@ -58,11 +60,21 @@ export default function RegisteredExercises() {
           return (
             <Accordion.Root title={item.name}>
               <Accordion.Content>
-                {item.exercises.map((exercise) => (
-                  <Accordion.Exercise
+                {item.exercises.map((exercise, index) => (
+                  <View
                     key={`${exercise.id}-${exercise.name}`}
-                    exercise={exercise}
-                  />
+                    className={clsx('flex flex-row items-center', {
+                      ['mb-3']: index !== item.exercises.length - 1,
+                    })}
+                  >
+                    <View className="mr-2">
+                      <EditExerciseModal />
+                    </View>
+                    <View className="mr-3">
+                      <EditExerciseModal />
+                    </View>
+                    <Accordion.Exercise exercise={exercise} />
+                  </View>
                 ))}
               </Accordion.Content>
             </Accordion.Root>
