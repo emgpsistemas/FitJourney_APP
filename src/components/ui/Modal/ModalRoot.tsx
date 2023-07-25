@@ -26,7 +26,7 @@ export function ModalRoot({
       <View className="flex-1 bg-overlay">
         <View
           className={clsx(
-            'relative mx-auto my-auto h-fit w-[90%] max-w-xl rounded-xl bg-white',
+            'relative mx-auto my-auto h-fit w-[90%] max-w-xl rounded-xl bg-zinc-50',
           )}
         >
           {children}
