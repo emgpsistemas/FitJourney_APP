@@ -9,8 +9,10 @@ import {
   OpenSans_800ExtraBold,
   useFonts,
 } from '@expo-google-fonts/open-sans';
+import { NavigationContainer } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { Loading } from './src/components/Loading';
+import { FirebaseAuthProvider } from './src/contexts/FirebaseAuth';
 import Routes from './src/routes';
 
 export default function App() {
@@ -35,5 +37,11 @@ export default function App() {
     return <Loading />;
   }
 
-  return <Routes />;
+  return (
+    <NavigationContainer>
+      <FirebaseAuthProvider>
+        <Routes />
+      </FirebaseAuthProvider>
+    </NavigationContainer>
+  );
 }
