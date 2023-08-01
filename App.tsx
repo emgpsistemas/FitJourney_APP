@@ -1,3 +1,4 @@
+import 'expo-dev-client';
 import * as SystemUI from 'expo-system-ui';
 
 import {

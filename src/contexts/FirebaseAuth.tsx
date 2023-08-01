@@ -10,21 +10,20 @@ import {
 } from 'firebase/auth';
 import { Alert } from 'react-native';
 import { FIREBASE_AUTH } from '../lib/firebase/config';
-
-interface UserForm {
-  email: string;
-  password: string;
-}
+import { LoginFormData } from '../validations/common/Login';
+import { UserRegisterFormData } from '../validations/common/UserRegister';
 
 interface FirebaseAuthContextData {
   session: UserCredential | null;
   user: User | null;
   isLoading: boolean;
-  signUpWithEmail({ email, password }: UserForm): Promise<void>;
-  signIn({ email, password }: UserForm): Promise<void>;
+  signUpWithEmail({ email, password }: UserRegisterFormData): Promise<void>;
+  signIn({ email, password }: LoginFormData): Promise<void>;
   signOut(): void;
   checkUserSession(): Promise<void>;
   recoveryPassword(email: string): Promise<void>;
+  signInWithGoogle(): Promise<void>;
+  signUpWithGoogle(): Promise<void>;
 }
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextData>(
@@ -153,6 +152,36 @@ export const FirebaseAuthProvider = ({
     }
   }
 
+  async function signInWithGoogle() {
+    setIsLoading(true);
+    try {
+      console.log('signInWithGoogle function');
+    } catch (error) {
+      console.error('signInWithGoogle function error =>', error);
+      Alert.alert(
+        'Erro!',
+        'Não foi possível fazer login com a conta do Google.',
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function signUpWithGoogle() {
+    setIsLoading(true);
+    try {
+      console.log('signUpWithGoogle function');
+    } catch (error) {
+      console.error('signUpWithGoogle function error =>', error);
+      Alert.alert(
+        'Erro!',
+        'Não foi possível criar uma conta com a conta do Google.',
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     loadUser();
   }, []);
@@ -168,6 +197,8 @@ export const FirebaseAuthProvider = ({
         signUpWithEmail,
         checkUserSession,
         recoveryPassword,
+        signInWithGoogle,
+        signUpWithGoogle,
       }}
     >
       {children}

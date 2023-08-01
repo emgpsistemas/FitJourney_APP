@@ -20,7 +20,7 @@ import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 import { LoginFormData, loginSchema } from '../../../validations/common/Login';
 
 function Login() {
-  const { signIn } = useFirebaseAuth();
+  const { signIn, signInWithGoogle } = useFirebaseAuth();
   const { navigate } = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {
@@ -138,6 +138,7 @@ function Login() {
           <TouchableOpacity
             className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-800"
             activeOpacity={0.7}
+            onPress={signInWithGoogle}
           >
             <GoogleSVG width={24} height={24} />
           </TouchableOpacity>
