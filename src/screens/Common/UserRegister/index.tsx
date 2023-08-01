@@ -23,7 +23,7 @@ import {
 } from '../../../validations/common/UserRegister';
 
 function UserRegister() {
-  const { signUpWithEmail, signUpWithGoogle } = useFirebaseAuth();
+  const { signUpWithEmail, signInWithGoogle } = useFirebaseAuth();
   const { navigate } = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -173,7 +173,7 @@ function UserRegister() {
           <TouchableOpacity
             className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-800"
             activeOpacity={0.7}
-            onPress={signUpWithGoogle}
+            onPress={signInWithGoogle}
           >
             <GoogleSVG width={24} height={24} />
           </TouchableOpacity>

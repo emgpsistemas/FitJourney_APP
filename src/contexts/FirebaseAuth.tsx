@@ -1,17 +1,25 @@
+import { GOOGLE_WEB_CLIENT_ID } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useEffect, useState } from 'react';
-
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {
+  GoogleAuthProvider,
   User,
   UserCredential,
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   sendPasswordResetEmail,
+  signInWithCredential,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import React, { createContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { FIREBASE_AUTH } from '../lib/firebase/config';
 import { LoginFormData } from '../validations/common/Login';
 import { UserRegisterFormData } from '../validations/common/UserRegister';
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+});
 
 interface FirebaseAuthContextData {
   session: UserCredential | null;
@@ -23,7 +31,6 @@ interface FirebaseAuthContextData {
   checkUserSession(): Promise<void>;
   recoveryPassword(email: string): Promise<void>;
   signInWithGoogle(): Promise<void>;
-  signUpWithGoogle(): Promise<void>;
 }
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextData>(
@@ -38,6 +45,7 @@ export const FirebaseAuthProvider = ({
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<UserCredential | null>(null);
+  const [initializing, setInitializing] = useState(true);
 
   async function signIn({
     email,
@@ -155,7 +163,15 @@ export const FirebaseAuthProvider = ({
   async function signInWithGoogle() {
     setIsLoading(true);
     try {
-      console.log('signInWithGoogle function');
+      const { idToken } = await GoogleSignin.signIn();
+      const googleCredential = GoogleAuthProvider.credential(idToken);
+      const response = await signInWithCredential(
+        FIREBASE_AUTH,
+        googleCredential,
+      );
+      await saveUser(response.user);
+      setUser(response.user);
+      setSession(response);
     } catch (error) {
       console.error('signInWithGoogle function error =>', error);
       Alert.alert(
@@ -167,24 +183,18 @@ export const FirebaseAuthProvider = ({
     }
   }
 
-  async function signUpWithGoogle() {
-    setIsLoading(true);
-    try {
-      console.log('signUpWithGoogle function');
-    } catch (error) {
-      console.error('signUpWithGoogle function error =>', error);
-      Alert.alert(
-        'Erro!',
-        'Não foi possível criar uma conta com a conta do Google.',
-      );
-    } finally {
-      setIsLoading(false);
-    }
+  function onAuthStateChange(user: User | null) {
+    setUser(user);
+    if (initializing) setInitializing(false);
   }
 
   useEffect(() => {
     loadUser();
+    const subscriber = onAuthStateChanged(FIREBASE_AUTH, onAuthStateChange);
+    return subscriber; // unsubscribe on unmount
   }, []);
+
+  if (initializing) return null;
 
   return (
     <FirebaseAuthContext.Provider
@@ -198,7 +208,6 @@ export const FirebaseAuthProvider = ({
         checkUserSession,
         recoveryPassword,
         signInWithGoogle,
-        signUpWithGoogle,
       }}
     >
       {children}
