@@ -17,14 +17,13 @@ import { ErrorText } from '../../../components/ErrorText';
 import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
 import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
-import { LoginFormData } from '../../../validations/common/Login';
 import {
   UserRegisterFormData,
   userRegisterSchema,
 } from '../../../validations/common/UserRegister';
 
 function UserRegister() {
-  const { signIn } = useFirebaseAuth();
+  const { signUpWithEmail } = useFirebaseAuth();
   const { navigate } = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -52,8 +51,8 @@ function UserRegister() {
     setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
   };
 
-  const onSubmit = (data: LoginFormData) => {
-    signIn(data);
+  const onSubmit = (data: UserRegisterFormData) => {
+    signUpWithEmail(data);
   };
 
   return (
