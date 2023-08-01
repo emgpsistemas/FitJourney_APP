@@ -5,6 +5,7 @@ import {
   User,
   UserCredential,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { Alert } from 'react-native';
@@ -23,6 +24,7 @@ interface FirebaseAuthContextData {
   signIn({ email, password }: UserForm): Promise<void>;
   signOut(): void;
   checkUserSession(): Promise<void>;
+  recoveryPassword(email: string): Promise<void>;
 }
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextData>(
@@ -102,6 +104,21 @@ export const FirebaseAuthProvider = ({
     }
   }
 
+  async function recoveryPassword(email: string) {
+    setIsLoading(true);
+    try {
+      await sendPasswordResetEmail(FIREBASE_AUTH, email);
+      Alert.alert('Sucesso!', 'Email de recuperação enviado!');
+    } catch (error: any) {
+      if (error?.message.includes('user-not-found')) {
+        Alert.alert('Erro!', 'Usuário não encontrado.');
+      }
+      console.error('recoveryPassword function error =>', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function saveUser(user: User) {
     try {
       const jsonUser = JSON.stringify(user);
@@ -150,6 +167,7 @@ export const FirebaseAuthProvider = ({
         signOut,
         signUpWithEmail,
         checkUserSession,
+        recoveryPassword,
       }}
     >
       {children}

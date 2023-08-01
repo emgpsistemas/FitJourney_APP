@@ -127,6 +127,7 @@ function Login() {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigate('ForgotPassword')}
+            className="flex w-32 items-center justify-end self-end"
           >
             <Text className="py-3 text-right font-openBold text-xs text-zinc-900">
               Esqueceu sua senha?
