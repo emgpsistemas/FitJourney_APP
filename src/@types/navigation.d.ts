@@ -3,7 +3,7 @@ export declare global {
     interface RootParamList {
       // Auth
       Login: unknown;
-      Register: unknown;
+      UserRegister: unknown;
       ForgotPassword: unknown;
 
       // Home

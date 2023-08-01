@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoSVG from '../../../assets/brand/Logo.svg';
 import GoogleSVG from '../../../assets/google-logo.svg';
 
+import { useNavigation } from '@react-navigation/native';
 import { ErrorText } from '../../../components/ErrorText';
 import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
@@ -20,6 +21,7 @@ import { LoginFormData, loginSchema } from '../../../validations/common/Login';
 
 function Login() {
   const { signIn } = useFirebaseAuth();
+  const { navigate } = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {
     control,
@@ -52,11 +54,15 @@ function Login() {
             </Text>
             <View className="h-1 w-fit bg-zinc-900" />
           </View>
-          <View className="flex flex-col">
+          <TouchableOpacity
+            className="flex flex-col"
+            activeOpacity={0.7}
+            onPress={() => navigate('UserRegister')}
+          >
             <Text className="mb-1 font-openSemibold text-sm text-zinc-900">
               Cadastre-se
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <View className="flex-1 items-center justify-center">
           <LogoSVG width={'70%'} />
@@ -118,9 +124,14 @@ function Login() {
               name="password"
             />
           </View>
-          <Text className="py-3 text-right font-openBold text-xs text-zinc-900">
-            Esqueceu sua senha?
-          </Text>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => navigate('ForgotPassword')}
+          >
+            <Text className="py-3 text-right font-openBold text-xs text-zinc-900">
+              Esqueceu sua senha?
+            </Text>
+          </TouchableOpacity>
         </View>
         <View className="flex w-full flex-row items-center justify-between">
           <TouchableOpacity
