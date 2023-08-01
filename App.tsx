@@ -9,11 +9,15 @@ import {
   OpenSans_800ExtraBold,
   useFonts,
 } from '@expo-google-fonts/open-sans';
+import { NavigationContainer } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Loading } from './src/components/Loading';
+import { FirebaseAuthProvider } from './src/contexts/FirebaseAuth';
 import Routes from './src/routes';
 
 export default function App() {
+  const queryClient = new QueryClient();
   const [fontsLoaded] = useFonts({
     OpenSans_300Light,
     OpenSans_400Regular,
@@ -35,5 +39,13 @@ export default function App() {
     return <Loading />;
   }
 
-  return <Routes />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <FirebaseAuthProvider>
+          <Routes />
+        </FirebaseAuthProvider>
+      </NavigationContainer>
+    </QueryClientProvider>
+  );
 }
