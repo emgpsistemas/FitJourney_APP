@@ -55,9 +55,14 @@ export const FirebaseAuthProvider = ({
       await saveUser(response.user);
       setUser(response.user);
       setSession(response);
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.message.includes('wrong-password')) {
+        Alert.alert('Erro!', 'Senha incorreta.');
+      }
+      if (error?.message.includes('user-not-found')) {
+        Alert.alert('Erro!', 'Usuário não encontrado.');
+      }
       console.error('signIn function error =>', error);
-      Alert.alert('Erro!', 'Não foi possível fazer login.');
     } finally {
       setIsLoading(false);
     }
