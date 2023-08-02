@@ -12,7 +12,9 @@ import {
 } from '@expo-google-fonts/open-sans';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import colors from 'tailwindcss/colors';
 import { Loading } from './src/components/Loading';
 import { FirebaseAuthProvider } from './src/contexts/FirebaseAuth';
 import Routes from './src/routes';
@@ -29,7 +31,7 @@ export default function App() {
   });
 
   async function SetBackgroundColor() {
-    await SystemUI.setBackgroundColorAsync('#FAFAFA');
+    await SystemUI.setBackgroundColorAsync(colors.yellow[400]);
   }
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <FirebaseAuthProvider>
+          <StatusBar style="dark" />
           <Routes />
         </FirebaseAuthProvider>
       </NavigationContainer>

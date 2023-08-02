@@ -1,6 +1,9 @@
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import {
   GoogleAuthProvider,
   User,
@@ -61,7 +64,7 @@ export const FirebaseAuthProvider = ({
         email,
         password,
       );
-      await saveUser(response.user);
+      await saveUserToStorage(response.user);
       setUser(response.user);
       setSession(response);
     } catch (error: any) {
@@ -126,30 +129,32 @@ export const FirebaseAuthProvider = ({
     }
   }
 
-  async function saveUser(user: User) {
+  async function saveUserToStorage(user: User) {
     try {
       const jsonUser = JSON.stringify(user);
-      await AsyncStorage.setItem('user', jsonUser);
+      await AsyncStorage.setItem('@UserInfo', jsonUser);
     } catch (error) {
-      console.error('saveUser function error =>', error);
+      console.error('saveUserToStorage function error =>', error);
     }
   }
 
-  async function loadUser() {
+  async function loadUserFromStorage() {
+    console.log('loadUserFromStorage');
     try {
-      const jsonUser = await AsyncStorage.getItem('user');
+      const jsonUser = await AsyncStorage.getItem('@UserInfo');
       if (jsonUser) {
         const user = JSON.parse(jsonUser);
+
         setUser(user);
       }
     } catch (error) {
-      console.error('loadUser function error =>', error);
+      console.error('loadUserFromStorage function error =>', error);
     }
   }
 
   async function checkUserSession() {
     try {
-      const userJson = await AsyncStorage.getItem('user');
+      const userJson = await AsyncStorage.getItem('@UserInfo');
       const user = userJson ? JSON.parse(userJson) : null;
 
       if (user && session && user.refreshToken !== session.user.refreshToken) {
@@ -169,15 +174,34 @@ export const FirebaseAuthProvider = ({
         FIREBASE_AUTH,
         googleCredential,
       );
-      await saveUser(response.user);
+      await saveUserToStorage(response.user);
       setUser(response.user);
+      console.log('response', response);
       setSession(response);
-    } catch (error) {
+    } catch (error: any) {
       console.error('signInWithGoogle function error =>', error);
-      Alert.alert(
-        'Erro!',
-        'Não foi possível fazer login com a conta do Google.',
-      );
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        Alert.alert(
+          'Opa!',
+          'O login foi cancelado, tente novamente mais tarde.',
+        );
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+        Alert.alert(
+          'Opa!',
+          'O login está em progresso, tente novamente mais tarde.',
+        );
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        Alert.alert(
+          'Opa!',
+          'O serviço do Google Play não está disponível ou está desatualizado.',
+        );
+      } else {
+        // some other error happened
+        Alert.alert('Opa!', 'Ocorreu um erro, tente novamente mais tarde.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -189,7 +213,7 @@ export const FirebaseAuthProvider = ({
   }
 
   useEffect(() => {
-    loadUser();
+    loadUserFromStorage();
     const subscriber = onAuthStateChanged(FIREBASE_AUTH, onAuthStateChange);
     return subscriber; // unsubscribe on unmount
   }, []);
