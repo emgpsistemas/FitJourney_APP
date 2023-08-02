@@ -3,8 +3,10 @@ import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { useStep } from '../../../hooks/useStep';
 
 function StepOne() {
+  const { nextStep } = useStep();
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
       <StepInfo>1</StepInfo>
@@ -24,7 +26,7 @@ function StepOne() {
         </View>
       </View>
       <View className="w-1/2 self-end">
-        <FitButton.Root variant="primary" onPress={() => {}}>
+        <FitButton.Root variant="primary" onPress={nextStep}>
           <FitButton.Text>Próximo</FitButton.Text>
           <FitButton.Icon icon={CaretRight} />
         </FitButton.Root>

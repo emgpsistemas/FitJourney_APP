@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { Loading } from '../components/Loading';
 import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
-import { AuthRoutes } from './auth.routes';
-import TabRoutes from './tab.routes';
+import RegisterStepsStackRoutes from './registerStepsStack.routes';
 
 export default function Routes() {
   const { user, isLoading, checkUserSession } = useFirebaseAuth();
@@ -15,5 +14,6 @@ export default function Routes() {
     return <Loading />;
   }
 
-  return user ? <TabRoutes /> : <AuthRoutes />;
+  // return user ? <TabRoutes /> : <AuthRoutes />;
+  return <RegisterStepsStackRoutes />;
 }
