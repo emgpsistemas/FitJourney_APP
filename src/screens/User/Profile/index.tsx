@@ -5,6 +5,7 @@ import { LogoutButton } from '../../../components/LogoutButton';
 import { ProfilePicture } from '../../../components/ProfilePicture';
 import { UserInfo } from '../../../components/UserInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 
 const userInfo = {
   totalTrainings: 212,
@@ -39,6 +40,7 @@ const userInfo = {
 
 export default function Profile() {
   const { navigate } = useNavigation();
+  const { user } = useFirebaseAuth();
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-10">
@@ -54,7 +56,7 @@ export default function Profile() {
         <View>
           <ProfilePicture />
           <Text className="text-center font-openBold text-xl">
-            Eduardo Muchak
+            {user?.displayName}
           </Text>
         </View>
         <View className="flex w-full flex-row items-center justify-center space-x-11 py-7">
