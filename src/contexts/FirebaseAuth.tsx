@@ -1,5 +1,4 @@
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   GoogleSignin,
   statusCodes,
@@ -17,6 +16,7 @@ import {
 import React, { createContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { FIREBASE_AUTH } from '../lib/firebase/config';
+import { storage } from '../lib/mmkv/storage';
 import { LoginFormData } from '../validations/common/Login';
 import { UserRegisterFormData } from '../validations/common/UserRegister';
 
@@ -86,7 +86,7 @@ export const FirebaseAuthProvider = ({
       await FIREBASE_AUTH.signOut();
       setUser(null);
       setSession(null);
-      await AsyncStorage.removeItem('user');
+      storage.delete('UserInfo');
     } catch (error) {
       console.error('signOut function error =>', error);
       Alert.alert('Erro!', 'Não foi possível fazer logout.');
@@ -132,7 +132,7 @@ export const FirebaseAuthProvider = ({
   async function saveUserToStorage(user: User) {
     try {
       const jsonUser = JSON.stringify(user);
-      await AsyncStorage.setItem('@UserInfo', jsonUser);
+      storage.set('UserInfo', jsonUser);
     } catch (error) {
       console.error('saveUserToStorage function error =>', error);
     }
@@ -141,11 +141,10 @@ export const FirebaseAuthProvider = ({
   async function loadUserFromStorage() {
     console.log('loadUserFromStorage');
     try {
-      const jsonUser = await AsyncStorage.getItem('@UserInfo');
-      if (jsonUser) {
-        const user = JSON.parse(jsonUser);
-
-        setUser(user);
+      const user = storage.getString('UserInfo');
+      if (user) {
+        const jsonUser: User = JSON.parse(user);
+        setUser(jsonUser);
       }
     } catch (error) {
       console.error('loadUserFromStorage function error =>', error);
@@ -154,11 +153,15 @@ export const FirebaseAuthProvider = ({
 
   async function checkUserSession() {
     try {
-      const userJson = await AsyncStorage.getItem('@UserInfo');
-      const user = userJson ? JSON.parse(userJson) : null;
+      const user = storage.getString('UserInfo');
+      const userJson = user ? JSON.parse(user) : null;
 
-      if (user && session && user.refreshToken !== session.user.refreshToken) {
-        await AsyncStorage.removeItem('user');
+      if (
+        userJson &&
+        session &&
+        userJson.refreshToken !== session.user.refreshToken
+      ) {
+        storage.delete('UserInfo');
       }
     } catch (error) {
       console.error('checkUserSession function error =>', error);
