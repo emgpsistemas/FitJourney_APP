@@ -1,13 +1,16 @@
 import { PencilSimple } from 'phosphor-react-native';
 import { Image, TouchableOpacity, View } from 'react-native';
+import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 
 export function ProfilePicture() {
+  const { user } = useFirebaseAuth();
   return (
     <View className="relative h-28 w-28 self-center rounded-full border-4 border-yellow-400">
-      {/* // TODO: Adaptar componente para receber prop com imagem do usuário */}
       <Image
         source={{
-          uri: 'https://avatars.githubusercontent.com/u/81588512?s=400&u=d9f97ff4c05c8bea1031fc811e9443705f5ee6c5&v=4',
+          uri:
+            user?.photoURL ||
+            'https://api-private.atlassian.com/users/d533a32ca5379ef2482c4f6a780e3b20/avatar',
         }}
         className="h-full w-full rounded-full"
       />
