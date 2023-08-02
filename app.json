@@ -11,9 +11,12 @@
       "resizeMode": "cover",
       "backgroundColor": "#FACC15"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.emgp.fitjourney"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -31,6 +34,8 @@
         "projectId": "507d71c3-fd53-4582-99b3-bb0b84fe5d50"
       }
     },
-    "plugins": ["@react-native-google-signin/google-signin"]
+    "plugins": [
+      "@react-native-google-signin/google-signin"
+    ]
   }
 }
