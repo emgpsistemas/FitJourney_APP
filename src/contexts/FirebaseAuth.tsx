@@ -139,7 +139,6 @@ export const FirebaseAuthProvider = ({
   }
 
   async function loadUserFromStorage() {
-    console.log('loadUserFromStorage');
     try {
       const user = storage.getString('UserInfo');
       if (user) {
