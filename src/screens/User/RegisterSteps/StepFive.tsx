@@ -1,8 +1,10 @@
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import colors from 'tailwindcss/colors';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { IconButton } from '../../../components/ui/IconButton';
 import { useStep } from '../../../hooks/useStep';
 
 function StepFive() {
@@ -19,12 +21,12 @@ function StepFive() {
         <View className="flex-1 items-center justify-center space-y-10"></View>
       </View>
       <View className="flex flex-row items-center justify-between">
-        <View className="w-1/2 self-end">
-          <FitButton.Root variant="outline" onPress={previousStep}>
-            <FitButton.Icon icon={CaretLeft} />
-            <FitButton.Text>Voltar</FitButton.Text>
-          </FitButton.Root>
-        </View>
+        <IconButton
+          onPress={previousStep}
+          className="flex h-14 w-14 flex-row items-center justify-center rounded-full border-2 border-yellow-400 p-1"
+        >
+          <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
+        </IconButton>
         <View className="w-1/2 self-end">
           <FitButton.Root variant="primary" onPress={nextStep}>
             <FitButton.Text>Próximo</FitButton.Text>
