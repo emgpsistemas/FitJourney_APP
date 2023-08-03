@@ -65,7 +65,7 @@ export const RegisterUserInfoProvider = ({
 
   const [userInfoState, dispatchUserInfo] = useReducer(userInfoReducer, {
     gender: '',
-    age: 0,
+    age: 30,
     weight: 0,
     height: 0,
     goal: '',
