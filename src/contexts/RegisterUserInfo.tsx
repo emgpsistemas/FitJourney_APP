@@ -1,10 +1,56 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useReducer, useState } from 'react';
+
+type Gender = 'Masculino' | 'Feminino';
+type Goal = 'Emagrecimento' | 'Resistência' | 'Hipertrofia' | 'Saúde';
+type FitnessLevel =
+  | 'Iniciante'
+  | 'Intermediário'
+  | 'Avançado'
+  | 'Atleta'
+  | 'Não sei';
+interface UserInfo {
+  gender: string;
+  age: number;
+  weight: number;
+  height: number;
+  goal: string;
+  fitnessLevel: string;
+}
+
+type Action =
+  | { type: 'SET_GENDER'; payload: Gender }
+  | { type: 'SET_AGE'; payload: number }
+  | { type: 'SET_WEIGHT'; payload: number }
+  | { type: 'SET_HEIGHT'; payload: number }
+  | { type: 'SET_GOAL'; payload: Goal }
+  | { type: 'SET_FITNESS_LEVEL'; payload: FitnessLevel };
 
 interface RegisterUserInfoContextData {
   nextStep: () => void;
   previousStep: () => void;
+  userInfoState: UserInfo;
+  dispatchUserInfo: React.Dispatch<Action>;
 }
+
+const userInfoReducer = (state: UserInfo, action: Action): UserInfo => {
+  switch (action.type) {
+    case 'SET_GENDER':
+      return { ...state, gender: action.payload };
+    case 'SET_AGE':
+      return { ...state, age: action.payload };
+    case 'SET_WEIGHT':
+      return { ...state, weight: action.payload };
+    case 'SET_HEIGHT':
+      return { ...state, height: action.payload };
+    case 'SET_GOAL':
+      return { ...state, goal: action.payload };
+    case 'SET_FITNESS_LEVEL':
+      return { ...state, fitnessLevel: action.payload };
+    default:
+      return state;
+  }
+};
 
 export const RegisterUserInfoContext =
   createContext<RegisterUserInfoContextData>({} as RegisterUserInfoContextData);
@@ -16,6 +62,15 @@ export const RegisterUserInfoProvider = ({
 }) => {
   const { navigate } = useNavigation();
   const [actualStep, setActualStep] = useState(1);
+
+  const [userInfoState, dispatchUserInfo] = useReducer(userInfoReducer, {
+    gender: '',
+    age: 0,
+    weight: 0,
+    height: 0,
+    goal: '',
+    fitnessLevel: '',
+  });
 
   function nextStep() {
     try {
@@ -59,7 +114,9 @@ export const RegisterUserInfoProvider = ({
   }, [nextStep, previousStep]);
 
   return (
-    <RegisterUserInfoContext.Provider value={{ nextStep, previousStep }}>
+    <RegisterUserInfoContext.Provider
+      value={{ nextStep, previousStep, userInfoState, dispatchUserInfo }}
+    >
       {children}
     </RegisterUserInfoContext.Provider>
   );
