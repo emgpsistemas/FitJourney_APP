@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Accordion } from "../../../components/Accordion";
 import { ScreenTitle } from "../../../components/ScreenTitle";
 import { fetchExercises } from "../../../services/get/exercises/fetchAllExercises";
@@ -41,34 +42,36 @@ export function RegisterNewTraining() {
     });
 
   return (
-    <View className="flex flex-1 bg-white px-5 py-16">
-      <ScreenTitle.Root>
-        <ScreenTitle.GoBackButton />
-        <ScreenTitle.Text>Cadastrar Treino</ScreenTitle.Text>
-      </ScreenTitle.Root>
-
-      <View className="pt-10">
-        <MultipleSelect
-          exercises={formattedExercises}
-          onSelectExercises={handleSelectMultipleExercises}
-        />
-      </View>
-
-      {selectedExercisesFromMultipleSelect &&
-      selectedExercisesFromMultipleSelect.length > 0 ? (
-        <View className="mt-4">
-          {exercisesWithAllInformation.map((exercise) => (
-            <Accordion.Root title={exercise.name}>
-              <Accordion.Content>
-                <Accordion.ContentTitle>Descrição</Accordion.ContentTitle>
-                <Accordion.ContentText>
-                  {exercise.description}
-                </Accordion.ContentText>
-              </Accordion.Content>
-            </Accordion.Root>
-          ))}
+    <SafeAreaView className="flex flex-1 bg-white px-5 pt-4">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <ScreenTitle.Root>
+          <ScreenTitle.GoBackButton />
+          <ScreenTitle.Text>Cadastrar Treino</ScreenTitle.Text>
+        </ScreenTitle.Root>
+        <View className="pt-10">
+          <MultipleSelect
+            exercises={formattedExercises}
+            onSelectExercises={handleSelectMultipleExercises}
+          />
         </View>
-      ) : null}
-    </View>
+        {selectedExercisesFromMultipleSelect &&
+        selectedExercisesFromMultipleSelect.length > 0 ? (
+          <View className="mt-4">
+            {exercisesWithAllInformation.map((exercise) => (
+              <View className="py-2">
+                <Accordion.Root title={exercise.name} initialOpen>
+                  <Accordion.Content>
+                    <Accordion.ContentTitle>Descrição</Accordion.ContentTitle>
+                    <Accordion.ContentText>
+                      {exercise.description}
+                    </Accordion.ContentText>
+                  </Accordion.Content>
+                </Accordion.Root>
+              </View>
+            ))}
+          </View>
+        ) : null}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
