@@ -1,7 +1,7 @@
 import { api } from "../../api";
 import { Exercise } from "./interface";
 
-export async function createExercise(exercise: Exercise) {
+export async function createExercise(exercise: Exercise.Create) {
   try {
     const response = await api.post("exercises/create/", exercise);
     return response.data;

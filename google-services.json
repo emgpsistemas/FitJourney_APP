@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "379481782384",
+    "project_id": "app-fit-journey",
+    "storage_bucket": "app-fit-journey.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379481782384:android:76f9795fc3fd1e4ba11cb5",
+        "android_client_info": {
+          "package_name": "com.emgp.fitjourney"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379481782384-s0a87rvqsfrii0s2ctkogpecsjtarqqo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emgp.fitjourney",
+            "certificate_hash": "043dde4f7fc473a7bc7c26d7e02572e2b4ddacb6"
+          }
+        },
+        {
+          "client_id": "379481782384-tf3i4p7ro2n0pc1kdvdeetbufenbec5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emgp.fitjourney",
+            "certificate_hash": "8ab3ac566a27359c91825c238d7626a58b638569"
+          }
+        },
+        {
+          "client_id": "379481782384-v8b3rrpulktsrgofk1t42nc055p6p5co.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqJzRCCRQbAHcNHqooy0_mcXkicnGgcIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379481782384-n6ipoebpgidb7eracvmhblravm8ujpmh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

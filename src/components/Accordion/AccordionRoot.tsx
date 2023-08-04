@@ -13,10 +13,11 @@ import { toggleAnimations } from '../../animations/ToggleAnimations';
 interface AccordionRootProps {
   children: React.ReactNode;
   title: string;
+  initialOpen?: boolean;
 }
 
-function AccordionRoot({ children, title }: AccordionRootProps) {
-  const [showContent, setShowContent] = useState(false);
+function AccordionRoot({ children, title, initialOpen }: AccordionRootProps) {
+  const [showContent, setShowContent] = useState(initialOpen ?? false);
   const animationController = useRef(new Animated.Value(0)).current;
 
   const toggleListItem = () => {
@@ -36,21 +37,22 @@ function AccordionRoot({ children, title }: AccordionRootProps) {
   });
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      className="mb-4 flex flex-col overflow-hidden rounded-lg bg-zinc-100 p-6"
-      onPress={() => toggleListItem()}
-    >
-      <View className="flex flex-row justify-between">
+    <View className="flex flex-col overflow-hidden rounded-lg bg-zinc-100 p-6">
+      <TouchableOpacity
+        onPress={() => toggleListItem()}
+        activeOpacity={0.7}
+        className="flex flex-row justify-between"
+      >
         <Text className="font-openBold text-base text-zinc-900">
           {title.toLocaleUpperCase()}
         </Text>
+
         <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
           <CaretDown size={24} color={colors.zinc[900]} weight="bold" />
         </Animated.View>
-      </View>
+      </TouchableOpacity>
       {showContent ? children : null}
-    </TouchableOpacity>
+    </View>
   );
 }
 

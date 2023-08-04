@@ -1,4 +1,4 @@
-import { Text, TextInput, TextInputProps, View } from "react-native";
+import { Text, TextInput, TextInputProps, View } from 'react-native';
 
 export interface TextAreaProps extends TextInputProps {
   label: string;
@@ -10,7 +10,7 @@ export function TextArea({ label, required, ...rest }: TextAreaProps) {
     <>
       <View className="flex flex-row gap-1">
         {required ? (
-          <Text className="text-status-red font-openBold text-sm leading-4">
+          <Text className="font-openBold text-sm leading-4 text-red-600">
             *
           </Text>
         ) : null}

@@ -5,12 +5,14 @@ interface CheckboxInputProps extends TextInputProps {
   label: string;
   required?: boolean;
   lastTraining: string;
+  error?: string;
 }
 
 function CheckboxInput({
   label,
   lastTraining,
   required,
+  error,
   ...rest
 }: CheckboxInputProps) {
   return (
@@ -19,6 +21,9 @@ function CheckboxInput({
       <Text className="font-openNormal text-xs text-zinc-900">
         Último Treino: {lastTraining}
       </Text>
+      {error ? (
+        <Text className="font-openNormal text-xs text-red-500">{error}</Text>
+      ) : null}
     </View>
   );
 }

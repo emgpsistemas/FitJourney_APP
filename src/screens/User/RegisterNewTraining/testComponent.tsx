@@ -17,7 +17,6 @@ export function MultipleSelect({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
 
-
   onSelectExercises(value!);
 
   return (

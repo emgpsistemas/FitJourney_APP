@@ -6,7 +6,7 @@ import { View } from "react-native";
 import { ErrorText } from "../../../components/ErrorText";
 import { ScreenTitle } from "../../../components/ScreenTitle";
 import { FitButton } from "../../../components/ui/FitButton";
-import { Input } from "../../../components/ui/Input";
+import { InputComposed } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { TextArea } from "../../../components/ui/Textarea/index";
 import { fetchMuscleGroups } from "../../../services/get/muscle-groups/fetchAllMuscleGroups";
@@ -67,7 +67,7 @@ export function RegisterExercise() {
   }
 
   return (
-    <View className="flex flex-1 justify-between bg-white px-5 pb-7 pt-16">
+    <View className="flex flex-1 justify-between border border-red-600 bg-white px-5 pb-7 pt-16">
       <ScreenTitle.Root>
         <ScreenTitle.GoBackButton />
         <ScreenTitle.Text>Cadastrar Exercício</ScreenTitle.Text>
@@ -78,14 +78,14 @@ export function RegisterExercise() {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <Input.Root>
-                <Input.Label label="Nome" />
-                <Input.Text
+              <InputComposed.Root>
+                <InputComposed.Label label="Nome" />
+                <InputComposed.Text
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                 />
-              </Input.Root>
+              </InputComposed.Root>
             )}
             name="name"
           />
@@ -130,15 +130,13 @@ export function RegisterExercise() {
         </View>
       </View>
 
-      <View>
-        <FitButton.Root
-          variant="primary"
-          onPress={handleSubmit(handleRegisterExercise)}
-        >
-          <FitButton.Icon icon={Check} />
-          <FitButton.Text>Finalizar Cadastro</FitButton.Text>
-        </FitButton.Root>
-      </View>
+      <FitButton.Root
+        variant="primary"
+        onPress={handleSubmit(handleRegisterExercise)}
+      >
+        <FitButton.Icon icon={Check} />
+        <FitButton.Text>Finalizar Cadastro</FitButton.Text>
+      </FitButton.Root>
     </View>
   );
 }

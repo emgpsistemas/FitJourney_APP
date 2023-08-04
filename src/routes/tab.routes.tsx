@@ -2,14 +2,22 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import colors from 'tailwindcss/colors';
 
 import { Barbell, House, ListPlus, UserCircle } from 'phosphor-react-native';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import ExerciseStackRoutes from './exerciseStack.routes';
 import HomeStackRoutes from './homeStack.routes';
 import ProfileStackRoutes from './profileStack.routes';
+import RegisterStepsStackRoutes from './registerStepsStack.routes';
 import TrainingStackRoutes from './trainingStack.routes';
 
 const Tab = createBottomTabNavigator();
 
 export default function TabRoutes() {
+  const { user } = useFirebaseAuth();
+
+  if (user?.email === 'eduardomuchak@gmail.com') {
+    return <RegisterStepsStackRoutes />;
+  }
+
   return (
     <Tab.Navigator
       screenOptions={{

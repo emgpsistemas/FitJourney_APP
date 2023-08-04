@@ -7,7 +7,7 @@ import { Exercise } from "../../../services/post/exercises/interface";
 import { MultipleSelect } from "./testComponent";
 
 export function RegisterNewTraining() {
-  const [exercises, setExercises] = useState([] as Exercise[]);
+  const [exercises, setExercises] = useState([] as Exercise.Exercise[]);
   const [
     selectedExercisesFromMultipleSelect,
     setSelectedExercisesFromMultipleSelect,
