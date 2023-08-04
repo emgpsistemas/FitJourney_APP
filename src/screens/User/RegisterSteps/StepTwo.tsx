@@ -23,7 +23,9 @@ function StepTwo() {
   const renderItem = useCallback(
     ({ index }: { index: number }) => (
       <View className="z-50 flex h-20 items-center justify-center">
-        <Text className="font-openBold text-[58px] text-zinc-900">{index}</Text>
+        <Text className="font-openSemibold text-[58px] text-zinc-900">
+          {index}
+        </Text>
       </View>
     ),
     [],
@@ -53,7 +55,7 @@ function StepTwo() {
               mode="parallax"
               modeConfig={{
                 parallaxScrollingScale: 1,
-                parallaxAdjacentItemScale: 0.6,
+                parallaxAdjacentItemScale: 0.55,
                 parallaxScrollingOffset: 30,
               }}
               width={width}
