@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { createContext, useEffect, useReducer, useState } from 'react';
 
-type Gender = 'Masculino' | 'Feminino';
-type Goal = 'Emagrecimento' | 'Resistência' | 'Hipertrofia' | 'Saúde';
-type FitnessLevel =
+export type Gender = 'Masculino' | 'Feminino';
+export type Goal = 'Emagrecimento' | 'Resistência' | 'Hipertrofia' | 'Saúde';
+export type FitnessLevel =
   | 'Iniciante'
   | 'Intermediário'
   | 'Avançado'
@@ -65,12 +65,14 @@ export const RegisterUserInfoProvider = ({
 
   const [userInfoState, dispatchUserInfo] = useReducer(userInfoReducer, {
     gender: '',
-    age: 30,
+    age: 0,
     weight: 0,
     height: 0,
     goal: '',
     fitnessLevel: '',
   });
+
+  console.log(userInfoState);
 
   function nextStep() {
     try {

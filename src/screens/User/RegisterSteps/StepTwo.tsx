@@ -1,14 +1,13 @@
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
-import { memo, useCallback } from 'react';
-import { Dimensions, Text, View } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from 'tailwindcss/colors';
+import LinesSVG from '../../../assets/lines.svg';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 import { IconButton } from '../../../components/ui/IconButton';
+import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
 import { useStep } from '../../../hooks/useStep';
-import { numberArrayGenerator } from '../../../utils/NumberArrayGenerator';
 
 function StepTwo() {
   const {
@@ -17,19 +16,6 @@ function StepTwo() {
     dispatchUserInfo,
     userInfoState: { age },
   } = useStep();
-
-  const width = Dimensions.get('window').width;
-
-  const renderItem = useCallback(
-    ({ index }: { index: number }) => (
-      <View className="z-50 flex h-20 items-center justify-center">
-        <Text className="font-openSemibold text-[58px] text-zinc-900">
-          {index}
-        </Text>
-      </View>
-    ),
-    [],
-  );
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
@@ -41,34 +27,19 @@ function StepTwo() {
           </Text>
         </View>
         <View className="flex-1 items-center justify-center space-y-10">
-          <View className="relative z-50 max-h-[350px]">
-            <View className="absolute left-[38%] top-[36%] z-0 h-20 w-32 border-b-4 border-t-4 border-yellow-400" />
-            <Carousel
-              data={numberArrayGenerator(0, 90)}
-              onSnapToItem={(age) =>
-                dispatchUserInfo({ type: 'SET_AGE', payload: age })
-              }
-              defaultIndex={age}
-              autoPlay={false}
-              loop={true}
-              vertical={true}
-              mode="parallax"
-              modeConfig={{
-                parallaxScrollingScale: 1,
-                parallaxAdjacentItemScale: 0.55,
-                parallaxScrollingOffset: 30,
-              }}
-              width={width}
-              height={width / 4}
-              scrollAnimationDuration={100}
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              renderItem={renderItem}
-            />
-          </View>
+          <InvisibleNumberInput
+            label={'anos'}
+            onChangeText={(age) =>
+              dispatchUserInfo({
+                type: 'SET_AGE',
+                payload: Number(age),
+              })
+            }
+            value={String(age)}
+            maxLength={22}
+            placeholder="0"
+          />
+          <LinesSVG width={'100%'} />
         </View>
       </View>
       <View className="flex flex-row items-center justify-between">
@@ -89,4 +60,4 @@ function StepTwo() {
   );
 }
 
-export default memo(StepTwo);
+export default StepTwo;

@@ -2,13 +2,22 @@ import { CaretLeft, CaretRight } from 'phosphor-react-native';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from 'tailwindcss/colors';
+import LinesSVG from '../../../assets/lines.svg';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 import { IconButton } from '../../../components/ui/IconButton';
 import { useStep } from '../../../hooks/useStep';
 
+import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
+
 function StepFour() {
-  const { nextStep, previousStep } = useStep();
+  const {
+    nextStep,
+    previousStep,
+    dispatchUserInfo,
+    userInfoState: { height },
+  } = useStep();
+
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
       <StepInfo>4</StepInfo>
@@ -18,7 +27,21 @@ function StepFour() {
             Qual é a sua altura?
           </Text>
         </View>
-        <View className="flex-1 items-center justify-center space-y-10"></View>
+        <View className="flex-1 items-center justify-center space-y-10">
+          <InvisibleNumberInput
+            label={'cm'}
+            onChangeText={(height) =>
+              dispatchUserInfo({
+                type: 'SET_HEIGHT',
+                payload: Number(height),
+              })
+            }
+            value={String(height)}
+            maxLength={22}
+            placeholder="0"
+          />
+          <LinesSVG width={'100%'} />
+        </View>
       </View>
       <View className="flex flex-row items-center justify-between">
         <IconButton
