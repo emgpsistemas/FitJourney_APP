@@ -8,10 +8,10 @@ async function getMuscleGroupsFromApi(): Promise<{
   return { data };
 }
 
-export async function fetchMuscleGroups(fillState: Function) {
+export async function fetchMuscleGroups(setState: Function) {
   try {
     const response = await getMuscleGroupsFromApi();
-    fillState(response.data);
+    setState(response.data);
   } catch (error) {
     console.error(error);
   }

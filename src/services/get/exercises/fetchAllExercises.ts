@@ -8,10 +8,10 @@ async function getExercisesFromApi(): Promise<{
   return { data };
 }
 
-export async function fetchMuscleGroups(fillState: Function) {
+export async function fetchExercises(setState: Function) {
   try {
     const response = await getExercisesFromApi();
-    fillState(response.data);
+    setState(response.data);
   } catch (error) {
     console.error(error);
   }
