@@ -13,10 +13,11 @@ import { toggleAnimations } from '../../animations/ToggleAnimations';
 interface AccordionRootProps {
   children: React.ReactNode;
   title: string;
+  initialOpen?: boolean;
 }
 
-function AccordionRoot({ children, title }: AccordionRootProps) {
-  const [showContent, setShowContent] = useState(false);
+function AccordionRoot({ children, title, initialOpen }: AccordionRootProps) {
+  const [showContent, setShowContent] = useState(initialOpen ?? false);
   const animationController = useRef(new Animated.Value(0)).current;
 
   const toggleListItem = () => {

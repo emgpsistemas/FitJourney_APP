@@ -21,3 +21,6 @@ web-build/
 
 # Google Play
 service-account.json
+
+# Google Firebase
+# google-services.json

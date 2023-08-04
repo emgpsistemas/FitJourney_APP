@@ -3,8 +3,16 @@ export declare global {
     interface RootParamList {
       // Auth
       Login: unknown;
-      Register: unknown;
+      UserRegister: unknown;
       ForgotPassword: unknown;
+
+      // Register User Info Steps
+      Step1: unknown;
+      Step2: unknown;
+      Step3: unknown;
+      Step4: unknown;
+      Step5: unknown;
+      Step6: unknown;
 
       // Home
       Home: unknown;
