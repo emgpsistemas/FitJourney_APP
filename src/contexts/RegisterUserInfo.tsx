@@ -31,6 +31,7 @@ interface RegisterUserInfoContextData {
   previousStep: () => void;
   userInfoState: UserInfo;
   dispatchUserInfo: React.Dispatch<Action>;
+  onConfirm: () => void;
 }
 
 const userInfoReducer = (state: UserInfo, action: Action): UserInfo => {
@@ -72,8 +73,6 @@ export const RegisterUserInfoProvider = ({
     fitnessLevel: '',
   });
 
-  console.log(userInfoState);
-
   function nextStep() {
     try {
       if (actualStep === 6) return;
@@ -111,13 +110,23 @@ export const RegisterUserInfoProvider = ({
     }
   }
 
+  function onConfirm() {
+    console.log('PAYLOAD => ', userInfoState);
+  }
+
   useEffect(() => {
     handleNavigation();
   }, [nextStep, previousStep]);
 
   return (
     <RegisterUserInfoContext.Provider
-      value={{ nextStep, previousStep, userInfoState, dispatchUserInfo }}
+      value={{
+        nextStep,
+        previousStep,
+        userInfoState,
+        dispatchUserInfo,
+        onConfirm,
+      }}
     >
       {children}
     </RegisterUserInfoContext.Provider>

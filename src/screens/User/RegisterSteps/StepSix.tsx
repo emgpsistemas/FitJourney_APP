@@ -10,7 +10,7 @@ import { FitnessLevel } from '../../../contexts/RegisterUserInfo';
 import { useStep } from '../../../hooks/useStep';
 
 function StepSix() {
-  const { nextStep, previousStep, dispatchUserInfo } = useStep();
+  const { nextStep, previousStep, dispatchUserInfo, onConfirm } = useStep();
 
   const width = Dimensions.get('window').width;
   const options: FitnessLevel[] = [
@@ -79,7 +79,7 @@ function StepSix() {
           <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
         </IconButton>
         <View className="w-1/2 self-end">
-          <FitButton.Root variant="primary" onPress={nextStep}>
+          <FitButton.Root variant="primary" onPress={onConfirm}>
             <FitButton.Text>Finalizar</FitButton.Text>
             <FitButton.Icon icon={CaretRight} />
           </FitButton.Root>
