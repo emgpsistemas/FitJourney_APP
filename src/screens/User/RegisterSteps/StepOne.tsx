@@ -1,10 +1,12 @@
 import { CaretRight, GenderFemale, GenderMale } from 'phosphor-react-native';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { GenderButton } from '../../../components/GenderButton';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 import { useStep } from '../../../hooks/useStep';
+import { toastConfig } from '../../../lib/toast/config';
 
 function StepOne() {
   const {
@@ -12,6 +14,21 @@ function StepOne() {
     dispatchUserInfo,
     userInfoState: { gender },
   } = useStep();
+
+  const handleNextStep = () => {
+    Toast.show({
+      type: 'error',
+      text1: 'Algo deu errado :(',
+      text2: 'Selecione uma opção para continuar',
+      position: 'bottom',
+      visibilityTime: 2000,
+      autoHide: true,
+    });
+    if (gender === '') {
+    } else {
+      nextStep();
+    }
+  };
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
@@ -52,11 +69,12 @@ function StepOne() {
         </View>
       </View>
       <View className="w-1/2 self-end">
-        <FitButton.Root variant="primary" onPress={nextStep}>
+        <FitButton.Root variant="primary" onPress={handleNextStep}>
           <FitButton.Text>Próximo</FitButton.Text>
           <FitButton.Icon icon={CaretRight} />
         </FitButton.Root>
       </View>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }

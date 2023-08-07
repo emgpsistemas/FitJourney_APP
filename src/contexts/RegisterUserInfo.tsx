@@ -18,7 +18,15 @@ interface UserInfo {
   fitnessLevel: string;
 }
 
-type Action =
+export type ActionTypes =
+  | 'SET_GENDER'
+  | 'SET_AGE'
+  | 'SET_WEIGHT'
+  | 'SET_HEIGHT'
+  | 'SET_GOAL'
+  | 'SET_FITNESS_LEVEL';
+
+export type Action =
   | { type: 'SET_GENDER'; payload: Gender }
   | { type: 'SET_AGE'; payload: number }
   | { type: 'SET_WEIGHT'; payload: number }
