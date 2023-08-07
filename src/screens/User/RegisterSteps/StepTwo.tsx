@@ -1,6 +1,7 @@
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import colors from 'tailwindcss/colors';
 import LinesSVG from '../../../assets/lines.svg';
 import { StepInfo } from '../../../components/StepInfo';
@@ -8,6 +9,7 @@ import { FitButton } from '../../../components/ui/FitButton';
 import { IconButton } from '../../../components/ui/IconButton';
 import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
 import { useStep } from '../../../hooks/useStep';
+import { toastConfig } from '../../../lib/toast/config';
 
 function StepTwo() {
   const {
@@ -16,6 +18,21 @@ function StepTwo() {
     dispatchUserInfo,
     userInfoState: { age },
   } = useStep();
+
+  const handleNextStep = () => {
+    Toast.show({
+      type: 'error',
+      text1: 'Algo deu errado :(',
+      text2: 'Insira uma idade para continuar',
+      position: 'bottom',
+      visibilityTime: 2000,
+      autoHide: true,
+    });
+    if (age === 0) {
+    } else {
+      nextStep();
+    }
+  };
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
@@ -50,12 +67,13 @@ function StepTwo() {
           <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
         </IconButton>
         <View className="w-1/2 self-end">
-          <FitButton.Root variant="primary" onPress={nextStep}>
+          <FitButton.Root variant="primary" onPress={handleNextStep}>
             <FitButton.Text>Próximo</FitButton.Text>
             <FitButton.Icon icon={CaretRight} />
           </FitButton.Root>
         </View>
       </View>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }
