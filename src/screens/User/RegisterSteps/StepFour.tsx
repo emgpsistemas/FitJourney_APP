@@ -11,6 +11,7 @@ import { useStep } from '../../../hooks/useStep';
 import Toast from 'react-native-toast-message';
 import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
 import { toastConfig } from '../../../lib/toast/config';
+import { handleNumberChange } from '../../../utils/HandleNumberInput';
 
 function StepFour() {
   const {
@@ -48,13 +49,10 @@ function StepFour() {
           <InvisibleNumberInput
             label={'cm'}
             onChangeText={(height) =>
-              dispatchUserInfo({
-                type: 'SET_HEIGHT',
-                payload: Number(height),
-              })
+              handleNumberChange(height, dispatchUserInfo, 'SET_HEIGHT')
             }
             value={String(height)}
-            maxLength={22}
+            maxLength={3}
             placeholder="0"
           />
           <LinesSVG width={'100%'} />

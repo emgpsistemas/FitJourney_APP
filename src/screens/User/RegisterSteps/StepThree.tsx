@@ -10,6 +10,7 @@ import { IconButton } from '../../../components/ui/IconButton';
 import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
 import { useStep } from '../../../hooks/useStep';
 import { toastConfig } from '../../../lib/toast/config';
+import { handleNumberChange } from '../../../utils/HandleNumberInput';
 
 function StepThree() {
   const {
@@ -47,10 +48,7 @@ function StepThree() {
           <InvisibleNumberInput
             label={'kg'}
             onChangeText={(weight) =>
-              dispatchUserInfo({
-                type: 'SET_WEIGHT',
-                payload: Number(weight),
-              })
+              handleNumberChange(weight, dispatchUserInfo, 'SET_WEIGHT')
             }
             value={String(weight)}
             maxLength={3}

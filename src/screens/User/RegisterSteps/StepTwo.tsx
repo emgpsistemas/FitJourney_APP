@@ -10,6 +10,7 @@ import { IconButton } from '../../../components/ui/IconButton';
 import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
 import { useStep } from '../../../hooks/useStep';
 import { toastConfig } from '../../../lib/toast/config';
+import { handleNumberChange } from '../../../utils/HandleNumberInput';
 
 function StepTwo() {
   const {
@@ -47,13 +48,10 @@ function StepTwo() {
           <InvisibleNumberInput
             label={'anos'}
             onChangeText={(age) =>
-              dispatchUserInfo({
-                type: 'SET_AGE',
-                payload: Number(age),
-              })
+              handleNumberChange(age, dispatchUserInfo, 'SET_AGE')
             }
             value={String(age)}
-            maxLength={22}
+            maxLength={3}
             placeholder="0"
           />
           <LinesSVG width={'100%'} />
