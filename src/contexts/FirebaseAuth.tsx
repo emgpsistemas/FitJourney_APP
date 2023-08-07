@@ -178,7 +178,6 @@ export const FirebaseAuthProvider = ({
       );
       await saveUserToStorage(response.user);
       setUser(response.user);
-      console.log('response', response);
       setSession(response);
     } catch (error: any) {
       console.error('signInWithGoogle function error =>', error);

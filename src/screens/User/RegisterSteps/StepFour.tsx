@@ -8,7 +8,10 @@ import { FitButton } from '../../../components/ui/FitButton';
 import { IconButton } from '../../../components/ui/IconButton';
 import { useStep } from '../../../hooks/useStep';
 
+import Toast from 'react-native-toast-message';
 import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
+import { toastConfig } from '../../../lib/toast/config';
+import { handleNumberChange } from '../../../utils/HandleNumberInput';
 
 function StepFour() {
   const {
@@ -17,6 +20,21 @@ function StepFour() {
     dispatchUserInfo,
     userInfoState: { height },
   } = useStep();
+
+  const handleNextStep = () => {
+    Toast.show({
+      type: 'error',
+      text1: 'Algo deu errado :(',
+      text2: 'Insira o sua altura para continuar',
+      position: 'bottom',
+      visibilityTime: 2000,
+      autoHide: true,
+    });
+    if (height === 0) {
+    } else {
+      nextStep();
+    }
+  };
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
@@ -31,13 +49,10 @@ function StepFour() {
           <InvisibleNumberInput
             label={'cm'}
             onChangeText={(height) =>
-              dispatchUserInfo({
-                type: 'SET_HEIGHT',
-                payload: Number(height),
-              })
+              handleNumberChange(height, dispatchUserInfo, 'SET_HEIGHT')
             }
             value={String(height)}
-            maxLength={22}
+            maxLength={3}
             placeholder="0"
           />
           <LinesSVG width={'100%'} />
@@ -51,12 +66,13 @@ function StepFour() {
           <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
         </IconButton>
         <View className="w-1/2 self-end">
-          <FitButton.Root variant="primary" onPress={nextStep}>
+          <FitButton.Root variant="primary" onPress={handleNextStep}>
             <FitButton.Text>Próximo</FitButton.Text>
             <FitButton.Icon icon={CaretRight} />
           </FitButton.Root>
         </View>
       </View>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }
