@@ -13,7 +13,7 @@ function FitButtonRoot({ children, variant, ...rest }: FitButtonRootProps) {
         'flex w-full flex-row items-center justify-center rounded-full p-3.5',
         {
           ['border-2 border-yellow-400 bg-yellow-400']: variant === 'primary',
-          ['border-2 border-yellow-400']: variant === 'outline',
+          ['border-2 border-yellow-400 bg-white']: variant === 'outline',
           ['border-2 border-transparent bg-transparent']: variant === 'ghost',
         },
       )}

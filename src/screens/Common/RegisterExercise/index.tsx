@@ -129,15 +129,14 @@ export function RegisterExercise() {
             <ErrorText>{errors.description?.message}</ErrorText>
           ) : null}
         </View>
+        <FitButton.Root
+          variant="primary"
+          onPress={handleSubmit(handleRegisterExercise)}
+        >
+          <FitButton.Icon icon={Check} />
+          <FitButton.Text>Finalizar Cadastro</FitButton.Text>
+        </FitButton.Root>
       </View>
-
-      <FitButton.Root
-        variant="primary"
-        onPress={handleSubmit(handleRegisterExercise)}
-      >
-        <FitButton.Icon icon={Check} />
-        <FitButton.Text>Finalizar Cadastro</FitButton.Text>
-      </FitButton.Root>
     </SafeAreaView>
   );
 }

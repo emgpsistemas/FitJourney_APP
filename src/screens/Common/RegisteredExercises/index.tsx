@@ -1,7 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import clsx from 'clsx';
 import { Plus } from 'phosphor-react-native';
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Accordion } from '../../../components/Accordion';
 import { DeleteExerciseModal } from '../../../components/DeleteExerciseModal';
 import { EditExerciseModal } from '../../../components/EditExerciseModal';
@@ -52,7 +53,7 @@ export default function RegisteredExercises() {
   const { navigate } = useNavigation();
 
   return (
-    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <FlatList
         showsVerticalScrollIndicator={false}
         data={categories}

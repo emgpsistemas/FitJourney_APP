@@ -8,6 +8,7 @@ import { ScreenTitle } from '../../../components/ScreenTitle';
 import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
 import { MultipleSelect } from '../../../components/ui/MultipleSelect';
+import { TextArea } from '../../../components/ui/Textarea';
 
 interface MultipleSelectOption {
   value: number | string;
@@ -62,6 +63,7 @@ export function RegisterNewTraining() {
       muscleGroup: foundExercise!.muscleGroup,
       repetitions: 10,
       series: 3,
+      observations: '',
     };
   });
 
@@ -89,7 +91,7 @@ export function RegisterNewTraining() {
         {selectedExercises && selectedExercises.length > 0 ? (
           <View className="mt-4">
             {exercisesWithAllInformation.map((exercise) => (
-              <View className="py-2">
+              <View className="py-2" key={exercise.id}>
                 <Accordion.RootWithTrash
                   title={exercise.name}
                   isInitiallyOpen
@@ -114,6 +116,29 @@ export function RegisterNewTraining() {
                     <Accordion.ContentText>
                       {exercise.description}
                     </Accordion.ContentText>
+                    <View className="my-4 flex flex-1 flex-row justify-between">
+                      <View className="flex w-[48%]">
+                        <Input
+                          label="Séries"
+                          onChangeText={(text) => console.log(text)}
+                          value={exercise.series.toString()}
+                          className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
+                        />
+                      </View>
+                      <View className="flex w-[48%]">
+                        <Input
+                          label="Repetições"
+                          onChangeText={(text) => console.log(text)}
+                          value={exercise.repetitions.toString()}
+                          className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
+                        />
+                      </View>
+                    </View>
+                    <TextArea
+                      label="Observações"
+                      value={exercise.observations}
+                      className="m-0 rounded-lg bg-white px-5 py-2 font-openSemibold"
+                    />
                   </Accordion.Content>
                 </Accordion.RootWithTrash>
               </View>
