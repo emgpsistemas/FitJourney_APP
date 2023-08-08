@@ -1,21 +1,22 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Check } from "phosphor-react-native";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { View } from "react-native";
-import { ErrorText } from "../../../components/ErrorText";
-import { ScreenTitle } from "../../../components/ScreenTitle";
-import { FitButton } from "../../../components/ui/FitButton";
-import { InputComposed } from "../../../components/ui/Input";
-import { Select } from "../../../components/ui/Select";
-import { TextArea } from "../../../components/ui/Textarea/index";
-import { fetchMuscleGroups } from "../../../services/get/muscle-groups/fetchAllMuscleGroups";
-import { MuscleGroup } from "../../../services/get/muscle-groups/interface";
-import { createExercise } from "../../../services/post/exercises/createExercise";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Check } from 'phosphor-react-native';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ErrorText } from '../../../components/ErrorText';
+import { ScreenTitle } from '../../../components/ScreenTitle';
+import { FitButton } from '../../../components/ui/FitButton';
+import { InputComposed } from '../../../components/ui/Input';
+import { Select } from '../../../components/ui/Select';
+import { TextArea } from '../../../components/ui/Textarea/index';
+import { fetchMuscleGroups } from '../../../services/get/muscle-groups/fetchAllMuscleGroups';
+import { MuscleGroup } from '../../../services/get/muscle-groups/interface';
+import { createExercise } from '../../../services/post/exercises/createExercise';
 import {
   NewExerciseFormData,
   newExerciseFormSchema,
-} from "../../../validations/common/CreateExercise";
+} from '../../../validations/common/CreateExercise';
 
 export function RegisterExercise() {
   const [muscleGroups, setMuscleGroups] = useState([] as MuscleGroup[]);
@@ -28,9 +29,9 @@ export function RegisterExercise() {
     getValues,
   } = useForm<NewExerciseFormData>({
     defaultValues: {
-      name: "",
-      muscleGroup: "",
-      description: "",
+      name: '',
+      muscleGroup: '',
+      description: '',
     },
     resolver: zodResolver(newExerciseFormSchema),
   });
@@ -42,7 +43,7 @@ export function RegisterExercise() {
   const muscleGroupsNames = muscleGroups.map((muscleGroup) => muscleGroup.name);
 
   const muscleGroupsOptions = [
-    "Selecione o Grupo Muscular",
+    'Selecione o Grupo Muscular',
     ...muscleGroupsNames,
   ];
 
@@ -58,16 +59,16 @@ export function RegisterExercise() {
 
     try {
       await createExercise(newExercise);
-      console.log("Exercise created successfully");
+      console.log('Exercise created successfully');
     } catch (error) {
-      console.error("Error creating exercise:", error);
+      console.error('Error creating exercise:', error);
     }
 
     reset();
   }
 
   return (
-    <View className="flex flex-1 justify-between border border-red-600 bg-white px-5 pb-7 pt-16">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 py-5">
       <ScreenTitle.Root>
         <ScreenTitle.GoBackButton />
         <ScreenTitle.Text>Cadastrar Exercício</ScreenTitle.Text>
@@ -107,7 +108,7 @@ export function RegisterExercise() {
             name="muscleGroup"
           />
           {errors.muscleGroup?.message ||
-          getValues().description === "Selecione o Grupo Muscular" ? (
+          getValues().description === 'Selecione o Grupo Muscular' ? (
             <ErrorText>Um grupo muscular deve ser selecionado</ErrorText>
           ) : null}
         </View>
@@ -137,6 +138,6 @@ export function RegisterExercise() {
         <FitButton.Icon icon={Check} />
         <FitButton.Text>Finalizar Cadastro</FitButton.Text>
       </FitButton.Root>
-    </View>
+    </SafeAreaView>
   );
 }

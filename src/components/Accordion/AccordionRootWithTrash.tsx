@@ -1,5 +1,5 @@
 import { CaretDown } from 'phosphor-react-native';
-import { useRef, useState } from 'react';
+import { ElementType, useRef, useState } from 'react';
 import {
   Animated,
   LayoutAnimation,
@@ -14,12 +14,14 @@ interface AccordionRootProps {
   children: React.ReactNode;
   title: string;
   isInitiallyOpen?: boolean;
+  trashComponent: ElementType;
 }
 
-function AccordionRoot({
+function AccordionRootWithTrash({
   children,
   title,
   isInitiallyOpen,
+  trashComponent: TrashComponent,
 }: AccordionRootProps) {
   const [showContent, setShowContent] = useState(isInitiallyOpen ?? false);
   const animationController = useRef(new Animated.Value(0)).current;
@@ -41,23 +43,26 @@ function AccordionRoot({
   });
 
   return (
-    <View className="flex flex-col overflow-hidden rounded-lg bg-zinc-100 p-6">
-      <TouchableOpacity
-        onPress={() => toggleListItem()}
-        activeOpacity={0.7}
-        className="flex flex-row justify-between"
-      >
-        <Text className="font-openBold text-base text-zinc-900">
-          {title.toLocaleUpperCase()}
-        </Text>
+    <View className="flex flex-row overflow-hidden rounded-lg bg-zinc-100">
+      <TrashComponent />
+      <View className="flex flex-1 flex-col p-6">
+        <TouchableOpacity
+          onPress={() => toggleListItem()}
+          activeOpacity={0.7}
+          className="flex flex-row justify-between"
+        >
+          <Text className="font-openBold text-base text-zinc-900">
+            {title.toLocaleUpperCase()}
+          </Text>
 
-        <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
-          <CaretDown size={24} color={colors.zinc[900]} weight="bold" />
-        </Animated.View>
-      </TouchableOpacity>
-      {showContent ? children : null}
+          <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
+            <CaretDown size={24} color={colors.zinc[900]} weight="bold" />
+          </Animated.View>
+        </TouchableOpacity>
+        {showContent ? children : null}
+      </View>
     </View>
   );
 }
 
-export default AccordionRoot;
+export default AccordionRootWithTrash;

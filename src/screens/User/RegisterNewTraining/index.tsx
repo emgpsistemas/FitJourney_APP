@@ -1,48 +1,87 @@
-import { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Accordion } from "../../../components/Accordion";
-import { ScreenTitle } from "../../../components/ScreenTitle";
-import { fetchExercises } from "../../../services/get/exercises/fetchAllExercises";
-import { Exercise } from "../../../services/post/exercises/interface";
-import { MultipleSelect } from "./testComponent";
+import { Check, Trash } from 'phosphor-react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import colors from 'tailwindcss/colors';
+import { Accordion } from '../../../components/Accordion';
+import { ScreenTitle } from '../../../components/ScreenTitle';
+import { FitButton } from '../../../components/ui/FitButton';
+import { Input } from '../../../components/ui/Input';
+import { MultipleSelect } from '../../../components/ui/MultipleSelect';
+
+interface MultipleSelectOption {
+  value: number | string;
+  label: string;
+}
+
+const exercisesMock = [
+  {
+    id: 1,
+    name: 'Supino Reto',
+    description: 'Descrição do exercício',
+    muscleGroup: 'Peito',
+  },
+  {
+    id: 2,
+    name: 'Supino Inclinado',
+    description: 'Descrição do exercício',
+    muscleGroup: 'Peito',
+  },
+  {
+    id: 3,
+    name: 'Leg Press',
+    description: 'Descrição do exercício',
+    muscleGroup: 'Pernas',
+  },
+];
+
+function TrashButton() {
+  return (
+    <TouchableOpacity
+      className="w-12 items-center justify-center rounded-l-lg bg-red-700"
+      activeOpacity={0.7}
+    >
+      <Trash size={24} color={colors.white} weight="bold" />
+    </TouchableOpacity>
+  );
+}
 
 export function RegisterNewTraining() {
-  const [exercises, setExercises] = useState([] as Exercise.Exercise[]);
-  const [
-    selectedExercisesFromMultipleSelect,
-    setSelectedExercisesFromMultipleSelect,
-  ] = useState<string[]>([]);
+  const [allExercises, setAllExercises] = useState(exercisesMock);
 
-  function handleSelectMultipleExercises(exercises: string[]) {
-    setSelectedExercisesFromMultipleSelect(exercises);
-  }
+  const [exercisesOptions, setExercisesOptions] = useState<
+    MultipleSelectOption[]
+  >([]);
+  const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
 
-  useEffect(() => {
-    fetchExercises(setExercises);
-  }, []);
+  const formatExercises = () => {
+    const formatedExercises = allExercises.map((exercise) => {
+      return {
+        label: exercise.name.toUpperCase(),
+        value: exercise.id,
+      };
+    });
+    setExercisesOptions(formatedExercises);
+  };
 
-  const formattedExercises = exercises.map((exercise) => {
+  const exercisesWithAllInformation = selectedExercises.map((exercise) => {
+    const foundExercise = allExercises.find((ex) => ex.id === exercise);
     return {
-      label: exercise.name.toUpperCase(),
-      value: exercise.name,
+      id: foundExercise!.id,
+      name: foundExercise!.name,
+      description: foundExercise!.description,
+      muscleGroup: foundExercise!.muscleGroup,
+      repetitions: 10,
+      series: 3,
     };
   });
 
-  const exercisesWithAllInformation =
-    selectedExercisesFromMultipleSelect &&
-    selectedExercisesFromMultipleSelect.map((exercise) => {
-      return {
-        id: exercises.find((ex) => ex.name === exercise)?.id,
-        name: exercise,
-        description: exercises.find((ex) => ex.name === exercise)?.description,
-        muscle_group: exercises.find((ex) => ex.name === exercise)
-          ?.muscle_group,
-      };
-    });
+  useEffect(() => {
+    formatExercises();
+  }, []);
 
   return (
-    <SafeAreaView className="flex flex-1 bg-white px-5 pt-4">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <ScrollView showsVerticalScrollIndicator={false}>
         <ScreenTitle.Root>
           <ScreenTitle.GoBackButton />
@@ -50,27 +89,48 @@ export function RegisterNewTraining() {
         </ScreenTitle.Root>
         <View className="pt-10">
           <MultipleSelect
-            exercises={formattedExercises}
-            onSelectExercises={handleSelectMultipleExercises}
+            options={exercisesOptions.sort((a, b) =>
+              a.label > b.label ? 1 : -1,
+            )}
+            selected={selectedExercises}
+            setSelected={setSelectedExercises}
+            label="NOME DO EXERCÍCIO"
           />
         </View>
-        {selectedExercisesFromMultipleSelect &&
-        selectedExercisesFromMultipleSelect.length > 0 ? (
+        {selectedExercises && selectedExercises.length > 0 ? (
           <View className="mt-4">
             {exercisesWithAllInformation.map((exercise) => (
               <View className="py-2">
-                <Accordion.Root title={exercise.name} initialOpen>
+                <Accordion.RootWithTrash
+                  title={exercise.name}
+                  isInitiallyOpen
+                  trashComponent={TrashButton}
+                >
                   <Accordion.Content>
-                    <Accordion.ContentTitle>Descrição</Accordion.ContentTitle>
+                    <Accordion.ContentTitle>Descrição:</Accordion.ContentTitle>
                     <Accordion.ContentText>
                       {exercise.description}
                     </Accordion.ContentText>
                   </Accordion.Content>
-                </Accordion.Root>
+                </Accordion.RootWithTrash>
               </View>
             ))}
           </View>
         ) : null}
+        <View className="flex flex-col space-y-6 pb-6 pt-3">
+          <Input
+            label="Quantidade de Repetições do Treino"
+            onChangeText={(text) => console.log(text)}
+            value={''}
+          />
+          <FitButton.Root
+            variant="primary"
+            onPress={() => console.log('Finalizar Cadastro')}
+          >
+            <FitButton.Icon icon={Check} />
+            <FitButton.Text>Finalizar Cadastro</FitButton.Text>
+          </FitButton.Root>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
