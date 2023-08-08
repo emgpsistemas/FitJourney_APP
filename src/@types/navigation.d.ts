@@ -29,6 +29,7 @@ export declare global {
       RegisteredTrainings: unknown;
       TrainingDetails: { id: number };
       RegisterExercise: unknown;
+      RegisterNewTraining: unknown;
     }
   }
 }

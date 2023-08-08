@@ -10,7 +10,21 @@ import { FitnessLevel } from '../../../contexts/RegisterUserInfo';
 import { useStep } from '../../../hooks/useStep';
 
 function StepSix() {
-  const { nextStep, previousStep, dispatchUserInfo, onConfirm } = useStep();
+  const { previousStep, dispatchUserInfo, userInfoState } = useStep();
+
+  async function onConfirm() {
+    console.log('PAYLOAD => ', userInfoState);
+    // try {
+    //   const docRef = await addDoc(collection(FIRESTORE_DB, 'users'), {
+    //     first: 'Ada',
+    //     last: 'Lovelace',
+    //     born: 1815,
+    //   });
+    //   console.log('Document written with ID: ', docRef.id);
+    // } catch (e) {
+    //   console.error('Error adding document: ', e);
+    // }
+  }
 
   const width = Dimensions.get('window').width;
   const options: FitnessLevel[] = [
@@ -20,6 +34,7 @@ function StepSix() {
     'Avançado',
     'Atleta',
   ];
+
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
       <StepInfo>6</StepInfo>

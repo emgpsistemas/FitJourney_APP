@@ -3,14 +3,15 @@ import { Check } from 'phosphor-react-native';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ErrorText } from '../../../components/ErrorText';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { FitButton } from '../../../components/ui/FitButton';
-import { Input } from '../../../components/ui/Input';
+import { InputComposed } from '../../../components/ui/Input';
 import { Select } from '../../../components/ui/Select';
 import { TextArea } from '../../../components/ui/Textarea/index';
+import { fetchMuscleGroups } from '../../../services/get/muscle-groups/fetchAllMuscleGroups';
 import { MuscleGroup } from '../../../services/get/muscle-groups/interface';
-import { fetchMuscleGroups } from '../../../services/get/muscle-groups/muscle-groups';
 import { createExercise } from '../../../services/post/exercises/createExercise';
 import {
   NewExerciseFormData,
@@ -67,7 +68,7 @@ export function RegisterExercise() {
   }
 
   return (
-    <View className="flex flex-1 justify-between bg-zinc-50 px-5 pb-7 pt-16">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 py-5">
       <ScreenTitle.Root>
         <ScreenTitle.GoBackButton />
         <ScreenTitle.Text>Cadastrar Exercício</ScreenTitle.Text>
@@ -78,12 +79,14 @@ export function RegisterExercise() {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Nome"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
+              <InputComposed.Root>
+                <InputComposed.Label label="Nome" />
+                <InputComposed.Text
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              </InputComposed.Root>
             )}
             name="name"
           />
@@ -126,15 +129,14 @@ export function RegisterExercise() {
             <ErrorText>{errors.description?.message}</ErrorText>
           ) : null}
         </View>
+        <FitButton.Root
+          variant="primary"
+          onPress={handleSubmit(handleRegisterExercise)}
+        >
+          <FitButton.Icon icon={Check} />
+          <FitButton.Text>Finalizar Cadastro</FitButton.Text>
+        </FitButton.Root>
       </View>
-
-      <FitButton.Root
-        variant="primary"
-        onPress={handleSubmit(handleRegisterExercise)}
-      >
-        <FitButton.Icon icon={Check} />
-        <FitButton.Text>Finalizar Cadastro</FitButton.Text>
-      </FitButton.Root>
-    </View>
+    </SafeAreaView>
   );
 }

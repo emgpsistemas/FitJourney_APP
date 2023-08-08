@@ -4,7 +4,8 @@ import clsx from 'clsx';
 import { Check } from 'phosphor-react-native';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, FlatList, SafeAreaView, Text, View } from 'react-native';
+import { Alert, FlatList, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Accordion } from '../../../components/Accordion';
 import { Checkbox } from '../../../components/Checkbox';
 import { ScreenTitle } from '../../../components/ScreenTitle';
@@ -203,7 +204,7 @@ export function TrainingDetails() {
   }, [exercises]);
 
   return (
-    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <ScreenTitle.Root>
         <ScreenTitle.GoBackButton />
         <View

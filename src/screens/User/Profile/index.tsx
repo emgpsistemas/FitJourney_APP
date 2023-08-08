@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { PencilSimple } from 'phosphor-react-native';
-import { SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LogoutButton } from '../../../components/LogoutButton';
 import { ProfilePicture } from '../../../components/ProfilePicture';
 import { UserInfo } from '../../../components/UserInfo';
@@ -43,7 +44,7 @@ export default function Profile() {
   const { user } = useFirebaseAuth();
 
   return (
-    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-10">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="mb-7 flex flex-row items-center justify-between">
           <Text className="font-openBold text-2xl text-zinc-900">

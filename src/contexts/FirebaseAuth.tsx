@@ -50,6 +50,42 @@ export const FirebaseAuthProvider = ({
   const [session, setSession] = useState<UserCredential | null>(null);
   const [initializing, setInitializing] = useState(true);
 
+  // TODO: Add user to firestore when sign up
+  // async function addUserToFirestore(user: UserCredential) {
+  //   try {
+  //     await addDoc(collection(FIRESTORE_DB, 'users'), {
+  //       id: user.providerId,
+  //       type: user.operationType,
+  //       user: user.user,
+  //     }).then((docRef) => {
+  //       console.log('Document written with ID: ', docRef.id);
+  //     });
+  //   } catch (e) {
+  //     console.error('addUserToFirestore function error: ', e);
+  //   }
+  // }
+
+  // TODO: Get all documents ids from collection (users) in firestore database to check if user already exists
+  // const getAllIdsFromCollection = async () => {
+  //   const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
+  //   const userIds = querySnapshot.docs.map((doc) => doc.id);
+  //   return userIds;
+  // };
+
+  // const updateOrCreateUser = (user: UserCredential) => {
+  //   const teste = getAllIdsFromCollection().then((ids) => {
+  //     console.log('ids => ', ids);
+  //   });
+
+  // const document = getDoc(testeDocument).then((doc) => {
+  //   if (doc.exists()) {
+  //     console.log('Document data:', doc.data());
+  //   } else {
+  //     console.log('No such document!');
+  //   }
+  // });
+  // };
+
   async function signIn({
     email,
     password,
@@ -104,7 +140,12 @@ export const FirebaseAuthProvider = ({
   }) {
     setIsLoading(true);
     try {
-      await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const response = await createUserWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password,
+      );
+      // addUserToFirestore(response);
       Alert.alert('Sucesso!', 'Usuário criado com sucesso!');
     } catch (error) {
       console.error('signUpWithEmail function error =>', error);

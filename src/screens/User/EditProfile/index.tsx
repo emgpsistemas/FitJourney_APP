@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check } from 'phosphor-react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { SafeAreaView, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ErrorText } from '../../../components/ErrorText';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { FitButton } from '../../../components/ui/FitButton';
@@ -45,7 +46,7 @@ function EditProfile() {
   };
 
   return (
-    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-16">
+    <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <ScreenTitle.Root>
         <ScreenTitle.GoBackButton />
         <ScreenTitle.Text>Editar Perfil</ScreenTitle.Text>

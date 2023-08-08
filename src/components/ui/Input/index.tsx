@@ -1,9 +1,21 @@
-import { TextInputProps } from 'react-native';
+import { InputLabel } from "./InputLabel";
+import { InputRoot } from "./InputRoot";
+import { InputSeachIcon } from "./InputSearchIcon";
+import { InputText } from "./InputText";
+
+export const InputComposed = {
+  Root: InputRoot,
+  Label: InputLabel,
+  Text: InputText,
+  SearchIcon: InputSeachIcon,
+};
+
+import { TextInputProps } from "react-native";
 import {
   TextInputMaskOptionProp,
   TextInputMaskTypeProp,
-} from 'react-native-masked-text';
-import { twMerge } from 'tailwind-merge';
+} from "react-native-masked-text";
+import { twMerge } from "tailwind-merge";
 
 export interface InputProps extends TextInputProps {
   label: string;
@@ -13,14 +25,14 @@ export interface InputProps extends TextInputProps {
   maskOptions?: TextInputMaskOptionProp;
 }
 
-import { Text, TextInput, View } from 'react-native';
-import { TextInputMask } from 'react-native-masked-text';
+import { Text, TextInput, View } from "react-native";
+import { TextInputMask } from "react-native-masked-text";
 
 export function Input({
   label,
   required,
   maskedInput = false,
-  maskType = 'custom',
+  maskType = "custom",
   maskOptions,
   ...rest
 }: InputProps) {
@@ -41,16 +53,16 @@ export function Input({
           type={maskType}
           options={maskOptions}
           className={twMerge(
-            'm-0 h-14 rounded-lg bg-neutral-100 px-5 py-2 font-openSemibold',
-            rest.className,
+            "m-0 h-14 rounded-lg bg-neutral-100 px-5 py-2 font-openSemibold",
+            rest.className
           )}
           {...rest}
         />
       ) : (
         <TextInput
           className={twMerge(
-            'm-0 h-14 rounded-lg bg-neutral-100 px-5 py-2 font-openSemibold',
-            rest.className,
+            "m-0 h-14 rounded-lg bg-neutral-100 px-5 py-2 font-openSemibold",
+            rest.className
           )}
           placeholder="Digite"
           {...rest}
