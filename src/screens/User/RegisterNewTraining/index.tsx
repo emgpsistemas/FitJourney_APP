@@ -35,17 +35,6 @@ const exercisesMock = [
   },
 ];
 
-function TrashButton() {
-  return (
-    <TouchableOpacity
-      className="w-12 items-center justify-center rounded-l-lg bg-red-700"
-      activeOpacity={0.7}
-    >
-      <Trash size={24} color={colors.white} weight="bold" />
-    </TouchableOpacity>
-  );
-}
-
 export function RegisterNewTraining() {
   const [allExercises, setAllExercises] = useState(exercisesMock);
 
@@ -104,7 +93,21 @@ export function RegisterNewTraining() {
                 <Accordion.RootWithTrash
                   title={exercise.name}
                   isInitiallyOpen
-                  trashComponent={TrashButton}
+                  trashComponent={
+                    <TouchableOpacity
+                      className="w-12 items-center justify-center rounded-l-lg bg-red-700"
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        setSelectedExercises(
+                          selectedExercises.filter(
+                            (item) => item !== exercise.id,
+                          ),
+                        )
+                      }
+                    >
+                      <Trash size={24} color={colors.white} weight="bold" />
+                    </TouchableOpacity>
+                  }
                 >
                   <Accordion.Content>
                     <Accordion.ContentTitle>Descrição:</Accordion.ContentTitle>

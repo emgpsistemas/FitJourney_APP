@@ -1,5 +1,5 @@
 import { CaretDown } from 'phosphor-react-native';
-import { ElementType, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Animated,
   LayoutAnimation,
@@ -14,14 +14,14 @@ interface AccordionRootProps {
   children: React.ReactNode;
   title: string;
   isInitiallyOpen?: boolean;
-  trashComponent: ElementType;
+  trashComponent: React.ReactNode;
 }
 
 function AccordionRootWithTrash({
   children,
   title,
   isInitiallyOpen,
-  trashComponent: TrashComponent,
+  trashComponent,
 }: AccordionRootProps) {
   const [showContent, setShowContent] = useState(isInitiallyOpen ?? false);
   const animationController = useRef(new Animated.Value(0)).current;
@@ -44,7 +44,7 @@ function AccordionRootWithTrash({
 
   return (
     <View className="flex flex-row overflow-hidden rounded-lg bg-zinc-100">
-      <TrashComponent />
+      {trashComponent}
       <View className="flex flex-1 flex-col p-6">
         <TouchableOpacity
           onPress={() => toggleListItem()}
