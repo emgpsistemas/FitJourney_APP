@@ -39,7 +39,6 @@ interface RegisterUserInfoContextData {
   previousStep: () => void;
   userInfoState: UserInfo;
   dispatchUserInfo: React.Dispatch<Action>;
-  onConfirm: () => void;
 }
 
 const userInfoReducer = (state: UserInfo, action: Action): UserInfo => {
@@ -118,10 +117,6 @@ export const RegisterUserInfoProvider = ({
     }
   }
 
-  function onConfirm() {
-    console.log('PAYLOAD => ', userInfoState);
-  }
-
   useEffect(() => {
     handleNavigation();
   }, [nextStep, previousStep]);
@@ -133,7 +128,6 @@ export const RegisterUserInfoProvider = ({
         previousStep,
         userInfoState,
         dispatchUserInfo,
-        onConfirm,
       }}
     >
       {children}
