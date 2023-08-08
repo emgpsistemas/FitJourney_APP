@@ -1,7 +1,8 @@
-import { Check, Trash } from 'phosphor-react-native';
+import { Check, Minus, Plus, Trash } from 'phosphor-react-native';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import colors from 'tailwindcss/colors';
 import { Accordion } from '../../../components/Accordion';
 import { ScreenTitle } from '../../../components/ScreenTitle';
@@ -9,6 +10,7 @@ import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
 import { MultipleSelect } from '../../../components/ui/MultipleSelect';
 import { TextArea } from '../../../components/ui/Textarea';
+import { toastConfig } from '../../../lib/toast/config';
 
 interface MultipleSelectOption {
   value: number | string;
@@ -38,6 +40,7 @@ const exercisesMock = [
 
 export function RegisterNewTraining() {
   const [allExercises, setAllExercises] = useState(exercisesMock);
+  const [repetitions, setRepetitions] = useState(10);
 
   const [exercisesOptions, setExercisesOptions] = useState<
     MultipleSelectOption[]
@@ -66,6 +69,21 @@ export function RegisterNewTraining() {
       observations: '',
     };
   });
+
+  const handleConfirm = () => {
+    if (selectedExercises.length === 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Algo deu errado :(',
+        text2: 'Adicione exercícios para continuar',
+        position: 'bottom',
+        visibilityTime: 2000,
+        autoHide: true,
+      });
+    } else {
+      console.log('Tudo certo');
+    }
+  };
 
   useEffect(() => {
     formatExercises();
@@ -159,20 +177,36 @@ export function RegisterNewTraining() {
           </View>
         )}
         <View className="flex flex-col space-y-6 pb-6 pt-3">
-          <Input
-            label="Quantidade de Repetições do Treino"
-            onChangeText={(text) => console.log(text)}
-            value={''}
-          />
-          <FitButton.Root
-            variant="primary"
-            onPress={() => console.log('Finalizar Cadastro')}
-          >
+          <Text className="text-center font-openBold text-sm leading-relaxed text-neutral-900">
+            QUANTAS VEZES VOCÊ DESEJA REPETIR ESTE TREINO?
+          </Text>
+          <View className="flex flex-row justify-between px-10">
+            <TouchableOpacity
+              className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-yellow-400 p-2"
+              activeOpacity={0.7}
+              onPress={() => setRepetitions(repetitions - 1)}
+            >
+              <Minus size={24} color={colors.zinc[900]} weight="bold" />
+            </TouchableOpacity>
+
+            <Text className="font-openBold text-lg text-zinc-900">
+              {repetitions}
+            </Text>
+            <TouchableOpacity
+              className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-yellow-400 p-2"
+              activeOpacity={0.7}
+              onPress={() => setRepetitions(repetitions + 1)}
+            >
+              <Plus size={24} color={colors.zinc[900]} weight="bold" />
+            </TouchableOpacity>
+          </View>
+          <FitButton.Root variant="primary" onPress={handleConfirm}>
             <FitButton.Icon icon={Check} />
             <FitButton.Text>Finalizar Cadastro</FitButton.Text>
           </FitButton.Root>
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }
