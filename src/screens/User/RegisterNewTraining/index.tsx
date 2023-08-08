@@ -1,6 +1,6 @@
 import { Check, Trash } from 'phosphor-react-native';
 import { useEffect, useState } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from 'tailwindcss/colors';
 import { Accordion } from '../../../components/Accordion';
@@ -144,7 +144,20 @@ export function RegisterNewTraining() {
               </View>
             ))}
           </View>
-        ) : null}
+        ) : (
+          <View
+            className="my-4 flex h-48 items-center justify-center rounded-lg"
+            style={{
+              borderColor: colors.zinc[300],
+              borderWidth: 2,
+              borderStyle: 'dashed',
+            }}
+          >
+            <Text className="mx-5 text-center font-openSemibold text-sm text-zinc-900">
+              Nenhum exercício adicionado. Adicione exercícios para continuar.
+            </Text>
+          </View>
+        )}
         <View className="flex flex-col space-y-6 pb-6 pt-3">
           <Input
             label="Quantidade de Repetições do Treino"
