@@ -13,9 +13,10 @@ import {
   signInWithCredential,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { FIREBASE_AUTH } from '../lib/firebase/config';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../lib/firebase/config';
 import { storage } from '../lib/mmkv/storage';
 import { LoginFormData } from '../validations/common/Login';
 import { UserRegisterFormData } from '../validations/common/UserRegister';
@@ -50,20 +51,32 @@ export const FirebaseAuthProvider = ({
   const [session, setSession] = useState<UserCredential | null>(null);
   const [initializing, setInitializing] = useState(true);
 
-  // TODO: Add user to firestore when sign up
-  // async function addUserToFirestore(user: UserCredential) {
-  //   try {
-  //     await addDoc(collection(FIRESTORE_DB, 'users'), {
-  //       id: user.providerId,
-  //       type: user.operationType,
-  //       user: user.user,
-  //     }).then((docRef) => {
-  //       console.log('Document written with ID: ', docRef.id);
-  //     });
-  //   } catch (e) {
-  //     console.error('addUserToFirestore function error: ', e);
-  //   }
-  // }
+  async function addUserToFirestore(user: UserCredential) {
+    const payload = {
+      uid: user.user.uid,
+      name: user.user.displayName,
+      email: user.user.email,
+      photoUrl: user.user.photoURL,
+      emailVerified: user.user.emailVerified,
+      createdAt: user.user.metadata.creationTime,
+      gender: null,
+      age: null,
+      weight: null,
+      height: null,
+      goal: null,
+      fitnessLevel: null,
+      observations: null,
+    };
+    try {
+      await addDoc(collection(FIRESTORE_DB, 'users'), payload).then(
+        (docRef) => {
+          console.log('Document written with ID: ', docRef.id);
+        },
+      );
+    } catch (error) {
+      console.error('addUserToFirestore function error: ', error);
+    }
+  }
 
   // TODO: Get all documents ids from collection (users) in firestore database to check if user already exists
   // const getAllIdsFromCollection = async () => {
@@ -145,7 +158,7 @@ export const FirebaseAuthProvider = ({
         email,
         password,
       );
-      // addUserToFirestore(response);
+      addUserToFirestore(response);
       Alert.alert('Sucesso!', 'Usuário criado com sucesso!');
     } catch (error) {
       console.error('signUpWithEmail function error =>', error);
@@ -217,6 +230,7 @@ export const FirebaseAuthProvider = ({
         FIREBASE_AUTH,
         googleCredential,
       );
+      addUserToFirestore(response);
       await saveUserToStorage(response.user);
       setUser(response.user);
       setSession(response);

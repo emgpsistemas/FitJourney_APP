@@ -1,15 +1,23 @@
-import { CaretRight, GenderFemale, GenderMale } from 'phosphor-react-native';
+import {
+  CaretLeft,
+  CaretRight,
+  GenderFemale,
+  GenderMale,
+} from 'phosphor-react-native';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import colors from 'tailwindcss/colors';
 import { GenderButton } from '../../../components/GenderButton';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { IconButton } from '../../../components/ui/IconButton';
 import { useStep } from '../../../hooks/useStep';
 import { toastConfig } from '../../../lib/toast/config';
 
-function StepOne() {
+function StepGender() {
   const {
+    previousStep,
     nextStep,
     dispatchUserInfo,
     userInfoState: { gender },
@@ -32,15 +40,11 @@ function StepOne() {
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
-      <StepInfo>1</StepInfo>
+      <StepInfo>2</StepInfo>
       <View className="mt-8 flex-1">
         <View className="space-y-3">
           <Text className="text-center font-openBold text-lg text-zinc-900">
-            Nos conte um pouco mais sobre você
-          </Text>
-          <Text className="text-center font-openBold text-sm text-zinc-900">
-            Para te fornecer uma melhor experiência, precisamos saber o seu
-            gênero:
+            Qual é o seu gênero?
           </Text>
         </View>
         <View className="flex-1 items-center justify-center space-y-10">
@@ -68,15 +72,23 @@ function StepOne() {
           </View>
         </View>
       </View>
-      <View className="w-1/2 self-end">
-        <FitButton.Root variant="primary" onPress={handleNextStep}>
-          <FitButton.Text>Próximo</FitButton.Text>
-          <FitButton.Icon icon={CaretRight} />
-        </FitButton.Root>
+      <View className="flex flex-row items-center justify-between">
+        <IconButton
+          onPress={previousStep}
+          className="flex h-14 w-14 flex-row items-center justify-center rounded-full border-2 border-yellow-400 p-1"
+        >
+          <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
+        </IconButton>
+        <View className="w-1/2 self-end">
+          <FitButton.Root variant="primary" onPress={handleNextStep}>
+            <FitButton.Text>Próximo</FitButton.Text>
+            <FitButton.Icon icon={CaretRight} />
+          </FitButton.Root>
+        </View>
       </View>
       <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }
 
-export default StepOne;
+export default StepGender;

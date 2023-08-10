@@ -6,6 +6,7 @@ import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import ExerciseStackRoutes from './exerciseStack.routes';
 import HomeStackRoutes from './homeStack.routes';
 import ProfileStackRoutes from './profileStack.routes';
+import RegisterStepsStackRoutes from './registerStepsStack.routes';
 import TrainingStackRoutes from './trainingStack.routes';
 
 const Tab = createBottomTabNavigator();
@@ -13,9 +14,9 @@ const Tab = createBottomTabNavigator();
 export default function TabRoutes() {
   const { user } = useFirebaseAuth();
 
-  // if (user?.email === 'eduardomuchak@gmail.com') {
-  //   return <RegisterStepsStackRoutes />;
-  // }
+  if (user?.email === 'eduardomuchak@gmail.com') {
+    return <RegisterStepsStackRoutes />;
+  }
 
   return (
     <Tab.Navigator

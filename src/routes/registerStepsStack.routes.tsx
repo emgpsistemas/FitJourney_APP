@@ -1,11 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RegisterUserInfoProvider } from '../contexts/RegisterUserInfo';
-import StepFive from '../screens/User/RegisterSteps/StepFive';
-import StepFour from '../screens/User/RegisterSteps/StepFour';
-import StepOne from '../screens/User/RegisterSteps/StepOne';
-import StepSix from '../screens/User/RegisterSteps/StepSix';
-import StepThree from '../screens/User/RegisterSteps/StepThree';
-import StepTwo from '../screens/User/RegisterSteps/StepTwo';
+import StepAge from '../screens/User/RegisterSteps/StepAge';
+import StepFitnessLevel from '../screens/User/RegisterSteps/StepFitnessLevel';
+import StepGender from '../screens/User/RegisterSteps/StepGender';
+import StepGoal from '../screens/User/RegisterSteps/StepGoal';
+import StepHeight from '../screens/User/RegisterSteps/StepHeight';
+import StepName from '../screens/User/RegisterSteps/StepName';
+import StepWeight from '../screens/User/RegisterSteps/StepWeight';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,12 +19,13 @@ export default function RegisterStepsStackRoutes() {
         }}
         initialRouteName="Step1"
       >
-        <Stack.Screen name="Step1" component={StepOne} />
-        <Stack.Screen name="Step2" component={StepTwo} />
-        <Stack.Screen name="Step3" component={StepThree} />
-        <Stack.Screen name="Step4" component={StepFour} />
-        <Stack.Screen name="Step5" component={StepFive} />
-        <Stack.Screen name="Step6" component={StepSix} />
+        <Stack.Screen name="Step1" component={StepName} />
+        <Stack.Screen name="Step2" component={StepGender} />
+        <Stack.Screen name="Step3" component={StepAge} />
+        <Stack.Screen name="Step4" component={StepWeight} />
+        <Stack.Screen name="Step5" component={StepHeight} />
+        <Stack.Screen name="Step6" component={StepGoal} />
+        <Stack.Screen name="Step7" component={StepFitnessLevel} />
       </Stack.Navigator>
     </RegisterUserInfoProvider>
   );

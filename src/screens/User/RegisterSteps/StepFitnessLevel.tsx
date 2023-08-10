@@ -6,27 +6,42 @@ import colors from 'tailwindcss/colors';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 import { IconButton } from '../../../components/ui/IconButton';
-import { Goal } from '../../../contexts/RegisterUserInfo';
+import { FitnessLevel } from '../../../contexts/RegisterUserInfo';
 import { useStep } from '../../../hooks/useStep';
 
-function StepFive() {
-  const { nextStep, previousStep, dispatchUserInfo } = useStep();
+function StepFitnessLevel() {
+  const { previousStep, dispatchUserInfo, userInfoState } = useStep();
+
+  async function onConfirm() {
+    console.log('PAYLOAD => ', userInfoState);
+    // try {
+    //   const docRef = await addDoc(collection(FIRESTORE_DB, 'users'), {
+    //     first: 'Ada',
+    //     last: 'Lovelace',
+    //     born: 1815,
+    //   });
+    //   console.log('Document written with ID: ', docRef.id);
+    // } catch (e) {
+    //   console.error('Error adding document: ', e);
+    // }
+  }
 
   const width = Dimensions.get('window').width;
-  const options: Goal[] = [
-    'Emagrecimento',
-    'Resistência',
-    'Hipertrofia',
-    'Saúde',
+  const options: FitnessLevel[] = [
+    'Não sei',
+    'Iniciante',
+    'Intermediário',
+    'Avançado',
+    'Atleta',
   ];
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
-      <StepInfo>5</StepInfo>
+      <StepInfo>7</StepInfo>
       <View className="mt-8 flex-1">
         <View className="space-y-3">
           <Text className="text-center font-openBold text-lg text-zinc-900">
-            Qual é o seu objetivo?
+            Atualmente, como você se considera fisicamente?
           </Text>
         </View>
         <View className="flex-1 items-center justify-center space-y-10">
@@ -35,8 +50,11 @@ function StepFive() {
             <Carousel
               data={options}
               onSnapToItem={(item) => {
-                const selectedGoal = options[item];
-                dispatchUserInfo({ type: 'SET_GOAL', payload: selectedGoal });
+                const selectedLevel = options[item];
+                dispatchUserInfo({
+                  type: 'SET_FITNESS_LEVEL',
+                  payload: selectedLevel,
+                });
               }}
               autoPlay={false}
               loop={true}
@@ -76,8 +94,8 @@ function StepFive() {
           <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
         </IconButton>
         <View className="w-1/2 self-end">
-          <FitButton.Root variant="primary" onPress={nextStep}>
-            <FitButton.Text>Próximo</FitButton.Text>
+          <FitButton.Root variant="primary" onPress={onConfirm}>
+            <FitButton.Text>Finalizar</FitButton.Text>
             <FitButton.Icon icon={CaretRight} />
           </FitButton.Root>
         </View>
@@ -86,4 +104,4 @@ function StepFive() {
   );
 }
 
-export default StepFive;
+export default StepFitnessLevel;
