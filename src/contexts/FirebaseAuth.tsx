@@ -67,34 +67,35 @@ export const FirebaseAuthProvider = ({
   const [session, setSession] = useState<UserCredential | null>(null);
   const [initializing, setInitializing] = useState(true);
 
+  async function getFirebaseDocumentId(fitJourneyUser: FitJourneyUser) {
+    // Get a reference to the users collection
+    const usersCollectionRef = collection(FIRESTORE_DB, 'users');
+    const usersCollectionSnapshot = await getDocs(usersCollectionRef);
+    const collectionData = usersCollectionSnapshot.docs.map((doc) => {
+      return {
+        documentId: doc.id,
+        userId: doc.get('uid') as string,
+      };
+    });
+    const collectionIdFoundByUid = collectionData.find((data) => {
+      return data.userId === fitJourneyUser.uid;
+    });
+    return collectionIdFoundByUid;
+  }
+
   async function addOrUpdateUserToFirestore(fitJourneyUser: FitJourneyUser) {
     try {
-      // Get a reference to the users collection
-      const usersCollectionRef = collection(FIRESTORE_DB, 'users');
-      const usersCollectionSnapshot = await getDocs(usersCollectionRef);
-      const collectionData = usersCollectionSnapshot.docs.map((doc) => {
-        return {
-          documentId: doc.id,
-          userId: doc.get('uid') as string,
-        };
-      });
-
-      const collectionIdFoundByUid = collectionData.find((data) => {
-        return data.userId === fitJourneyUser.uid;
-      });
-
-      if (collectionIdFoundByUid) {
+      const collectionFounded = await getFirebaseDocumentId(fitJourneyUser);
+      if (collectionFounded) {
         // Get a reference to the user document
         const userDocRef = doc(
           FIRESTORE_DB,
           'users',
-          collectionIdFoundByUid.documentId,
+          collectionFounded.documentId,
         );
-        console.log('userDocRef', userDocRef.id);
         // Check if user already exists
         const userDocSnap = await getDoc(userDocRef);
 
-        console.log('userDocSnap', userDocSnap.exists());
         if (!userDocSnap.exists()) {
           // User doesn't exist, add the user
           await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
@@ -105,6 +106,9 @@ export const FirebaseAuthProvider = ({
           };
           await updateDoc(userDocRef, fieldsToUpdate);
         }
+      } else {
+        // User doesn't exist, add the user
+        await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
       }
     } catch (error) {
       console.error('addOrUpdateUserToFirestore function error: ', error);
@@ -125,10 +129,11 @@ export const FirebaseAuthProvider = ({
         email,
         password,
       );
-      await saveUserToStorage(response);
+      const user = formatUserToFitJourneyPattern(response);
+      await saveUserToStorage(user);
       setUser(response.user);
       setSession(response);
-      setFitJourneyUser(formatUserToFitJourneyPattern(response));
+      setFitJourneyUser(user);
     } catch (error: any) {
       if (error?.message.includes('wrong-password')) {
         Alert.alert('Erro!', 'Senha incorreta.');
@@ -197,7 +202,7 @@ export const FirebaseAuthProvider = ({
     }
   }
 
-  async function saveUserToStorage(user: UserCredential) {
+  async function saveUserToStorage(user: FitJourneyUser) {
     try {
       const jsonUser = JSON.stringify(user);
       storage.set('UserInfo', jsonUser);
@@ -210,8 +215,8 @@ export const FirebaseAuthProvider = ({
     try {
       const user = storage.getString('UserInfo');
       if (user) {
-        const jsonUser: User = JSON.parse(user);
-        setUser(jsonUser);
+        const jsonUser: FitJourneyUser = JSON.parse(user);
+        setFitJourneyUser(jsonUser);
       }
     } catch (error) {
       console.error('loadUserFromStorage function error =>', error);
@@ -246,7 +251,7 @@ export const FirebaseAuthProvider = ({
       );
       const user = formatUserToFitJourneyPattern(response);
       addOrUpdateUserToFirestore(user);
-      await saveUserToStorage(response);
+      await saveUserToStorage(user);
       setUser(response.user);
       setSession(response);
     } catch (error: any) {
