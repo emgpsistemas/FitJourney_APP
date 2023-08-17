@@ -1,5 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
+import { doc, updateDoc } from 'firebase/firestore';
 import React, { createContext, useEffect, useReducer, useState } from 'react';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
+import { FIRESTORE_DB } from '../lib/firebase/config';
+import { FitJourneyUser } from '../utils/FormatUserToAddToFirestore';
 
 export type Gender = 'Masculino' | 'Feminino';
 export type Goal = 'Emagrecimento' | 'Resistência' | 'Hipertrofia' | 'Saúde';
@@ -43,6 +47,7 @@ interface RegisterUserInfoContextData {
   userInfoState: UserInfo;
   dispatchUserInfo: React.Dispatch<Action>;
   maxStep: number;
+  onConfirm: (payload: FitJourneyUser) => Promise<void>;
 }
 
 const userInfoReducer = (state: UserInfo, action: Action): UserInfo => {
@@ -75,6 +80,7 @@ export const RegisterUserInfoProvider = ({
   children: React.ReactNode;
 }) => {
   const { navigate } = useNavigation();
+  const { fitJourneyUser, getUserFirebaseCollection } = useFirebaseAuth();
   const [actualStep, setActualStep] = useState(0);
   const minStep = 1;
   const maxStep = 7;
@@ -128,6 +134,24 @@ export const RegisterUserInfoProvider = ({
     }
   }
 
+  async function onConfirm(payload: FitJourneyUser) {
+    console.log('payload', payload);
+
+    const collectionFounded = await getUserFirebaseCollection(payload);
+    console.log('collectionFounded', collectionFounded);
+    if (collectionFounded) {
+      const userDocRef = doc(
+        FIRESTORE_DB,
+        'users',
+        collectionFounded.documentId,
+      );
+      const fieldsToUpdate = {
+        ...payload,
+      };
+      await updateDoc(userDocRef, fieldsToUpdate);
+    }
+  }
+
   useEffect(() => {
     handleNavigation();
   }, [nextStep, previousStep]);
@@ -140,6 +164,7 @@ export const RegisterUserInfoProvider = ({
         userInfoState,
         dispatchUserInfo,
         maxStep,
+        onConfirm,
       }}
     >
       {children}

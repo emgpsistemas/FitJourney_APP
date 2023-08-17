@@ -14,7 +14,7 @@ const Tab = createBottomTabNavigator();
 export default function TabRoutes() {
   const { fitJourneyUser } = useFirebaseAuth();
 
-  if (fitJourneyUser.isBasicInfoCompleted) {
+  if (!fitJourneyUser.isBasicInfoCompleted) {
     return <RegisterStepsStackRoutes />;
   }
 

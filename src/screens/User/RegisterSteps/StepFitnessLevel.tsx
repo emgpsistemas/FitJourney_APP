@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
+import { useEffect } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,12 +11,13 @@ import { IconButton } from '../../../components/ui/IconButton';
 import { FitnessLevel } from '../../../contexts/RegisterUserInfo';
 import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 import { useStep } from '../../../hooks/useStep';
-import { storage } from '../../../lib/mmkv/storage';
+import { FitJourneyUser } from '../../../utils/FormatUserToAddToFirestore';
 
 function StepFitnessLevel() {
   const { navigate } = useNavigation();
-  const { user } = useFirebaseAuth();
-  const { previousStep, dispatchUserInfo, userInfoState } = useStep();
+  const { fitJourneyUser, loadUserFromStorage } = useFirebaseAuth();
+  const { previousStep, dispatchUserInfo, userInfoState, onConfirm } =
+    useStep();
   const width = Dimensions.get('window').width;
   const options: FitnessLevel[] = [
     'Não sei',
@@ -25,12 +27,29 @@ function StepFitnessLevel() {
     'Atleta',
   ];
 
-  const mmkvUser = storage.getString('UserInfo');
-  const mmkvUserParsed = JSON.parse(mmkvUser || '{}');
-
-  async function onConfirm() {
-    // formatUserToFitJourneyPattern()
+  console.log('fitJourneyUser', fitJourneyUser);
+  async function handleSubmit() {
+    try {
+      const fieldsToUpdate: FitJourneyUser = {
+        ...fitJourneyUser,
+        age: String(userInfoState.age),
+        weight: String(userInfoState.weight),
+        height: String(userInfoState.height),
+        gender: userInfoState.gender,
+        goal: userInfoState.goal,
+        fitnessLevel: userInfoState.fitnessLevel,
+        displayName: userInfoState.name,
+        isBasicInfoCompleted: true,
+      };
+      await onConfirm(fieldsToUpdate);
+    } catch (error) {
+      console.error('handleSubmit function error: ', error);
+    }
   }
+
+  useEffect(() => {
+    loadUserFromStorage();
+  }, []);
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
@@ -91,7 +110,7 @@ function StepFitnessLevel() {
           <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
         </IconButton>
         <View className="w-1/2 self-end">
-          <FitButton.Root variant="primary" onPress={onConfirm}>
+          <FitButton.Root variant="primary" onPress={() => handleSubmit()}>
             <FitButton.Text>Finalizar</FitButton.Text>
             <FitButton.Icon icon={CaretRight} />
           </FitButton.Root>

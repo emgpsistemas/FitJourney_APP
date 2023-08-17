@@ -48,6 +48,8 @@ interface FirebaseAuthContextData {
   signInWithGoogle(): Promise<void>;
   addOrUpdateUserToFirestore(fitJourneyUser: FitJourneyUser): Promise<void>;
   fitJourneyUser: FitJourneyUser;
+  getUserFirebaseCollection(fitJourneyUser: FitJourneyUser): Promise<any>;
+  loadUserFromStorage(): Promise<void>;
 }
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextData>(
@@ -67,7 +69,7 @@ export const FirebaseAuthProvider = ({
   const [session, setSession] = useState<UserCredential | null>(null);
   const [initializing, setInitializing] = useState(true);
 
-  async function getFirebaseDocumentId(fitJourneyUser: FitJourneyUser) {
+  async function getUserFirebaseCollection(fitJourneyUser: FitJourneyUser) {
     // Get a reference to the users collection
     const usersCollectionRef = collection(FIRESTORE_DB, 'users');
     const usersCollectionSnapshot = await getDocs(usersCollectionRef);
@@ -77,6 +79,8 @@ export const FirebaseAuthProvider = ({
         userId: doc.get('uid') as string,
       };
     });
+    console.log('fitJourneyUser', fitJourneyUser.uid);
+    console.log('collectionData', collectionData[0].userId);
     const collectionIdFoundByUid = collectionData.find((data) => {
       return data.userId === fitJourneyUser.uid;
     });
@@ -85,7 +89,7 @@ export const FirebaseAuthProvider = ({
 
   async function addOrUpdateUserToFirestore(fitJourneyUser: FitJourneyUser) {
     try {
-      const collectionFounded = await getFirebaseDocumentId(fitJourneyUser);
+      const collectionFounded = await getUserFirebaseCollection(fitJourneyUser);
       if (collectionFounded) {
         // Get a reference to the user document
         const userDocRef = doc(
@@ -310,6 +314,8 @@ export const FirebaseAuthProvider = ({
         signInWithGoogle,
         addOrUpdateUserToFirestore,
         fitJourneyUser,
+        getUserFirebaseCollection,
+        loadUserFromStorage,
       }}
     >
       {children}
