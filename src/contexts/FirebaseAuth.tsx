@@ -13,11 +13,22 @@ import {
   signInWithCredential,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../lib/firebase/config';
 import { storage } from '../lib/mmkv/storage';
+import {
+  FitJourneyUser,
+  formatUserToFitJourneyPattern,
+} from '../utils/FormatUserToAddToFirestore';
 import { LoginFormData } from '../validations/common/Login';
 import { UserRegisterFormData } from '../validations/common/UserRegister';
 
@@ -35,6 +46,8 @@ interface FirebaseAuthContextData {
   checkUserSession(): Promise<void>;
   recoveryPassword(email: string): Promise<void>;
   signInWithGoogle(): Promise<void>;
+  addOrUpdateUserToFirestore(fitJourneyUser: FitJourneyUser): Promise<void>;
+  fitJourneyUser: FitJourneyUser;
 }
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextData>(
@@ -47,57 +60,56 @@ export const FirebaseAuthProvider = ({
   children: React.ReactNode;
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [fitJourneyUser, setFitJourneyUser] = useState<FitJourneyUser>(
+    {} as FitJourneyUser,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<UserCredential | null>(null);
   const [initializing, setInitializing] = useState(true);
 
-  async function addUserToFirestore(user: UserCredential) {
-    const payload = {
-      uid: user.user.uid,
-      name: user.user.displayName,
-      email: user.user.email,
-      photoUrl: user.user.photoURL,
-      emailVerified: user.user.emailVerified,
-      createdAt: user.user.metadata.creationTime,
-      gender: null,
-      age: null,
-      weight: null,
-      height: null,
-      goal: null,
-      fitnessLevel: null,
-      observations: null,
-    };
+  async function addOrUpdateUserToFirestore(fitJourneyUser: FitJourneyUser) {
     try {
-      await addDoc(collection(FIRESTORE_DB, 'users'), payload).then(
-        (docRef) => {
-          console.log('Document written with ID: ', docRef.id);
-        },
-      );
+      // Get a reference to the users collection
+      const usersCollectionRef = collection(FIRESTORE_DB, 'users');
+      const usersCollectionSnapshot = await getDocs(usersCollectionRef);
+      const collectionData = usersCollectionSnapshot.docs.map((doc) => {
+        return {
+          documentId: doc.id,
+          userId: doc.get('uid') as string,
+        };
+      });
+
+      const collectionIdFoundByUid = collectionData.find((data) => {
+        return data.userId === fitJourneyUser.uid;
+      });
+
+      if (collectionIdFoundByUid) {
+        // Get a reference to the user document
+        const userDocRef = doc(
+          FIRESTORE_DB,
+          'users',
+          collectionIdFoundByUid.documentId,
+        );
+        console.log('userDocRef', userDocRef.id);
+        // Check if user already exists
+        const userDocSnap = await getDoc(userDocRef);
+
+        console.log('userDocSnap', userDocSnap.exists());
+        if (!userDocSnap.exists()) {
+          // User doesn't exist, add the user
+          await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
+        } else {
+          // User exists, update the user
+          const fieldsToUpdate = {
+            ...fitJourneyUser,
+          };
+          await updateDoc(userDocRef, fieldsToUpdate);
+        }
+      }
     } catch (error) {
-      console.error('addUserToFirestore function error: ', error);
+      console.error('addOrUpdateUserToFirestore function error: ', error);
     }
   }
-
-  // TODO: Get all documents ids from collection (users) in firestore database to check if user already exists
-  // const getAllIdsFromCollection = async () => {
-  //   const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
-  //   const userIds = querySnapshot.docs.map((doc) => doc.id);
-  //   return userIds;
-  // };
-
-  // const updateOrCreateUser = (user: UserCredential) => {
-  //   const teste = getAllIdsFromCollection().then((ids) => {
-  //     console.log('ids => ', ids);
-  //   });
-
-  // const document = getDoc(testeDocument).then((doc) => {
-  //   if (doc.exists()) {
-  //     console.log('Document data:', doc.data());
-  //   } else {
-  //     console.log('No such document!');
-  //   }
-  // });
-  // };
 
   async function signIn({
     email,
@@ -113,9 +125,10 @@ export const FirebaseAuthProvider = ({
         email,
         password,
       );
-      await saveUserToStorage(response.user);
+      await saveUserToStorage(response);
       setUser(response.user);
       setSession(response);
+      setFitJourneyUser(formatUserToFitJourneyPattern(response));
     } catch (error: any) {
       if (error?.message.includes('wrong-password')) {
         Alert.alert('Erro!', 'Senha incorreta.');
@@ -158,7 +171,8 @@ export const FirebaseAuthProvider = ({
         email,
         password,
       );
-      addUserToFirestore(response);
+      const user = formatUserToFitJourneyPattern(response);
+      addOrUpdateUserToFirestore(user);
       Alert.alert('Sucesso!', 'Usuário criado com sucesso!');
     } catch (error) {
       console.error('signUpWithEmail function error =>', error);
@@ -183,7 +197,7 @@ export const FirebaseAuthProvider = ({
     }
   }
 
-  async function saveUserToStorage(user: User) {
+  async function saveUserToStorage(user: UserCredential) {
     try {
       const jsonUser = JSON.stringify(user);
       storage.set('UserInfo', jsonUser);
@@ -230,8 +244,9 @@ export const FirebaseAuthProvider = ({
         FIREBASE_AUTH,
         googleCredential,
       );
-      addUserToFirestore(response);
-      await saveUserToStorage(response.user);
+      const user = formatUserToFitJourneyPattern(response);
+      addOrUpdateUserToFirestore(user);
+      await saveUserToStorage(response);
       setUser(response.user);
       setSession(response);
     } catch (error: any) {
@@ -288,6 +303,8 @@ export const FirebaseAuthProvider = ({
         checkUserSession,
         recoveryPassword,
         signInWithGoogle,
+        addOrUpdateUserToFirestore,
+        fitJourneyUser,
       }}
     >
       {children}

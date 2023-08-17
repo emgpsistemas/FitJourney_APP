@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
 import { Dimensions, Text, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
@@ -7,25 +8,14 @@ import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 import { IconButton } from '../../../components/ui/IconButton';
 import { FitnessLevel } from '../../../contexts/RegisterUserInfo';
+import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 import { useStep } from '../../../hooks/useStep';
+import { storage } from '../../../lib/mmkv/storage';
 
 function StepFitnessLevel() {
+  const { navigate } = useNavigation();
+  const { user } = useFirebaseAuth();
   const { previousStep, dispatchUserInfo, userInfoState } = useStep();
-
-  async function onConfirm() {
-    console.log('PAYLOAD => ', userInfoState);
-    // try {
-    //   const docRef = await addDoc(collection(FIRESTORE_DB, 'users'), {
-    //     first: 'Ada',
-    //     last: 'Lovelace',
-    //     born: 1815,
-    //   });
-    //   console.log('Document written with ID: ', docRef.id);
-    // } catch (e) {
-    //   console.error('Error adding document: ', e);
-    // }
-  }
-
   const width = Dimensions.get('window').width;
   const options: FitnessLevel[] = [
     'Não sei',
@@ -34,6 +24,13 @@ function StepFitnessLevel() {
     'Avançado',
     'Atleta',
   ];
+
+  const mmkvUser = storage.getString('UserInfo');
+  const mmkvUserParsed = JSON.parse(mmkvUser || '{}');
+
+  async function onConfirm() {
+    // formatUserToFitJourneyPattern()
+  }
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
