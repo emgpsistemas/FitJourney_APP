@@ -350,13 +350,10 @@ export const FirebaseAuthProvider = ({
       // Check if user already exists
       const userDocSnap = await getDoc(userDocRef);
       if (userDocSnap.exists()) {
-        console.log('CHEGOU');
         const user = userDocSnap.data();
         setFitJourneyUser(user as FitJourneyUser);
         saveUserToStorage(user as FitJourneyUser);
         return user as FitJourneyUser;
-      } else {
-        console.log(' NÃO CHEGOU');
       }
     }
   }
