@@ -48,9 +48,11 @@ interface FirebaseAuthContextData {
   signInWithGoogle(): Promise<void>;
   addOrUpdateUserToFirestore(fitJourneyUser: FitJourneyUser): Promise<void>;
   fitJourneyUser: FitJourneyUser;
-  getUserFirebaseCollection(fitJourneyUser: FitJourneyUser): Promise<any>;
+  getUserFirebaseCollection(uid: string): Promise<any>;
   loadUserFromStorage(): Promise<void>;
-  getUserFromFirestore(user: FitJourneyUser): Promise<void>;
+  getUserFromFirestore(
+    user: FitJourneyUser,
+  ): Promise<FitJourneyUser | undefined>;
 }
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextData>(
@@ -70,7 +72,7 @@ export const FirebaseAuthProvider = ({
   const [session, setSession] = useState<UserCredential | null>(null);
   const [initializing, setInitializing] = useState(true);
 
-  async function getUserFirebaseCollection(fitJourneyUser: FitJourneyUser) {
+  async function getUserFirebaseCollection(uid: string) {
     // Get a reference to the users collection
     const usersCollectionRef = collection(FIRESTORE_DB, 'users');
     const usersCollectionSnapshot = await getDocs(usersCollectionRef);
@@ -78,17 +80,20 @@ export const FirebaseAuthProvider = ({
       return {
         documentId: doc.id,
         userId: doc.get('uid') as string,
+        user: doc.data() as FitJourneyUser,
       };
     });
     const collectionIdFoundByUid = collectionData.find((data) => {
-      return data.userId === fitJourneyUser.uid;
+      return data.userId === uid;
     });
     return collectionIdFoundByUid;
   }
 
   async function addOrUpdateUserToFirestore(fitJourneyUser: FitJourneyUser) {
     try {
-      const collectionFounded = await getUserFirebaseCollection(fitJourneyUser);
+      const collectionFounded = await getUserFirebaseCollection(
+        fitJourneyUser.uid,
+      );
       if (collectionFounded) {
         // Get a reference to the user document
         const userDocRef = doc(
@@ -100,11 +105,9 @@ export const FirebaseAuthProvider = ({
         const userDocSnap = await getDoc(userDocRef);
 
         if (!userDocSnap.exists()) {
-          console.log('CAIU NO IF EXISTS ADD DOC');
           // User doesn't exist, add the user
           await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
         } else {
-          console.log('CAIU NO ELSE UPDATE DOC');
           // User exists, update the user
           // The const fieldsToUpdate below should have only the fields of fitJourneyUser that is not in the userDocSnap.data()
 
@@ -128,7 +131,6 @@ export const FirebaseAuthProvider = ({
           await updateDoc(userDocRef, fieldsToUpdate);
         }
       } else {
-        console.log('CAIU NO ELSE ADD DOC');
         // User doesn't exist, add the user
         await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
       }
@@ -272,11 +274,25 @@ export const FirebaseAuthProvider = ({
         FIREBASE_AUTH,
         googleCredential,
       );
-      const user = formatUserToFitJourneyPattern(response);
-      addOrUpdateUserToFirestore(user);
-      await saveUserToStorage(user);
-      setUser(response.user);
-      setSession(response);
+      const responseId = response.user.uid;
+      const firestoreUser = await getUserFirebaseCollection(responseId);
+      if (firestoreUser) {
+        console.log('CAIU NO IF');
+        const user = firestoreUser.user;
+        setFitJourneyUser(user);
+        saveUserToStorage(user);
+        setUser(response.user);
+        setSession(response);
+        return;
+      } else {
+        console.log('CAIU NO ELSE');
+        const user = formatUserToFitJourneyPattern(response);
+        addOrUpdateUserToFirestore(user);
+        await saveUserToStorage(user);
+        setUser(response.user);
+        setSession(response);
+        setFitJourneyUser(user);
+      }
     } catch (error: any) {
       console.error('signInWithGoogle function error =>', error);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -312,7 +328,7 @@ export const FirebaseAuthProvider = ({
   }
 
   async function getUserFromFirestore(user: FitJourneyUser) {
-    const collectionFounded = await getUserFirebaseCollection(user);
+    const collectionFounded = await getUserFirebaseCollection(user.uid);
     if (collectionFounded) {
       // Get a reference to the user document
       const userDocRef = doc(
@@ -323,8 +339,13 @@ export const FirebaseAuthProvider = ({
       // Check if user already exists
       const userDocSnap = await getDoc(userDocRef);
       if (userDocSnap.exists()) {
+        console.log('CHEGOU');
         const user = userDocSnap.data();
         setFitJourneyUser(user as FitJourneyUser);
+        saveUserToStorage(user as FitJourneyUser);
+        return user as FitJourneyUser;
+      } else {
+        console.log(' NÃO CHEGOU');
       }
     }
   }

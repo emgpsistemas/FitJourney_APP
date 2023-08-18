@@ -155,7 +155,6 @@ export function TrainingDetails() {
           })),
         })),
       };
-      console.log('PAYLOAD =>', payload);
       Alert.alert('Treino finalizado com sucesso!');
     } catch (error: any) {
       Alert.alert('Erro ao finalizar treino', error.message);

@@ -1,5 +1,5 @@
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,11 +10,12 @@ import { IconButton } from '../../../components/ui/IconButton';
 import { FitnessLevel } from '../../../contexts/RegisterUserInfo';
 import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 import { useStep } from '../../../hooks/useStep';
+import { storage } from '../../../lib/mmkv/storage';
 import { FitJourneyUser } from '../../../utils/FormatUserToAddToFirestore';
 
 function StepFitnessLevel() {
-  const { fitJourneyUser, loadUserFromStorage, getUserFromFirestore } =
-    useFirebaseAuth();
+  const [storageUser, setStorageUser] = useState({} as FitJourneyUser);
+  const { getUserFromFirestore, user } = useFirebaseAuth();
   const { previousStep, dispatchUserInfo, userInfoState, onConfirm } =
     useStep();
   const width = Dimensions.get('window').width;
@@ -29,7 +30,8 @@ function StepFitnessLevel() {
   async function handleSubmit() {
     try {
       const fieldsToUpdate: FitJourneyUser = {
-        ...fitJourneyUser,
+        ...storageUser,
+        uid: user ? user.uid : storageUser.uid,
         age: String(userInfoState.age),
         weight: String(userInfoState.weight),
         height: String(userInfoState.height),
@@ -46,8 +48,16 @@ function StepFitnessLevel() {
     }
   }
 
+  function getUserFromStorage() {
+    const storageUser = storage.getString('UserInfo');
+    if (storageUser) {
+      const jsonUser: FitJourneyUser = JSON.parse(storageUser);
+      setStorageUser(jsonUser);
+    }
+  }
+
   useEffect(() => {
-    loadUserFromStorage();
+    getUserFromStorage();
   }, []);
 
   return (

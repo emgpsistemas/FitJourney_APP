@@ -135,7 +135,9 @@ export const RegisterUserInfoProvider = ({
   }
 
   async function onConfirm(payload: FitJourneyUser) {
-    const collectionFounded = await getUserFirebaseCollection(payload);
+    const collectionFounded = await getUserFirebaseCollection(payload.uid);
+    console.log('payload => ', payload);
+    console.log('collectionFounded => ', collectionFounded);
     if (collectionFounded) {
       const userDocRef = doc(
         FIRESTORE_DB,
