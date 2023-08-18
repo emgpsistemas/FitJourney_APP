@@ -80,8 +80,8 @@ export const RegisterUserInfoProvider = ({
   children: React.ReactNode;
 }) => {
   const { navigate } = useNavigation();
-  const { fitJourneyUser, getUserFirebaseCollection } = useFirebaseAuth();
-  const [actualStep, setActualStep] = useState(0);
+  const { getUserFirebaseCollection } = useFirebaseAuth();
+  const [actualStep, setActualStep] = useState(1);
   const minStep = 1;
   const maxStep = 7;
 
@@ -100,7 +100,7 @@ export const RegisterUserInfoProvider = ({
       if (actualStep === maxStep) return;
       setActualStep(actualStep + 1);
     } catch (error) {
-      console.log('nextStep function error => ', error);
+      console.error('nextStep function error => ', error);
     }
   }
 
@@ -109,7 +109,7 @@ export const RegisterUserInfoProvider = ({
       if (actualStep === minStep) return;
       setActualStep(actualStep - 1);
     } catch (error) {
-      console.log('nextStep function error => ', error);
+      console.error('nextStep function error => ', error);
     }
   }
 
@@ -135,10 +135,7 @@ export const RegisterUserInfoProvider = ({
   }
 
   async function onConfirm(payload: FitJourneyUser) {
-    console.log('payload', payload);
-
     const collectionFounded = await getUserFirebaseCollection(payload);
-    console.log('collectionFounded', collectionFounded);
     if (collectionFounded) {
       const userDocRef = doc(
         FIRESTORE_DB,

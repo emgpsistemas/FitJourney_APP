@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
 import { useEffect } from 'react';
 import { Dimensions, Text, View } from 'react-native';
@@ -14,8 +13,8 @@ import { useStep } from '../../../hooks/useStep';
 import { FitJourneyUser } from '../../../utils/FormatUserToAddToFirestore';
 
 function StepFitnessLevel() {
-  const { navigate } = useNavigation();
-  const { fitJourneyUser, loadUserFromStorage } = useFirebaseAuth();
+  const { fitJourneyUser, loadUserFromStorage, getUserFromFirestore } =
+    useFirebaseAuth();
   const { previousStep, dispatchUserInfo, userInfoState, onConfirm } =
     useStep();
   const width = Dimensions.get('window').width;
@@ -27,7 +26,6 @@ function StepFitnessLevel() {
     'Atleta',
   ];
 
-  console.log('fitJourneyUser', fitJourneyUser);
   async function handleSubmit() {
     try {
       const fieldsToUpdate: FitJourneyUser = {
@@ -42,6 +40,7 @@ function StepFitnessLevel() {
         isBasicInfoCompleted: true,
       };
       await onConfirm(fieldsToUpdate);
+      await getUserFromFirestore(fieldsToUpdate);
     } catch (error) {
       console.error('handleSubmit function error: ', error);
     }

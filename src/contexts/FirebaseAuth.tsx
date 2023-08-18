@@ -50,6 +50,7 @@ interface FirebaseAuthContextData {
   fitJourneyUser: FitJourneyUser;
   getUserFirebaseCollection(fitJourneyUser: FitJourneyUser): Promise<any>;
   loadUserFromStorage(): Promise<void>;
+  getUserFromFirestore(user: FitJourneyUser): Promise<void>;
 }
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextData>(
@@ -79,8 +80,6 @@ export const FirebaseAuthProvider = ({
         userId: doc.get('uid') as string,
       };
     });
-    console.log('fitJourneyUser', fitJourneyUser.uid);
-    console.log('collectionData', collectionData[0].userId);
     const collectionIdFoundByUid = collectionData.find((data) => {
       return data.userId === fitJourneyUser.uid;
     });
@@ -101,16 +100,35 @@ export const FirebaseAuthProvider = ({
         const userDocSnap = await getDoc(userDocRef);
 
         if (!userDocSnap.exists()) {
+          console.log('CAIU NO IF EXISTS ADD DOC');
           // User doesn't exist, add the user
           await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
         } else {
+          console.log('CAIU NO ELSE UPDATE DOC');
           // User exists, update the user
+          // The const fieldsToUpdate below should have only the fields of fitJourneyUser that is not in the userDocSnap.data()
+
+          const copyFitJourneyUser: any = { ...fitJourneyUser };
+
+          Object.keys(copyFitJourneyUser).forEach((key) => {
+            if (
+              copyFitJourneyUser[key] === null ||
+              copyFitJourneyUser[key] === undefined
+            )
+              delete copyFitJourneyUser[key];
+          });
+
+          delete copyFitJourneyUser.displayName;
+          delete copyFitJourneyUser.isBasicInfoCompleted;
+
           const fieldsToUpdate = {
-            ...fitJourneyUser,
+            ...copyFitJourneyUser,
           };
+
           await updateDoc(userDocRef, fieldsToUpdate);
         }
       } else {
+        console.log('CAIU NO ELSE ADD DOC');
         // User doesn't exist, add the user
         await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
       }
@@ -157,6 +175,7 @@ export const FirebaseAuthProvider = ({
       await FIREBASE_AUTH.signOut();
       setUser(null);
       setSession(null);
+      setFitJourneyUser({} as FitJourneyUser);
       storage.delete('UserInfo');
     } catch (error) {
       console.error('signOut function error =>', error);
@@ -292,6 +311,24 @@ export const FirebaseAuthProvider = ({
     if (initializing) setInitializing(false);
   }
 
+  async function getUserFromFirestore(user: FitJourneyUser) {
+    const collectionFounded = await getUserFirebaseCollection(user);
+    if (collectionFounded) {
+      // Get a reference to the user document
+      const userDocRef = doc(
+        FIRESTORE_DB,
+        'users',
+        collectionFounded.documentId,
+      );
+      // Check if user already exists
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const user = userDocSnap.data();
+        setFitJourneyUser(user as FitJourneyUser);
+      }
+    }
+  }
+
   useEffect(() => {
     loadUserFromStorage();
     const subscriber = onAuthStateChanged(FIREBASE_AUTH, onAuthStateChange);
@@ -316,6 +353,7 @@ export const FirebaseAuthProvider = ({
         fitJourneyUser,
         getUserFirebaseCollection,
         loadUserFromStorage,
+        getUserFromFirestore,
       }}
     >
       {children}

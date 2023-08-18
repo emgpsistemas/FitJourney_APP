@@ -8,7 +8,7 @@ import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 
 export default function Home() {
   const { navigate } = useNavigation();
-  const { user } = useFirebaseAuth();
+  const { fitJourneyUser } = useFirebaseAuth();
 
   return (
     <ScrollView className="flex flex-1 flex-col bg-neutral-50 px-5 py-10">
@@ -19,10 +19,11 @@ export default function Home() {
         <HomeImageSVG width={'100%'} />
       </View>
 
-      {user && user.displayName ? (
+      {fitJourneyUser && fitJourneyUser.displayName ? (
         <Text className="text-center font-openMedium text-xl text-zinc-900">
-          Olá <Text className="font-openBold">{user?.displayName}</Text>, bem
-          vindo!
+          Olá{' '}
+          <Text className="font-openBold">{fitJourneyUser.displayName}</Text>,
+          bem vindo!
         </Text>
       ) : (
         <Text className="text-center font-openBold text-xl text-zinc-900">
