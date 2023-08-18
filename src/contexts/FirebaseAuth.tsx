@@ -285,10 +285,16 @@ export const FirebaseAuthProvider = ({
       const firestoreUser = await getUserFirebaseCollection(responseId);
       if (firestoreUser) {
         const user = firestoreUser.user;
-        setFitJourneyUser(user);
-        saveUserToStorage(user);
+        const finalUser: FitJourneyUser = {
+          ...user,
+          emailVerified: response.user.emailVerified,
+          photoUrl: response.user.photoURL,
+        };
+        setFitJourneyUser(finalUser);
+        saveUserToStorage(finalUser);
         setUser(response.user);
         setSession(response);
+        addOrUpdateUserToFirestore(finalUser);
         return;
       } else {
         const user = formatUserToFitJourneyPattern(response);
