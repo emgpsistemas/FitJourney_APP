@@ -109,10 +109,7 @@ export const FirebaseAuthProvider = ({
           await addDoc(collection(FIRESTORE_DB, 'users'), fitJourneyUser);
         } else {
           // User exists, update the user
-          // The const fieldsToUpdate below should have only the fields of fitJourneyUser that is not in the userDocSnap.data()
-
           const copyFitJourneyUser: any = { ...fitJourneyUser };
-
           Object.keys(copyFitJourneyUser).forEach((key) => {
             if (
               copyFitJourneyUser[key] === null ||
@@ -120,14 +117,12 @@ export const FirebaseAuthProvider = ({
             )
               delete copyFitJourneyUser[key];
           });
-
           delete copyFitJourneyUser.displayName;
           delete copyFitJourneyUser.isBasicInfoCompleted;
 
           const fieldsToUpdate = {
             ...copyFitJourneyUser,
           };
-
           await updateDoc(userDocRef, fieldsToUpdate);
         }
       } else {
@@ -153,11 +148,23 @@ export const FirebaseAuthProvider = ({
         email,
         password,
       );
-      const user = formatUserToFitJourneyPattern(response);
-      await saveUserToStorage(user);
-      setUser(response.user);
-      setSession(response);
-      setFitJourneyUser(user);
+      const responseId = response.user.uid;
+      const firestoreUser = await getUserFirebaseCollection(responseId);
+      if (firestoreUser) {
+        const user = firestoreUser.user;
+        setFitJourneyUser(user);
+        saveUserToStorage(user);
+        setUser(response.user);
+        setSession(response);
+        return;
+      } else {
+        const user = formatUserToFitJourneyPattern(response);
+        addOrUpdateUserToFirestore(user);
+        await saveUserToStorage(user);
+        setUser(response.user);
+        setSession(response);
+        setFitJourneyUser(user);
+      }
     } catch (error: any) {
       if (error?.message.includes('wrong-password')) {
         Alert.alert('Erro!', 'Senha incorreta.');
@@ -277,7 +284,6 @@ export const FirebaseAuthProvider = ({
       const responseId = response.user.uid;
       const firestoreUser = await getUserFirebaseCollection(responseId);
       if (firestoreUser) {
-        console.log('CAIU NO IF');
         const user = firestoreUser.user;
         setFitJourneyUser(user);
         saveUserToStorage(user);
@@ -285,7 +291,6 @@ export const FirebaseAuthProvider = ({
         setSession(response);
         return;
       } else {
-        console.log('CAIU NO ELSE');
         const user = formatUserToFitJourneyPattern(response);
         addOrUpdateUserToFirestore(user);
         await saveUserToStorage(user);
