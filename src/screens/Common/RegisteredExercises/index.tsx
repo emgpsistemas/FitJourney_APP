@@ -7,57 +7,28 @@ import { Accordion } from '../../../components/Accordion';
 import { DeleteExerciseModal } from '../../../components/DeleteExerciseModal';
 import { EditExerciseModal } from '../../../components/EditExerciseModal';
 import { FitButton } from '../../../components/ui/FitButton';
-
-const categories = [
-  {
-    id: 1,
-    name: 'Peito',
-    exercises: [
-      {
-        id: 1,
-        name: 'Supino Reto',
-        description: 'Teste',
-      },
-      {
-        id: 2,
-        name: 'Supino Inclinado',
-        description: 'Teste',
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Ombros',
-    exercises: [
-      {
-        id: 3,
-        name: 'Elevação Lateral',
-        description: 'Teste',
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Pernas',
-    exercises: [
-      {
-        id: 4,
-        name: 'Leg Press 45º',
-        description: 'Teste',
-      },
-    ],
-  },
-];
+import { useExercises } from '../../../hooks/useExercises';
 
 export default function RegisteredExercises() {
   const { navigate } = useNavigation();
+  const { allExercises } = useExercises();
+
+  const categoriesWithExercises = allExercises.map((exercise) => {
+    return {
+      name: exercise.muscle_group,
+      exercises: allExercises.filter(
+        (exerciseToFilter) =>
+          exerciseToFilter.muscle_group === exercise.muscle_group,
+      ),
+    };
+  });
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={categories}
-        keyExtractor={(item) => String(item.id)}
+        data={categoriesWithExercises}
+        keyExtractor={(item) => String(item.name)}
         renderItem={({ item }) => {
           return (
             <Accordion.Root title={item.name}>
@@ -70,10 +41,7 @@ export default function RegisteredExercises() {
                     })}
                   >
                     <View className="mr-2">
-                      <DeleteExerciseModal
-                        categoryId={item.id}
-                        exerciseId={exercise.id}
-                      />
+                      <DeleteExerciseModal exerciseId={exercise.id} />
                     </View>
                     <View className="mr-3">
                       <EditExerciseModal

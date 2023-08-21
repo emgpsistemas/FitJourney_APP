@@ -16,6 +16,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import colors from 'tailwindcss/colors';
 import { Loading } from './src/components/Loading';
+import { ExercisesProvider } from './src/contexts/Exercises';
 import { FirebaseAuthProvider } from './src/contexts/FirebaseAuth';
 import Routes from './src/routes';
 
@@ -46,8 +47,10 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <FirebaseAuthProvider>
-          <StatusBar style="dark" />
-          <Routes />
+          <ExercisesProvider>
+            <StatusBar style="dark" />
+            <Routes />
+          </ExercisesProvider>
         </FirebaseAuthProvider>
       </NavigationContainer>
     </QueryClientProvider>

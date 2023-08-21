@@ -7,19 +7,14 @@ import { IconButton } from '../ui/IconButton';
 import { CustomModal } from '../ui/Modal';
 
 interface DeleteExerciseModalProps {
-  categoryId: number;
   exerciseId: number;
 }
 
-export function DeleteExerciseModal({
-  categoryId,
-  exerciseId,
-}: DeleteExerciseModalProps) {
+export function DeleteExerciseModal({ exerciseId }: DeleteExerciseModalProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const onSubmit = () => {
     const payload = {
-      categoryId,
       exerciseId,
     };
     try {
