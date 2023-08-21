@@ -13,6 +13,7 @@ export declare global {
       Step4: unknown;
       Step5: unknown;
       Step6: unknown;
+      Step7: unknown;
 
       // Home
       Home: unknown;

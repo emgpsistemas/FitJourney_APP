@@ -8,40 +8,65 @@ import { UserInfo } from '../../../components/UserInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 
-const userInfo = {
-  totalTrainings: 212,
-  memberSince: new Date('2022-08-22').toISOString(),
-  registerInfo: [
-    {
-      title: 'Gênero',
-      content: 'Masculino',
-    },
-    {
-      title: 'Idade',
-      content: '27 Anos',
-    },
-    {
-      title: 'Peso',
-      content: '72 Kg',
-    },
-    {
-      title: 'Altura',
-      content: '1,82 m',
-    },
-    {
-      title: 'Objetivo',
-      content: 'Hipertrofia',
-    },
-    {
-      title: 'Condicionamento Físico',
-      content: 'Intermediário',
-    },
-  ],
-};
-
 export default function Profile() {
   const { navigate } = useNavigation();
-  const { user } = useFirebaseAuth();
+  const { fitJourneyUser } = useFirebaseAuth();
+
+  function makeFitJourneyUserArray() {
+    const fitJourneyUserArray = Object.entries(fitJourneyUser).map(
+      ([key, value]) => {
+        if (key === 'gender')
+          return {
+            title: 'Gênero',
+            content: value,
+          };
+        if (key === 'age')
+          return {
+            title: 'Idade',
+            content: `${value} Anos`,
+          };
+        if (key === 'weight')
+          return {
+            title: 'Peso',
+            content: `${value} Kg`,
+          };
+        if (key === 'height')
+          return {
+            title: 'Altura',
+            content: `${value} m`,
+          };
+        if (key === 'goal')
+          return {
+            title: 'Objetivo',
+            content: value,
+          };
+        if (key === 'fitnessLevel')
+          return {
+            title: 'Condicionamento Físico',
+            content: value,
+          };
+        else return;
+      },
+    );
+
+    const filteredArray = fitJourneyUserArray.filter(
+      (item) => item !== undefined,
+    );
+    const final = {
+      totalTrainings: 0,
+      memberSince: new Date(fitJourneyUser.createdAt || '').toLocaleDateString(
+        'pt-BR',
+        {
+          year: 'numeric',
+          month: '2-digit',
+        },
+      ),
+      registerInfo: filteredArray,
+    };
+    return final;
+  }
+
+  const userInfo = makeFitJourneyUserArray();
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
@@ -57,7 +82,7 @@ export default function Profile() {
         <View>
           <ProfilePicture />
           <Text className="text-center font-openBold text-xl">
-            {user?.displayName}
+            {fitJourneyUser.displayName}
           </Text>
         </View>
         <View className="flex w-full flex-row items-center justify-center space-x-11 py-7">
@@ -75,20 +100,17 @@ export default function Profile() {
               Membro desde
             </Text>
             <Text className="font-openSemibold text-base text-zinc-900">
-              {new Date(userInfo.memberSince).toLocaleDateString('pt-BR', {
-                year: 'numeric',
-                month: '2-digit',
-              })}
+              {userInfo.memberSince}
             </Text>
           </View>
         </View>
 
         <UserInfo.Root>
           {userInfo.registerInfo.map((item, index) => (
-            <View key={`${item.title}-${index}`}>
+            <View key={`${item?.title}-${index}`}>
               <UserInfo.Card>
-                <UserInfo.CardTitle>{item.title}</UserInfo.CardTitle>
-                <UserInfo.CardContent>{item.content}</UserInfo.CardContent>
+                <UserInfo.CardTitle>{item?.title}</UserInfo.CardTitle>
+                <UserInfo.CardContent>{item?.content}</UserInfo.CardContent>
               </UserInfo.Card>
               {index !== userInfo.registerInfo.length - 1 ? (
                 <UserInfo.Divider />

@@ -1,4 +1,5 @@
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
+import { useEffect, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,27 +7,66 @@ import colors from 'tailwindcss/colors';
 import { StepInfo } from '../../../components/StepInfo';
 import { FitButton } from '../../../components/ui/FitButton';
 import { IconButton } from '../../../components/ui/IconButton';
-import { Goal } from '../../../contexts/RegisterUserInfo';
+import { FitnessLevel } from '../../../contexts/RegisterUserInfo';
+import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 import { useStep } from '../../../hooks/useStep';
+import { storage } from '../../../lib/mmkv/storage';
+import { FitJourneyUser } from '../../../utils/FormatUserToAddToFirestore';
 
-function StepFive() {
-  const { nextStep, previousStep, dispatchUserInfo } = useStep();
-
+function StepFitnessLevel() {
+  const [storageUser, setStorageUser] = useState({} as FitJourneyUser);
+  const { getUserFromFirestore, user } = useFirebaseAuth();
+  const { previousStep, dispatchUserInfo, userInfoState, onConfirm } =
+    useStep();
   const width = Dimensions.get('window').width;
-  const options: Goal[] = [
-    'Emagrecimento',
-    'Resistência',
-    'Hipertrofia',
-    'Saúde',
+  const options: FitnessLevel[] = [
+    'Não sei',
+    'Iniciante',
+    'Intermediário',
+    'Avançado',
+    'Atleta',
   ];
+
+  async function handleSubmit() {
+    try {
+      const fieldsToUpdate: FitJourneyUser = {
+        ...storageUser,
+        uid: user ? user.uid : storageUser.uid,
+        age: String(userInfoState.age),
+        weight: String(userInfoState.weight),
+        height: String(userInfoState.height),
+        gender: userInfoState.gender,
+        goal: userInfoState.goal,
+        fitnessLevel: userInfoState.fitnessLevel,
+        displayName: userInfoState.name,
+        isBasicInfoCompleted: true,
+      };
+      await onConfirm(fieldsToUpdate);
+      await getUserFromFirestore(fieldsToUpdate);
+    } catch (error) {
+      console.error('handleSubmit function error: ', error);
+    }
+  }
+
+  function getUserFromStorage() {
+    const storageUser = storage.getString('UserInfo');
+    if (storageUser) {
+      const jsonUser: FitJourneyUser = JSON.parse(storageUser);
+      setStorageUser(jsonUser);
+    }
+  }
+
+  useEffect(() => {
+    getUserFromStorage();
+  }, []);
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
-      <StepInfo>5</StepInfo>
+      <StepInfo>7</StepInfo>
       <View className="mt-8 flex-1">
         <View className="space-y-3">
           <Text className="text-center font-openBold text-lg text-zinc-900">
-            Qual é o seu objetivo?
+            Atualmente, como você se considera fisicamente?
           </Text>
         </View>
         <View className="flex-1 items-center justify-center space-y-10">
@@ -35,8 +75,11 @@ function StepFive() {
             <Carousel
               data={options}
               onSnapToItem={(item) => {
-                const selectedGoal = options[item];
-                dispatchUserInfo({ type: 'SET_GOAL', payload: selectedGoal });
+                const selectedLevel = options[item];
+                dispatchUserInfo({
+                  type: 'SET_FITNESS_LEVEL',
+                  payload: selectedLevel,
+                });
               }}
               autoPlay={false}
               loop={true}
@@ -76,8 +119,8 @@ function StepFive() {
           <CaretLeft size={20} weight="bold" color={colors.zinc[900]} />
         </IconButton>
         <View className="w-1/2 self-end">
-          <FitButton.Root variant="primary" onPress={nextStep}>
-            <FitButton.Text>Próximo</FitButton.Text>
+          <FitButton.Root variant="primary" onPress={() => handleSubmit()}>
+            <FitButton.Text>Finalizar</FitButton.Text>
             <FitButton.Icon icon={CaretRight} />
           </FitButton.Root>
         </View>
@@ -86,4 +129,4 @@ function StepFive() {
   );
 }
 
-export default StepFive;
+export default StepFitnessLevel;

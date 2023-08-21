@@ -12,24 +12,24 @@ import { useStep } from '../../../hooks/useStep';
 import { toastConfig } from '../../../lib/toast/config';
 import { handleNumberChange } from '../../../utils/HandleNumberInput';
 
-function StepTwo() {
+function StepWeight() {
   const {
     nextStep,
     previousStep,
     dispatchUserInfo,
-    userInfoState: { age },
+    userInfoState: { weight },
   } = useStep();
 
   const handleNextStep = () => {
     Toast.show({
       type: 'error',
       text1: 'Algo deu errado :(',
-      text2: 'Insira uma idade para continuar',
+      text2: 'Insira o seu peso para continuar',
       position: 'bottom',
       visibilityTime: 2000,
       autoHide: true,
     });
-    if (age === 0) {
+    if (weight === 0) {
     } else {
       nextStep();
     }
@@ -37,20 +37,20 @@ function StepTwo() {
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
-      <StepInfo>2</StepInfo>
+      <StepInfo>4</StepInfo>
       <View className="mt-8 flex-1">
         <View className="space-y-3">
           <Text className="text-center font-openBold text-lg text-zinc-900">
-            Qual é a sua idade?
+            Qual é o seu peso?
           </Text>
         </View>
         <View className="flex-1 items-center justify-center space-y-10">
           <InvisibleNumberInput
-            label={'anos'}
-            onChangeText={(age) =>
-              handleNumberChange(age, dispatchUserInfo, 'SET_AGE')
+            label={'kg'}
+            onChangeText={(weight) =>
+              handleNumberChange(weight, dispatchUserInfo, 'SET_WEIGHT')
             }
-            value={String(age)}
+            value={String(weight)}
             maxLength={3}
             placeholder="0"
           />
@@ -76,4 +76,4 @@ function StepTwo() {
   );
 }
 
-export default StepTwo;
+export default StepWeight;

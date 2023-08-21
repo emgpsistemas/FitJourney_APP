@@ -13,7 +13,7 @@ import { InvisibleNumberInput } from '../../../components/ui/InvisibleInput';
 import { toastConfig } from '../../../lib/toast/config';
 import { handleNumberChange } from '../../../utils/HandleNumberInput';
 
-function StepFour() {
+function StepHeight() {
   const {
     nextStep,
     previousStep,
@@ -38,7 +38,7 @@ function StepFour() {
 
   return (
     <SafeAreaView className="flex flex-1 flex-col justify-between bg-neutral-50 px-5 py-10">
-      <StepInfo>4</StepInfo>
+      <StepInfo>5</StepInfo>
       <View className="mt-8 flex-1">
         <View className="space-y-3">
           <Text className="text-center font-openBold text-lg text-zinc-900">
@@ -77,4 +77,4 @@ function StepFour() {
   );
 }
 
-export default StepFour;
+export default StepHeight;

@@ -1,5 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
+import { doc, updateDoc } from 'firebase/firestore';
 import React, { createContext, useEffect, useReducer, useState } from 'react';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
+import { FIRESTORE_DB } from '../lib/firebase/config';
+import { FitJourneyUser } from '../utils/FormatUserToAddToFirestore';
 
 export type Gender = 'Masculino' | 'Feminino';
 export type Goal = 'Emagrecimento' | 'Resistência' | 'Hipertrofia' | 'Saúde';
@@ -10,6 +14,7 @@ export type FitnessLevel =
   | 'Atleta'
   | 'Não sei';
 interface UserInfo {
+  name: string;
   gender: string;
   age: number;
   weight: number;
@@ -19,6 +24,7 @@ interface UserInfo {
 }
 
 export type ActionTypes =
+  | 'SET_NAME'
   | 'SET_GENDER'
   | 'SET_AGE'
   | 'SET_WEIGHT'
@@ -27,6 +33,7 @@ export type ActionTypes =
   | 'SET_FITNESS_LEVEL';
 
 export type Action =
+  | { type: 'SET_NAME'; payload: string }
   | { type: 'SET_GENDER'; payload: Gender }
   | { type: 'SET_AGE'; payload: number }
   | { type: 'SET_WEIGHT'; payload: number }
@@ -39,10 +46,14 @@ interface RegisterUserInfoContextData {
   previousStep: () => void;
   userInfoState: UserInfo;
   dispatchUserInfo: React.Dispatch<Action>;
+  maxStep: number;
+  onConfirm: (payload: FitJourneyUser) => Promise<void>;
 }
 
 const userInfoReducer = (state: UserInfo, action: Action): UserInfo => {
   switch (action.type) {
+    case 'SET_NAME':
+      return { ...state, name: action.payload };
     case 'SET_GENDER':
       return { ...state, gender: action.payload };
     case 'SET_AGE':
@@ -69,9 +80,13 @@ export const RegisterUserInfoProvider = ({
   children: React.ReactNode;
 }) => {
   const { navigate } = useNavigation();
+  const { getUserFirebaseCollection } = useFirebaseAuth();
   const [actualStep, setActualStep] = useState(1);
+  const minStep = 1;
+  const maxStep = 7;
 
   const [userInfoState, dispatchUserInfo] = useReducer(userInfoReducer, {
+    name: '',
     gender: '',
     age: 0,
     weight: 0,
@@ -82,19 +97,19 @@ export const RegisterUserInfoProvider = ({
 
   function nextStep() {
     try {
-      if (actualStep === 6) return;
+      if (actualStep === maxStep) return;
       setActualStep(actualStep + 1);
     } catch (error) {
-      console.log('nextStep function error => ', error);
+      console.error('nextStep function error => ', error);
     }
   }
 
   function previousStep() {
     try {
-      if (actualStep === 1) return;
+      if (actualStep === minStep) return;
       setActualStep(actualStep - 1);
     } catch (error) {
-      console.log('nextStep function error => ', error);
+      console.error('nextStep function error => ', error);
     }
   }
 
@@ -112,8 +127,25 @@ export const RegisterUserInfoProvider = ({
         return navigate('Step5');
       case 6:
         return navigate('Step6');
+      case 7:
+        return navigate('Step7');
       default:
         return false;
+    }
+  }
+
+  async function onConfirm(payload: FitJourneyUser) {
+    const collectionFounded = await getUserFirebaseCollection(payload.uid);
+    if (collectionFounded) {
+      const userDocRef = doc(
+        FIRESTORE_DB,
+        'users',
+        collectionFounded.documentId,
+      );
+      const fieldsToUpdate = {
+        ...payload,
+      };
+      await updateDoc(userDocRef, fieldsToUpdate);
     }
   }
 
@@ -128,6 +160,8 @@ export const RegisterUserInfoProvider = ({
         previousStep,
         userInfoState,
         dispatchUserInfo,
+        maxStep,
+        onConfirm,
       }}
     >
       {children}
