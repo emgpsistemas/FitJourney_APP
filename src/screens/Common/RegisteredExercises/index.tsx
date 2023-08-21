@@ -60,7 +60,7 @@ export default function RegisteredExercises() {
                       <EditExerciseModal
                         exercise={{
                           ...exercise,
-                          category: item.name,
+                          muscle_group: item.name,
                         }}
                       />
                     </View>

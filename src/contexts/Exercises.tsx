@@ -1,4 +1,10 @@
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  updateDoc,
+} from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { FIRESTORE_DB } from '../lib/firebase/config';
 import { NewExerciseFormData } from '../validations/common/CreateExercise';
@@ -11,8 +17,9 @@ interface MuscleGroup {
 interface ExercisesContextData {
   allExercises: NewExerciseFormData[];
   allMuscleGroups: MuscleGroup[];
-  getExercisesCollection: () => Promise<void>;
+  getExercisesCollection: () => Promise<NewExerciseFormData[]>;
   createExercise: (exercise: NewExerciseFormData) => Promise<void>;
+  updateExercise: (exercise: NewExerciseFormData) => Promise<void>;
 }
 
 export const ExercisesContext = createContext<ExercisesContextData>(
@@ -37,6 +44,7 @@ export const ExercisesProvider = ({
       },
     );
     setAllExercises(exercisesCollectionData as NewExerciseFormData[]);
+    return exercisesCollectionData as NewExerciseFormData[];
   }
 
   async function createExercise(exercise: NewExerciseFormData) {
@@ -44,6 +52,36 @@ export const ExercisesProvider = ({
       await addDoc(collection(FIRESTORE_DB, 'exercises'), exercise);
     } catch (error) {
       console.error('createExercise function error:', error);
+    } finally {
+      getExercisesCollection();
+    }
+  }
+
+  async function updateExercise(exercise: NewExerciseFormData) {
+    try {
+      const exercisesCollectionRef = collection(FIRESTORE_DB, 'exercises');
+      const exercisesCollectionSnapshot = await getDocs(exercisesCollectionRef);
+      const exercisesCollectionData = exercisesCollectionSnapshot.docs.map(
+        (doc) => {
+          const documentId = doc.id;
+          return { docId: documentId, data: doc.data() };
+        },
+      );
+      const exerciseToUpdate = exercisesCollectionData.find(
+        (exerciseToFind) => exerciseToFind.data.id === exercise.id,
+      );
+
+      if (exerciseToUpdate) {
+        const exerciseToUpdateRef = doc(
+          FIRESTORE_DB,
+          'exercises',
+          exerciseToUpdate.docId,
+        );
+
+        await updateDoc(exerciseToUpdateRef, exercise);
+      }
+    } catch (error) {
+      console.error('updateExercise function error:', error);
     } finally {
       getExercisesCollection();
     }
@@ -74,6 +112,7 @@ export const ExercisesProvider = ({
         allExercises,
         getExercisesCollection,
         createExercise,
+        updateExercise,
         allMuscleGroups,
       }}
     >
