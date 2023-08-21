@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   updateDoc,
@@ -20,6 +21,7 @@ interface ExercisesContextData {
   getExercisesCollection: () => Promise<NewExerciseFormData[]>;
   createExercise: (exercise: NewExerciseFormData) => Promise<void>;
   updateExercise: (exercise: NewExerciseFormData) => Promise<void>;
+  deleteExercise: (exercise: NewExerciseFormData) => Promise<void>;
 }
 
 export const ExercisesContext = createContext<ExercisesContextData>(
@@ -87,6 +89,35 @@ export const ExercisesProvider = ({
     }
   }
 
+  async function deleteExercise(exercise: NewExerciseFormData) {
+    try {
+      const exercisesCollectionRef = collection(FIRESTORE_DB, 'exercises');
+      const exercisesCollectionSnapshot = await getDocs(exercisesCollectionRef);
+      const exercisesCollectionData = exercisesCollectionSnapshot.docs.map(
+        (doc) => {
+          const documentId = doc.id;
+          return { docId: documentId, data: doc.data() };
+        },
+      );
+      const exerciseToDelete = exercisesCollectionData.find(
+        (exerciseToFind) => exerciseToFind.data.id === exercise.id,
+      );
+
+      if (exerciseToDelete) {
+        const exerciseToDeleteRef = doc(
+          FIRESTORE_DB,
+          'exercises',
+          exerciseToDelete.docId,
+        );
+        await deleteDoc(exerciseToDeleteRef);
+      }
+    } catch (error) {
+      console.error('deleteExercise function error:', error);
+    } finally {
+      getExercisesCollection();
+    }
+  }
+
   // ! Muscle Groups
   async function getMuscleGroupsCollection() {
     const muscleGroupsCollectionRef = collection(FIRESTORE_DB, 'muscleGroups');
@@ -113,6 +144,7 @@ export const ExercisesProvider = ({
         getExercisesCollection,
         createExercise,
         updateExercise,
+        deleteExercise,
         allMuscleGroups,
       }}
     >

@@ -57,7 +57,7 @@ export function EditExerciseModal({
     try {
       updateExercise(data);
     } catch (error: any) {
-      console.log('ERROR =>', error);
+      console.error('ERROR =>', error);
     } finally {
       reset();
       setIsModalVisible(false);

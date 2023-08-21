@@ -54,7 +54,7 @@ export default function RegisteredExercises() {
                     })}
                   >
                     <View className="mr-2">
-                      <DeleteExerciseModal exerciseId={exercise.id} />
+                      <DeleteExerciseModal exercise={exercise} />
                     </View>
                     <View className="mr-3">
                       <EditExerciseModal
