@@ -34,7 +34,7 @@ export default function Home() {
       <View className="mt-10 flex flex-1 items-center justify-center space-y-3 ">
         <FitButton.Root
           variant="primary"
-          onPress={() => navigate('RegisteredExercices')}
+          onPress={() => navigate('RegisteredExercises')}
         >
           <FitButton.Icon icon={ListPlus} />
           <FitButton.Text>Exercícios</FitButton.Text>

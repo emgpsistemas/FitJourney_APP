@@ -8,6 +8,7 @@ import { DeleteExerciseModal } from '../../../components/DeleteExerciseModal';
 import { EditExerciseModal } from '../../../components/EditExerciseModal';
 import { FitButton } from '../../../components/ui/FitButton';
 import { useExercises } from '../../../hooks/useExercises';
+import { uniqueID } from '../../../utils/uniqueID';
 
 export default function RegisteredExercises() {
   const { navigate } = useNavigation();
@@ -15,6 +16,7 @@ export default function RegisteredExercises() {
 
   const categoriesWithExercises = allExercises.map((exercise) => {
     return {
+      id: uniqueID(),
       name: exercise.muscle_group,
       exercises: allExercises.filter(
         (exerciseToFilter) =>
@@ -23,12 +25,23 @@ export default function RegisteredExercises() {
     };
   });
 
+  // Filter the duplicated categories
+  const categoriesWithExercisesFiltered = categoriesWithExercises
+    .filter(
+      (category, index, self) =>
+        index ===
+        self.findIndex(
+          (categoryToFilter) => categoryToFilter.name === category.name,
+        ),
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={categoriesWithExercises}
-        keyExtractor={(item) => String(item.name)}
+        data={categoriesWithExercisesFiltered}
+        keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => {
           return (
             <Accordion.Root title={item.name}>

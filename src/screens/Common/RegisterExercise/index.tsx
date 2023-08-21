@@ -1,25 +1,27 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
 import { Check } from 'phosphor-react-native';
-import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { ErrorText } from '../../../components/ErrorText';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { FitButton } from '../../../components/ui/FitButton';
 import { InputComposed } from '../../../components/ui/Input';
 import { Select } from '../../../components/ui/Select';
 import { TextArea } from '../../../components/ui/Textarea/index';
-import { fetchMuscleGroups } from '../../../services/get/muscle-groups/fetchAllMuscleGroups';
-import { MuscleGroup } from '../../../services/get/muscle-groups/interface';
-import { createExercise } from '../../../services/post/exercises/createExercise';
+import { useExercises } from '../../../hooks/useExercises';
+import { toastConfig } from '../../../lib/toast/config';
+import { uniqueID } from '../../../utils/uniqueID';
 import {
   NewExerciseFormData,
   newExerciseFormSchema,
 } from '../../../validations/common/CreateExercise';
 
 export function RegisterExercise() {
-  const [muscleGroups, setMuscleGroups] = useState([] as MuscleGroup[]);
+  const { allMuscleGroups, createExercise } = useExercises();
+  const { navigate } = useNavigation();
 
   const {
     control,
@@ -29,42 +31,49 @@ export function RegisterExercise() {
     getValues,
   } = useForm<NewExerciseFormData>({
     defaultValues: {
+      id: 0,
       name: '',
-      muscleGroup: '',
+      muscle_group: '',
       description: '',
     },
     resolver: zodResolver(newExerciseFormSchema),
   });
 
-  useEffect(() => {
-    fetchMuscleGroups(setMuscleGroups);
-  }, []);
-
-  const muscleGroupsNames = muscleGroups.map((muscleGroup) => muscleGroup.name);
+  const muscleGroupsNames = allMuscleGroups.map(
+    (muscleGroup) => muscleGroup.name,
+  );
 
   const muscleGroupsOptions = [
     'Selecione o Grupo Muscular',
-    ...muscleGroupsNames,
+    ...muscleGroupsNames.sort((a, b) => a.localeCompare(b)),
   ];
 
   async function handleRegisterExercise(data: NewExerciseFormData) {
-    const muscleGroupId =
-      muscleGroups.find((group) => group.name === data.muscleGroup)?.id || 0;
-
-    const newExercise = {
-      name: data.name,
-      muscle_group: muscleGroupId,
-      description: data.description,
-    };
-
     try {
-      await createExercise(newExercise);
-      console.log('Exercise created successfully');
+      const payload: NewExerciseFormData = {
+        ...data,
+        id: uniqueID(),
+      };
+      await createExercise(payload);
+      Toast.show({
+        type: 'success',
+        text1: 'Exercício cadastrado com sucesso!',
+        position: 'bottom',
+      });
     } catch (error) {
-      console.error('Error creating exercise:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao cadastrar exercício!',
+        text2: 'Tente novamente',
+        position: 'bottom',
+      });
+      console.error('handleRegisterExercise function error:', error);
+    } finally {
+      reset();
+      setTimeout(() => {
+        navigate('RegisteredExercises');
+      }, 2000);
     }
-
-    reset();
   }
 
   return (
@@ -105,9 +114,9 @@ export function RegisterExercise() {
                 setSelected={onChange}
               />
             )}
-            name="muscleGroup"
+            name="muscle_group"
           />
-          {errors.muscleGroup?.message ||
+          {errors.muscle_group?.message ||
           getValues().description === 'Selecione o Grupo Muscular' ? (
             <ErrorText>Um grupo muscular deve ser selecionado</ErrorText>
           ) : null}
@@ -137,6 +146,7 @@ export function RegisterExercise() {
           <FitButton.Text>Finalizar Cadastro</FitButton.Text>
         </FitButton.Root>
       </View>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }
