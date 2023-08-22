@@ -32,8 +32,7 @@ export type Action =
   | { type: 'SET_NAME'; payload: string }
   | { type: 'DECREMENT_TRAINING_REPETITIONS' }
   | { type: 'INCREMENT_TRAINING_REPETITIONS' }
-  | { type: 'SET_SELECTED_EXERCISES'; payload: Exercise[] };
-// | { type: 'SET_EXERCISE_REPETITIONS'; payload: Exercise[] }
-// | { type: 'SET_EXERCISE_SERIES'; payload: Exercise[] }
-// | { type: 'SET_EXERCISE_OBSERVATIONS'; payload: Exercise[] }
-// | { type: 'SET_EXERCISE_REFERENCE'; payload: Exercise[] }
+  | { type: 'SET_SELECTED_EXERCISES'; payload: Exercise[] }
+  | { type: 'UPDATE_REPETITIONS'; exerciseId: number; repetitions: number }
+  | { type: 'UPDATE_SERIES'; exerciseId: number; series: number }
+  | { type: 'UPDATE_OBSERVATIONS'; exerciseId: number; observations: string };

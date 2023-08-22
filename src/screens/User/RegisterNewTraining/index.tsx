@@ -41,6 +41,33 @@ const trainingRegisterReducer = (
         ...state,
         exercises: action.payload,
       };
+    case 'UPDATE_REPETITIONS':
+      return {
+        ...state,
+        exercises: state.exercises.map((exercise) =>
+          exercise.id === action.exerciseId
+            ? { ...exercise, repetitions: action.repetitions }
+            : exercise,
+        ),
+      };
+    case 'UPDATE_SERIES':
+      return {
+        ...state,
+        exercises: state.exercises.map((exercise) =>
+          exercise.id === action.exerciseId
+            ? { ...exercise, series: action.series }
+            : exercise,
+        ),
+      };
+    case 'UPDATE_OBSERVATIONS':
+      return {
+        ...state,
+        exercises: state.exercises.map((exercise) =>
+          exercise.id === action.exerciseId
+            ? { ...exercise, observations: action.observations }
+            : exercise,
+        ),
+      };
     default:
       return state;
   }
@@ -101,6 +128,33 @@ export function RegisterNewTraining() {
     dispatchTrainingRegisterState({
       type: 'SET_SELECTED_EXERCISES',
       payload: updatedExercises,
+    });
+  };
+
+  const handleRepetitionsChange = (exerciseId: number, repetitions: number) => {
+    dispatchTrainingRegisterState({
+      type: 'UPDATE_REPETITIONS',
+      exerciseId,
+      repetitions,
+    });
+  };
+
+  const handleSeriesChange = (exerciseId: number, series: number) => {
+    dispatchTrainingRegisterState({
+      type: 'UPDATE_SERIES',
+      exerciseId,
+      series,
+    });
+  };
+
+  const handleObservationsChange = (
+    exerciseId: number,
+    observations: string,
+  ) => {
+    dispatchTrainingRegisterState({
+      type: 'UPDATE_OBSERVATIONS',
+      exerciseId,
+      observations,
     });
   };
 
@@ -172,9 +226,10 @@ export function RegisterNewTraining() {
             label="EXERCÍCIOS"
           />
         </View>
-        {selectedExercises && selectedExercises.length > 0 ? (
+        {trainingRegisterState.exercises &&
+        trainingRegisterState.exercises.length > 0 ? (
           <View className="mt-4">
-            {exercisesWithAllInformation.map((exercise) => (
+            {trainingRegisterState.exercises.map((exercise) => (
               <View className="py-2" key={exercise.id}>
                 <Accordion.RootWithTrash
                   title={exercise.name}
@@ -203,7 +258,9 @@ export function RegisterNewTraining() {
                       <View className="flex w-[48%]">
                         <Input
                           label="Séries"
-                          onChangeText={(text) => console.log(text)}
+                          onChangeText={(text) => {
+                            handleSeriesChange(exercise.id, Number(text));
+                          }}
                           value={exercise.series.toString()}
                           className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
                         />
@@ -211,13 +268,18 @@ export function RegisterNewTraining() {
                       <View className="flex w-[48%]">
                         <Input
                           label="Repetições"
-                          onChangeText={(text) => console.log(text)}
+                          onChangeText={(text) => {
+                            handleRepetitionsChange(exercise.id, Number(text));
+                          }}
                           value={exercise.repetitions.toString()}
                           className="m-0 h-14 rounded-lg bg-white px-5 py-2 font-openSemibold"
                         />
                       </View>
                     </View>
                     <TextArea
+                      onChangeText={(text) =>
+                        handleObservationsChange(exercise.id, text)
+                      }
                       label="Observações"
                       value={exercise.observations}
                       className="m-0 rounded-lg bg-white px-5 py-2 font-openSemibold"
