@@ -11,17 +11,16 @@ import {
   useFonts,
 } from '@expo-google-fonts/open-sans';
 import { NavigationContainer } from '@react-navigation/native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import colors from 'tailwindcss/colors';
 import { Loading } from './src/components/Loading';
 import { ExercisesProvider } from './src/contexts/Exercises';
 import { FirebaseAuthProvider } from './src/contexts/FirebaseAuth';
+import { TrainingProvider } from './src/contexts/Trainings';
 import Routes from './src/routes';
 
 export default function App() {
-  const queryClient = new QueryClient();
   const [fontsLoaded] = useFonts({
     OpenSans_300Light,
     OpenSans_400Regular,
@@ -44,15 +43,15 @@ export default function App() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <NavigationContainer>
-        <FirebaseAuthProvider>
-          <ExercisesProvider>
+    <NavigationContainer>
+      <FirebaseAuthProvider>
+        <ExercisesProvider>
+          <TrainingProvider>
             <StatusBar style="dark" />
             <Routes />
-          </ExercisesProvider>
-        </FirebaseAuthProvider>
-      </NavigationContainer>
-    </QueryClientProvider>
+          </TrainingProvider>
+        </ExercisesProvider>
+      </FirebaseAuthProvider>
+    </NavigationContainer>
   );
 }

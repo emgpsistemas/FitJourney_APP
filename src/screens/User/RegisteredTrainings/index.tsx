@@ -5,9 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TrainingCard } from '../../../components/TrainingCard';
 import { FitButton } from '../../../components/ui/FitButton';
+import { useTrainings } from '../../../hooks/useTrainings';
 
 export default function RegisteredTrainings() {
   const navigation = useNavigation();
+  const { allTrainings } = useTrainings();
 
   const mock = [
     {
@@ -26,10 +28,11 @@ export default function RegisteredTrainings() {
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={mock}
-        renderItem={({ item, index }) => (
-          <TrainingCard key={`${index}-${item.name}`} training={item} />
-        )}
+        data={allTrainings}
+        renderItem={({ item, index }) => {
+          console.log('item', item);
+          return <TrainingCard key={`${index}-${item.name}`} training={item} />;
+        }}
         ItemSeparatorComponent={() => <View className="h-3" />}
         ListHeaderComponent={() => (
           <Text className="mb-10 font-openBold text-2xl text-zinc-900">
