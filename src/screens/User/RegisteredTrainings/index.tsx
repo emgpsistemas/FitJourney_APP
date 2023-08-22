@@ -11,26 +11,12 @@ export default function RegisteredTrainings() {
   const navigation = useNavigation();
   const { allTrainings } = useTrainings();
 
-  const mock = [
-    {
-      id: 1,
-      name: 'Treino A',
-      muscleGroups: ['Peito', 'Bíceps'],
-    },
-    { id: 2, name: 'Treino B', muscleGroups: ['Costas', 'Tríceps'] },
-    { id: 3, name: 'Treino C', muscleGroups: ['Ombro', 'Abdômen'] },
-    { id: 4, name: 'Treino D', muscleGroups: ['Pernas', 'Panturrilhas'] },
-    { id: 5, name: 'Treino E', muscleGroups: ['Glúteos', 'Abdômen'] },
-    { id: 6, name: 'Treino F', muscleGroups: ['Corpo Inteiro', 'Cardio'] },
-  ];
-
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
       <FlatList
         showsVerticalScrollIndicator={false}
         data={allTrainings}
         renderItem={({ item, index }) => {
-          console.log('item', item);
           return <TrainingCard key={`${index}-${item.name}`} training={item} />;
         }}
         ItemSeparatorComponent={() => <View className="h-3" />}

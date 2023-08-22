@@ -1,5 +1,5 @@
 import { Check, Minus, Plus, Trash } from 'phosphor-react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -10,42 +10,72 @@ import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
 import { MultipleSelect } from '../../../components/ui/MultipleSelect';
 import { TextArea } from '../../../components/ui/Textarea';
+import { useExercises } from '../../../hooks/useExercises';
+import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
 import { toastConfig } from '../../../lib/toast/config';
+import {
+  Action,
+  MultipleSelectOption,
+  TrainingForm,
+} from './interface.interface';
 
-interface MultipleSelectOption {
-  value: number | string;
-  label: string;
-}
-
-const exercisesMock = [
-  {
-    id: 1,
-    name: 'Supino Reto',
-    description: 'Descrição do exercício',
-    muscleGroup: 'Peito',
-  },
-  {
-    id: 2,
-    name: 'Supino Inclinado',
-    description: 'Descrição do exercício',
-    muscleGroup: 'Peito',
-  },
-  {
-    id: 3,
-    name: 'Leg Press',
-    description: 'Descrição do exercício',
-    muscleGroup: 'Pernas',
-  },
-];
+const trainingRegisterReducer = (
+  state: TrainingForm,
+  action: Action,
+): TrainingForm => {
+  switch (action.type) {
+    case 'SET_NAME':
+      return { ...state, name: action.payload };
+    case 'DECREMENT_TRAINING_REPETITIONS':
+      return {
+        ...state,
+        training_repetitions: state.training_repetitions - 1,
+      };
+    case 'INCREMENT_TRAINING_REPETITIONS':
+      return {
+        ...state,
+        training_repetitions: state.training_repetitions + 1,
+      };
+    default:
+      return state;
+  }
+};
 
 export function RegisterNewTraining() {
-  const [allExercises, setAllExercises] = useState(exercisesMock);
-  const [repetitions, setRepetitions] = useState(10);
-
+  const { fitJourneyUser } = useFirebaseAuth();
+  const { allExercises } = useExercises();
   const [exercisesOptions, setExercisesOptions] = useState<
     MultipleSelectOption[]
   >([]);
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+
+  const [trainingRegisterState, dispatchTrainingRegisterState] = useReducer(
+    trainingRegisterReducer,
+    {
+      name: '',
+      exercises: [],
+      training_repetitions: 10,
+    },
+  );
+
+  console.log('trainingRegisterState', trainingRegisterState);
+
+  const exercisesWithAllInformation = selectedExercises.map(
+    (selectedExercise) => {
+      const foundExercise = allExercises.find(
+        (exercise) => exercise.id === selectedExercise,
+      );
+      return {
+        id: foundExercise!.id,
+        name: foundExercise!.name,
+        description: foundExercise!.description,
+        muscleGroup: foundExercise!.muscle_group,
+        repetitions: 10,
+        series: 3,
+        observations: '',
+      };
+    },
+  );
 
   const formatExercises = () => {
     const formatedExercises = allExercises.map((exercise) => {
@@ -56,19 +86,6 @@ export function RegisterNewTraining() {
     });
     setExercisesOptions(formatedExercises);
   };
-
-  const exercisesWithAllInformation = selectedExercises.map((exercise) => {
-    const foundExercise = allExercises.find((ex) => ex.id === exercise);
-    return {
-      id: foundExercise!.id,
-      name: foundExercise!.name,
-      description: foundExercise!.description,
-      muscleGroup: foundExercise!.muscleGroup,
-      repetitions: 10,
-      series: 3,
-      observations: '',
-    };
-  });
 
   const handleConfirm = () => {
     if (selectedExercises.length === 0) {
@@ -81,7 +98,12 @@ export function RegisterNewTraining() {
         autoHide: true,
       });
     } else {
-      console.log('Tudo certo');
+      const payload = {
+        exercises: exercisesWithAllInformation,
+        user_id: fitJourneyUser.uid,
+        training_repetitions: trainingRegisterState.training_repetitions,
+      };
+      console.log('PAYLOAD =>', payload);
     }
   };
 
@@ -97,13 +119,25 @@ export function RegisterNewTraining() {
           <ScreenTitle.Text>Cadastrar Treino</ScreenTitle.Text>
         </ScreenTitle.Root>
         <View className="pt-10">
+          <Input
+            label="NOME DO TREINO"
+            onChangeText={(text) =>
+              dispatchTrainingRegisterState({
+                type: 'SET_NAME',
+                payload: text,
+              })
+            }
+            value={trainingRegisterState.name}
+          />
+        </View>
+        <View className="pt-4">
           <MultipleSelect
             options={exercisesOptions.sort((a, b) =>
               a.label > b.label ? 1 : -1,
             )}
             selected={selectedExercises}
             setSelected={setSelectedExercises}
-            label="NOME DO EXERCÍCIO"
+            label="EXERCÍCIOS"
           />
         </View>
         {selectedExercises && selectedExercises.length > 0 ? (
@@ -112,7 +146,6 @@ export function RegisterNewTraining() {
               <View className="py-2" key={exercise.id}>
                 <Accordion.RootWithTrash
                   title={exercise.name}
-                  isInitiallyOpen
                   trashComponent={
                     <TouchableOpacity
                       className="w-12 items-center justify-center rounded-l-lg bg-red-700"
@@ -184,18 +217,26 @@ export function RegisterNewTraining() {
             <TouchableOpacity
               className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-yellow-400 p-2"
               activeOpacity={0.7}
-              onPress={() => setRepetitions(repetitions - 1)}
+              onPress={() =>
+                dispatchTrainingRegisterState({
+                  type: 'DECREMENT_TRAINING_REPETITIONS',
+                })
+              }
             >
               <Minus size={24} color={colors.zinc[900]} weight="bold" />
             </TouchableOpacity>
 
             <Text className="font-openBold text-lg text-zinc-900">
-              {repetitions}
+              {trainingRegisterState.training_repetitions}
             </Text>
             <TouchableOpacity
               className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-yellow-400 p-2"
               activeOpacity={0.7}
-              onPress={() => setRepetitions(repetitions + 1)}
+              onPress={() =>
+                dispatchTrainingRegisterState({
+                  type: 'INCREMENT_TRAINING_REPETITIONS',
+                })
+              }
             >
               <Plus size={24} color={colors.zinc[900]} weight="bold" />
             </TouchableOpacity>

@@ -61,7 +61,7 @@ export function MultipleSelect({
           }}
           style={{
             zIndex: 50,
-            backgroundColor: '#F8F9FA',
+            backgroundColor: '#f5f5f5',
             height: 56,
             borderRadius: 8,
             borderWidth: 0,

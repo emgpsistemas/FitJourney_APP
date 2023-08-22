@@ -1,5 +1,6 @@
 import { DocumentReference, collection, getDocs } from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import { FIRESTORE_DB } from '../lib/firebase/config';
 import { NewExerciseFormData } from '../validations/common/CreateExercise';
 
@@ -28,6 +29,8 @@ interface Training {
   name: string;
   training_repetitions: number;
   user_id: string;
+  actual_training: string;
+  last_training: string;
 }
 
 export interface CompleteTraining extends Training {
@@ -49,9 +52,8 @@ export const TrainingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { fitJourneyUser } = useFirebaseAuth();
   const [allTrainings, setAllTrainings] = useState<CompleteTraining[]>([]);
-
-  console.log('allTrainings', allTrainings);
 
   // ! Exercises
   async function getExercisesCollection() {
@@ -76,6 +78,11 @@ export const TrainingProvider = ({
         return { data: doc.data(), id: doc.id };
       },
     );
+
+    // const filteredTrainingsCollectionDataByUser =
+    //   trainingsCollectionData.filter(
+    //     (training) => training.data.user_id === fitJourneyUser.uid,
+    //   );
 
     const trainingsCollectionDataWithExercises = trainingsCollectionData.map(
       (training) => {
