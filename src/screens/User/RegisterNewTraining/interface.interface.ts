@@ -6,6 +6,16 @@ export interface MultipleSelectOption {
 }
 
 export interface Exercise {
+  id: number;
+  name: string;
+  description: string;
+  muscle_group: string;
+  repetitions: number;
+  series: number;
+  observations: string;
+}
+
+export interface PayloadExercise {
   observations: string;
   reference: DocumentReference;
   repetitions: number;
@@ -20,9 +30,10 @@ export interface TrainingForm {
 
 export type Action =
   | { type: 'SET_NAME'; payload: string }
-  | { type: 'SET_EXERCISE_REPETITIONS'; payload: Exercise[] }
-  | { type: 'SET_EXERCISE_SERIES'; payload: Exercise[] }
-  | { type: 'SET_EXERCISE_OBSERVATIONS'; payload: Exercise[] }
-  | { type: 'SET_EXERCISE_REFERENCE'; payload: Exercise[] }
   | { type: 'DECREMENT_TRAINING_REPETITIONS' }
-  | { type: 'INCREMENT_TRAINING_REPETITIONS' };
+  | { type: 'INCREMENT_TRAINING_REPETITIONS' }
+  | { type: 'SET_SELECTED_EXERCISES'; payload: Exercise[] };
+// | { type: 'SET_EXERCISE_REPETITIONS'; payload: Exercise[] }
+// | { type: 'SET_EXERCISE_SERIES'; payload: Exercise[] }
+// | { type: 'SET_EXERCISE_OBSERVATIONS'; payload: Exercise[] }
+// | { type: 'SET_EXERCISE_REFERENCE'; payload: Exercise[] }

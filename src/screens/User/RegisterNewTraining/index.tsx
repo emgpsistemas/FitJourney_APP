@@ -36,6 +36,11 @@ const trainingRegisterReducer = (
         ...state,
         training_repetitions: state.training_repetitions + 1,
       };
+    case 'SET_SELECTED_EXERCISES':
+      return {
+        ...state,
+        exercises: action.payload,
+      };
     default:
       return state;
   }
@@ -77,6 +82,28 @@ export function RegisterNewTraining() {
     },
   );
 
+  const handleExerciseSelection = (selectedExerciseIds: number[]) => {
+    const updatedExercises = selectedExerciseIds.map((selectedExerciseId) => {
+      const foundExercise = allExercises.find(
+        (exercise) => exercise.id === selectedExerciseId,
+      );
+      return {
+        id: foundExercise!.id,
+        name: foundExercise!.name,
+        description: foundExercise!.description,
+        muscle_group: foundExercise!.muscle_group,
+        repetitions: 10,
+        series: 3,
+        observations: '',
+      };
+    });
+
+    dispatchTrainingRegisterState({
+      type: 'SET_SELECTED_EXERCISES',
+      payload: updatedExercises,
+    });
+  };
+
   const formatExercises = () => {
     const formatedExercises = allExercises.map((exercise) => {
       return {
@@ -110,6 +137,11 @@ export function RegisterNewTraining() {
   useEffect(() => {
     formatExercises();
   }, []);
+
+  useEffect(() => {
+    formatExercises();
+    handleExerciseSelection(selectedExercises);
+  }, [selectedExercises]);
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
