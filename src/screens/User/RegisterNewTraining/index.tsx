@@ -1,3 +1,4 @@
+import { addDoc, collection } from 'firebase/firestore';
 import { Check, Minus, Plus, Trash } from 'phosphor-react-native';
 import { useEffect, useReducer, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -12,6 +13,8 @@ import { MultipleSelect } from '../../../components/ui/MultipleSelect';
 import { TextArea } from '../../../components/ui/Textarea';
 import { useExercises } from '../../../hooks/useExercises';
 import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
+import { useTrainings } from '../../../hooks/useTrainings';
+import { FIRESTORE_DB } from '../../../lib/firebase/config';
 import { toastConfig } from '../../../lib/toast/config';
 import {
   Action,
@@ -75,6 +78,7 @@ const trainingRegisterReducer = (
 
 export function RegisterNewTraining() {
   const { fitJourneyUser } = useFirebaseAuth();
+  const { getTrainingsCollection } = useTrainings();
   const { allExercises } = useExercises();
   const [exercisesOptions, setExercisesOptions] = useState<
     MultipleSelectOption[]
@@ -89,8 +93,6 @@ export function RegisterNewTraining() {
       training_repetitions: 10,
     },
   );
-
-  console.log('trainingRegisterState', trainingRegisterState);
 
   const exercisesWithAllInformation = selectedExercises.map(
     (selectedExercise) => {
@@ -168,6 +170,16 @@ export function RegisterNewTraining() {
     setExercisesOptions(formatedExercises);
   };
 
+  async function createTraining(training: any) {
+    try {
+      await addDoc(collection(FIRESTORE_DB, 'trainings'), training);
+    } catch (error) {
+      console.error('createTraining function error:', error);
+    } finally {
+      getTrainingsCollection();
+    }
+  }
+
   const handleConfirm = () => {
     if (selectedExercises.length === 0) {
       Toast.show({
@@ -180,11 +192,15 @@ export function RegisterNewTraining() {
       });
     } else {
       const payload = {
-        exercises: exercisesWithAllInformation,
         user_id: fitJourneyUser.uid,
+        name: trainingRegisterState.name,
         training_repetitions: trainingRegisterState.training_repetitions,
+        actual_training: '1',
+        created_at: new Date().toISOString(),
+        last_training: null,
+        exercises: trainingRegisterState.exercises,
       };
-      console.log('PAYLOAD =>', payload);
+      createTraining(payload);
     }
   };
 
