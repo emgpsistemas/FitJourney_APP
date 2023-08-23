@@ -15,8 +15,12 @@ interface MuscleGroup {
   name: string;
 }
 
+interface ExercisesWithReference extends NewExerciseFormData {
+  docId: string;
+}
+
 interface ExercisesContextData {
-  allExercises: NewExerciseFormData[];
+  allExercises: ExercisesWithReference[];
   allMuscleGroups: MuscleGroup[];
   getExercisesCollection: () => Promise<NewExerciseFormData[]>;
   createExercise: (exercise: NewExerciseFormData) => Promise<void>;
@@ -33,7 +37,9 @@ export const ExercisesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [allExercises, setAllExercises] = useState<NewExerciseFormData[]>([]);
+  const [allExercises, setAllExercises] = useState<ExercisesWithReference[]>(
+    [],
+  );
   const [allMuscleGroups, setAllMuscleGrops] = useState<MuscleGroup[]>([]);
 
   // ! Exercises
@@ -42,11 +48,11 @@ export const ExercisesProvider = ({
     const exercisesCollectionSnapshot = await getDocs(exercisesCollectionRef);
     const exercisesCollectionData = exercisesCollectionSnapshot.docs.map(
       (doc) => {
-        return { ...doc.data() };
+        return { ...doc.data(), docId: doc.id };
       },
     );
-    setAllExercises(exercisesCollectionData as NewExerciseFormData[]);
-    return exercisesCollectionData as NewExerciseFormData[];
+    setAllExercises(exercisesCollectionData as ExercisesWithReference[]);
+    return exercisesCollectionData as ExercisesWithReference[];
   }
 
   async function createExercise(exercise: NewExerciseFormData) {

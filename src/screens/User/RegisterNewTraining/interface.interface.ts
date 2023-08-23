@@ -1,4 +1,4 @@
-import { DocumentReference } from 'firebase/firestore';
+import { DocumentData, DocumentReference } from 'firebase/firestore';
 
 export interface MultipleSelectOption {
   value: number | string;
@@ -6,6 +6,7 @@ export interface MultipleSelectOption {
 }
 
 export interface Exercise {
+  docId: string;
   id: number;
   name: string;
   description: string;
@@ -17,7 +18,7 @@ export interface Exercise {
 
 export interface PayloadExercise {
   observations: string;
-  reference: DocumentReference;
+  reference: DocumentReference<DocumentData, DocumentData>;
   repetitions: number;
   series: number;
 }
@@ -36,3 +37,13 @@ export type Action =
   | { type: 'UPDATE_REPETITIONS'; exerciseId: number; repetitions: number }
   | { type: 'UPDATE_SERIES'; exerciseId: number; series: number }
   | { type: 'UPDATE_OBSERVATIONS'; exerciseId: number; observations: string };
+
+export interface PayloadCreateTraining {
+  user_id: string;
+  name: string;
+  training_repetitions: number;
+  actual_training: string;
+  created_at: string;
+  last_training: null | string;
+  exercises: PayloadExercise[];
+}

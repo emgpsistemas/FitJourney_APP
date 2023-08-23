@@ -1,4 +1,4 @@
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc } from 'firebase/firestore';
 import { Check, Minus, Plus, Trash } from 'phosphor-react-native';
 import { useEffect, useReducer, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -19,6 +19,7 @@ import { toastConfig } from '../../../lib/toast/config';
 import {
   Action,
   MultipleSelectOption,
+  PayloadCreateTraining,
   TrainingForm,
 } from './interface.interface';
 
@@ -94,29 +95,13 @@ export function RegisterNewTraining() {
     },
   );
 
-  const exercisesWithAllInformation = selectedExercises.map(
-    (selectedExercise) => {
-      const foundExercise = allExercises.find(
-        (exercise) => exercise.id === selectedExercise,
-      );
-      return {
-        id: foundExercise!.id,
-        name: foundExercise!.name,
-        description: foundExercise!.description,
-        muscleGroup: foundExercise!.muscle_group,
-        repetitions: 10,
-        series: 3,
-        observations: '',
-      };
-    },
-  );
-
   const handleExerciseSelection = (selectedExerciseIds: number[]) => {
     const updatedExercises = selectedExerciseIds.map((selectedExerciseId) => {
       const foundExercise = allExercises.find(
         (exercise) => exercise.id === selectedExerciseId,
       );
       return {
+        docId: foundExercise!.docId,
         id: foundExercise!.id,
         name: foundExercise!.name,
         description: foundExercise!.description,
@@ -170,7 +155,7 @@ export function RegisterNewTraining() {
     setExercisesOptions(formatedExercises);
   };
 
-  async function createTraining(training: any) {
+  async function createTraining(training: PayloadCreateTraining) {
     try {
       await addDoc(collection(FIRESTORE_DB, 'trainings'), training);
     } catch (error) {
@@ -198,7 +183,14 @@ export function RegisterNewTraining() {
         actual_training: '1',
         created_at: new Date().toISOString(),
         last_training: null,
-        exercises: trainingRegisterState.exercises,
+        exercises: trainingRegisterState.exercises.map((exercise) => {
+          return {
+            reference: doc(FIRESTORE_DB, 'exercises', exercise.docId),
+            repetitions: exercise.repetitions,
+            series: exercise.series,
+            observations: exercise.observations,
+          };
+        }),
       };
       createTraining(payload);
     }
