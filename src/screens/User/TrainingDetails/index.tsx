@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import clsx from 'clsx';
+import { collection, getDocs } from 'firebase/firestore';
 import { Check } from 'phosphor-react-native';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -8,105 +9,108 @@ import { Alert, FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Accordion } from '../../../components/Accordion';
 import { Checkbox } from '../../../components/Checkbox';
+import { Loading } from '../../../components/Loading';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { FIRESTORE_DB } from '../../../lib/firebase/config';
 import {
   TrainingDetailsFormData,
   trainingDetailsSchema,
 } from '../../../validations/User/TrainingDetails';
+import { TrainingDetailsInfo } from './interface.interface';
 
-const training = {
-  name: 'Treino A',
-  exercises: [
-    {
-      id: 1,
-      name: 'Supino Reto',
-      description:
-        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-      observations:
-        '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-      series: [
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Supino Declinado',
-      description:
-        'Deite-se em um banco declinado, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-      observations:
-        '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-      series: [
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-      ],
-    },
-  ],
-};
+// const training = {
+//   name: 'Treino A',
+//   exercises: [
+//     {
+//       id: '1',
+//       name: 'Supino Reto',
+//       description:
+//         'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+//       observations:
+//         '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
+//       series: [
+//         {
+//           isChecked: false,
+//           repetitions: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//           weight: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//         },
+//         {
+//           isChecked: false,
+//           repetitions: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//           weight: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//         },
+//         {
+//           isChecked: false,
+//           repetitions: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//           weight: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//         },
+//       ],
+//     },
+//     {
+//       id: 2,
+//       name: 'Supino Declinado',
+//       description:
+//         'Deite-se em um banco declinado, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
+//       observations:
+//         '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
+//       series: [
+//         {
+//           isChecked: false,
+//           repetitions: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//           weight: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//         },
+//         {
+//           isChecked: false,
+//           repetitions: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//           weight: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//         },
+//         {
+//           isChecked: false,
+//           repetitions: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//           weight: {
+//             actual: '0',
+//             lastTraining: '0',
+//           },
+//         },
+//       ],
+//     },
+//   ],
+// };
 
 interface Serie {
   isChecked: boolean;
@@ -121,11 +125,15 @@ interface Serie {
 }
 
 export function TrainingDetails() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [trainingData, setTrainingData] = useState<TrainingDetailsInfo>(
+    {} as TrainingDetailsInfo,
+  );
   const [exerciseBorderColors, setExerciseBorderColors] = useState<any>({});
 
   const route = useRoute();
   const { goBack } = useNavigation();
-  const { id } = route.params as { id: number };
+  const { id } = route.params as { id: string };
 
   const {
     control,
@@ -134,15 +142,36 @@ export function TrainingDetails() {
     reset,
     getValues,
     watch,
+    setValue,
   } = useForm<TrainingDetailsFormData>({
     defaultValues: {
-      name: training.name,
-      exercises: training.exercises,
+      name: '',
+      exercises: [],
     },
     resolver: zodResolver(trainingDetailsSchema),
   });
+  const trainingExercises = getValues('exercises');
 
   const exercises = watch('exercises', []);
+
+  const getTrainingDetailsFromFirestore = async () => {
+    try {
+      const trainingsCollectionRef = collection(FIRESTORE_DB, 'trainings');
+      const trainingsCollectionSnapshot = await getDocs(trainingsCollectionRef);
+      const filteredTrainingsCollectionData =
+        trainingsCollectionSnapshot.docs.filter((doc) => doc.id === id);
+      const trainingData =
+        filteredTrainingsCollectionData[0].data() as TrainingDetailsInfo;
+      setTrainingData(trainingData);
+      setValue('name', trainingData.name);
+
+      console.log('trainingData', trainingData);
+    } catch (error: any) {
+      Alert.alert('Erro ao buscar treino', error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onSubmit = (data: TrainingDetailsFormData) => {
     try {
@@ -199,8 +228,16 @@ export function TrainingDetails() {
   };
 
   useEffect(() => {
+    getTrainingDetailsFromFirestore();
+  }, []);
+
+  useEffect(() => {
     defineBorderColor();
   }, [exercises]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
@@ -208,22 +245,29 @@ export function TrainingDetails() {
         <ScreenTitle.GoBackButton />
         <View
           className={clsx('mr-3 h-4 w-4 rounded-full bg-gray-500', {
-            'bg-yellow-400': training.name === 'Treino A',
-            'bg-rose-500': training.name === 'Treino B',
-            'bg-lime-500': training.name === 'Treino C',
-            'bg-cyan-500': training.name === 'Treino D',
-            'bg-purple-500': training.name === 'Treino E',
+            'bg-yellow-400': trainingData.name === 'Treino A',
+            'bg-rose-500': trainingData.name === 'Treino B',
+            'bg-lime-500': trainingData.name === 'Treino C',
+            'bg-cyan-500': trainingData.name === 'Treino D',
+            'bg-purple-500': trainingData.name === 'Treino E',
           })}
         />
-        <ScreenTitle.Text>Treino {id}</ScreenTitle.Text>
-        <ScreenTitle.TrainProgress>0/10</ScreenTitle.TrainProgress>
+        <ScreenTitle.Text>{trainingData.name}</ScreenTitle.Text>
+        <ScreenTitle.TrainProgress>{`${trainingData.actual_training}/${trainingData.training_repetitions}`}</ScreenTitle.TrainProgress>
       </ScreenTitle.Root>
       <FlatList
         className="flex flex-1 pt-10"
-        ListHeaderComponent={() => <TrainingInfo />}
+        ListHeaderComponent={() => (
+          <TrainingInfo
+            trainingDates={{
+              startDate: trainingData.created_at,
+              lastTrainingDate: trainingData.last_training,
+            }}
+          />
+        )}
         ItemSeparatorComponent={() => <View className="h-4" />}
         showsVerticalScrollIndicator={false}
-        data={training.exercises}
+        data={trainingExercises}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item, index }) => {
           return (
@@ -235,7 +279,7 @@ export function TrainingDetails() {
                 'border-green-500': exerciseBorderColors[item.id] === 'green',
               })}
             >
-              <Accordion.Root title={item.name}>
+              <Accordion.Root title={item.name ? item.name : ''}>
                 <Accordion.Content>
                   <View className="mb-4 flex flex-col">
                     <Accordion.ContentTitle>DESCRIÇÃO: </Accordion.ContentTitle>

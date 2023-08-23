@@ -180,15 +180,25 @@ export function RegisterNewTraining() {
         user_id: fitJourneyUser.uid,
         name: trainingRegisterState.name,
         training_repetitions: trainingRegisterState.training_repetitions,
-        actual_training: '1',
+        actual_training: 1,
         created_at: new Date().toISOString(),
         last_training: null,
         exercises: trainingRegisterState.exercises.map((exercise) => {
+          let lastTraining = [];
+
+          for (let index = 0; index < exercise.series; index++) {
+            lastTraining.push({
+              repetitions: null,
+              weight: null,
+            });
+          }
+
           return {
             reference: doc(FIRESTORE_DB, 'exercises', exercise.docId),
             repetitions: exercise.repetitions,
             series: exercise.series,
             observations: exercise.observations,
+            last_training: lastTraining,
           };
         }),
       };

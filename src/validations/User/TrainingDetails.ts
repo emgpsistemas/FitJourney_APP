@@ -3,7 +3,7 @@ import { z } from 'zod';
 export type TrainingDetailsFormData = z.infer<typeof trainingDetailsSchema>;
 
 export const exerciseFormSchema = z.object({
-  id: z.number().optional(),
+  id: z.string(),
   name: z.string().optional(),
   description: z.string().optional(),
   observations: z.string().optional(),

@@ -16,11 +16,17 @@ export interface Exercise {
   observations: string;
 }
 
+export interface LastTraining {
+  repetitions: number | null;
+  weight: number | null;
+}
+
 export interface PayloadExercise {
   observations: string;
   reference: DocumentReference<DocumentData, DocumentData>;
   repetitions: number;
   series: number;
+  last_training: LastTraining[];
 }
 
 export interface TrainingForm {
@@ -42,7 +48,7 @@ export interface PayloadCreateTraining {
   user_id: string;
   name: string;
   training_repetitions: number;
-  actual_training: string;
+  actual_training: number;
   created_at: string;
   last_training: null | string;
   exercises: PayloadExercise[];
