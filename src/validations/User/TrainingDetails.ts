@@ -11,12 +11,12 @@ export const exerciseFormSchema = z.object({
     z.object({
       isChecked: z.boolean(),
       repetitions: z.object({
-        actual: z.string(),
-        lastTraining: z.string(),
+        actual: z.number(),
+        lastTraining: z.number(),
       }),
       weight: z.object({
-        actual: z.string(),
-        lastTraining: z.string(),
+        actual: z.number(),
+        lastTraining: z.number(),
       }),
     }),
   ),

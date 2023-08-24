@@ -2,18 +2,19 @@ import { collection, getDocs } from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 import { FIRESTORE_DB } from '../../lib/firebase/config';
-import { uniqueID } from '../../utils/uniqueID';
 import {
-  CompleteExercise,
   CompleteTraining,
-  Exercise,
   ExerciseCollectionData,
+  FinalSeriesData,
+  TrainingCollectionData,
   TrainingDetailsInfo,
+  TrainingExercisesData,
 } from './interface';
 
 interface TrainingsContextData {
   allTrainings: CompleteTraining[];
   trainingDetails: TrainingDetailsInfo;
+  trainingExercisesData: TrainingExercisesData[];
   getTrainingsCollection: () => Promise<CompleteTraining[]>;
   getTrainingDetails: (trainingId: string) => Promise<void>;
 }
@@ -32,9 +33,12 @@ export const TrainingProvider = ({
   const [trainingDetails, setTrainingDetails] = useState<TrainingDetailsInfo>(
     {} as TrainingDetailsInfo,
   );
+  const [trainingExercisesData, setTrainingExercisesData] = useState<
+    TrainingExercisesData[]
+  >([]);
 
   // ! Exercises
-  async function getExercisesCollection() {
+  async function getExercisesFromFirestore() {
     const exercisesCollectionRef = collection(FIRESTORE_DB, 'exercises');
     const exercisesCollectionSnapshot = await getDocs(exercisesCollectionRef);
     const exercisesCollectionData = exercisesCollectionSnapshot.docs.map(
@@ -46,16 +50,20 @@ export const TrainingProvider = ({
   }
 
   // ! Trainings
-  async function getTrainingsCollection() {
-    const exercisesCollectionData = await getExercisesCollection();
-
+  async function getTrainingsFromFirestore() {
     const trainingsCollectionRef = collection(FIRESTORE_DB, 'trainings');
     const trainingsCollectionSnapshot = await getDocs(trainingsCollectionRef);
     const trainingsCollectionData = trainingsCollectionSnapshot.docs.map(
       (doc) => {
-        return { data: doc.data(), id: doc.id };
+        return { data: doc.data(), docId: doc.id };
       },
     );
+    return trainingsCollectionData as TrainingCollectionData[];
+  }
+
+  async function getTrainingsCollection() {
+    const exercisesCollectionData = await getExercisesFromFirestore();
+    const trainingsCollectionData = await getTrainingsFromFirestore();
 
     const filteredTrainingsCollectionDataByUser =
       trainingsCollectionData.filter(
@@ -64,19 +72,17 @@ export const TrainingProvider = ({
 
     const trainingsCollectionDataWithExercises =
       filteredTrainingsCollectionDataByUser.map((training) => {
-        const exercises: CompleteExercise[] = training.data.exercises.map(
-          (exercise: Exercise) => {
-            const exerciseData = exercisesCollectionData.find(
-              (exerciseData) => exerciseData.docId === exercise.reference.id,
-            );
-            return { ...exercise, ...exerciseData?.data };
-          },
-        );
+        const exercises = training.data.exercises.map((exercise) => {
+          const exerciseData = exercisesCollectionData.find(
+            (exerciseData) => exerciseData.docId === exercise.reference.id,
+          );
+          return { ...exercise, ...exerciseData?.data };
+        });
         const muscleGroups = exercises.map((exercise) => exercise.muscle_group);
         const uniqueMuscleGroups = [...new Set(muscleGroups)];
-        const training_id = training.id;
+        const trainingId = training.docId;
         const data = training.data;
-        const trainingData = { ...data, training_id };
+        const trainingData = { ...data, training_id: trainingId };
         return {
           ...trainingData,
           exercises: exercises,
@@ -88,20 +94,21 @@ export const TrainingProvider = ({
     return trainingsCollectionDataWithExercises as CompleteTraining[];
   }
 
-  const formatExercisesSeries = (trainingData: TrainingDetailsInfo) => {
-    console.log('trainingData.exercises', trainingData.exercises);
+  const formatExercisesSeries = (
+    trainingData: TrainingDetailsInfo,
+  ): FinalSeriesData[] => {
     const formattedExercises = trainingData.exercises.map((exercise) => {
       let exerciseSeries = [];
-      for (let i = 0; i < exercise.series; i++) {
+      for (let index = 0; index < exercise.series; index++) {
         exerciseSeries.push({
           isChecked: false,
           repetitions: {
-            actual: exercise.last_training[i].repetitions ?? 0,
-            lastTraining: exercise.last_training[i].repetitions ?? 0,
+            actual: exercise.last_training[index].repetitions ?? 0,
+            lastTraining: exercise.last_training[index].repetitions ?? 0,
           },
           weight: {
-            actual: exercise.last_training[i].weight ?? 0,
-            lastTraining: exercise.last_training[i].weight ?? 0,
+            actual: exercise.last_training[index].weight ?? 0,
+            lastTraining: exercise.last_training[index].weight ?? 0,
           },
         });
       }
@@ -122,17 +129,17 @@ export const TrainingProvider = ({
       setTrainingDetails(trainingData);
       const formattedSeries = formatExercisesSeries(trainingData);
 
-      const result = [
+      const exercises = [
         {
           series: formattedSeries,
-          id: String(uniqueID()),
+          id: filteredTrainingsCollectionData[0].id,
           name: 'Teste',
           description: '',
           observations: '',
         },
       ];
 
-      console.log('result', result);
+      setTrainingExercisesData(exercises);
     } catch (error: any) {
       console.error('Error getting documents: ', error);
     } finally {
@@ -148,6 +155,7 @@ export const TrainingProvider = ({
       value={{
         allTrainings,
         trainingDetails,
+        trainingExercisesData,
         getTrainingsCollection,
         getTrainingDetails,
       }}

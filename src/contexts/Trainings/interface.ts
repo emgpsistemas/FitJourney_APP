@@ -6,11 +6,29 @@ export interface ExerciseCollectionData {
   data: NewExerciseFormData;
 }
 
+export interface LastTraining {
+  repetitions: number | null;
+  weight: number | null;
+}
 export interface Exercise {
   observations: string;
   reference: DocumentReference;
   repetitions: number;
   series: number;
+  last_training: LastTraining[];
+}
+export interface TrainingDetailsData {
+  exercises: Exercise[];
+  created_at: string;
+  name: string;
+  training_repetitions: number;
+  user_id: string;
+  actual_training: string;
+  last_training: string | null;
+}
+export interface TrainingCollectionData {
+  docId: string;
+  data: TrainingDetailsData;
 }
 
 export interface CompleteExercise extends Exercise {
@@ -35,11 +53,6 @@ export interface CompleteTraining extends Training {
   muscle_groups: string[];
 }
 
-export interface LastTraining {
-  repetitions: number | null;
-  weight: number | null;
-}
-
 export interface ExerciseWithReference {
   observations: string;
   reference: DocumentReference<DocumentData, DocumentData>;
@@ -56,4 +69,24 @@ export interface TrainingDetailsInfo {
   name: string;
   training_repetitions: number;
   user_id: string;
+}
+
+export interface FinalSeriesData {
+  isChecked: boolean;
+  repetitions: {
+    actual: number;
+    lastTraining: number;
+  };
+  weight: {
+    actual: number;
+    lastTraining: number;
+  };
+}
+
+export interface TrainingExercisesData {
+  description: string;
+  id: string;
+  name: string;
+  observations: string;
+  series: FinalSeriesData[];
 }

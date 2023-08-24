@@ -18,98 +18,6 @@ import {
   trainingDetailsSchema,
 } from '../../../validations/User/TrainingDetails';
 
-// const training = {
-//   name: 'Treino A',
-//   exercises: [
-//     {
-//       id: '1',
-//       name: 'Supino Reto',
-//       description:
-//         'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-//       observations:
-//         '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-//       series: [
-//         {
-//           isChecked: false,
-//           repetitions: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//           weight: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//         },
-//         {
-//           isChecked: false,
-//           repetitions: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//           weight: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//         },
-//         {
-//           isChecked: false,
-//           repetitions: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//           weight: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//         },
-//       ],
-//     },
-//     {
-//       id: 2,
-//       name: 'Supino Declinado',
-//       description:
-//         'Deite-se em um banco declinado, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-//       observations:
-//         '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-//       series: [
-//         {
-//           isChecked: false,
-//           repetitions: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//           weight: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//         },
-//         {
-//           isChecked: false,
-//           repetitions: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//           weight: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//         },
-//         {
-//           isChecked: false,
-//           repetitions: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//           weight: {
-//             actual: '0',
-//             lastTraining: '0',
-//           },
-//         },
-//       ],
-//     },
-//   ],
-// };
-
 interface Serie {
   isChecked: boolean;
   repetitions: {
@@ -126,7 +34,8 @@ export function TrainingDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [exerciseBorderColors, setExerciseBorderColors] = useState<any>({});
 
-  const { getTrainingDetails, trainingDetails } = useTrainings();
+  const { getTrainingDetails, trainingDetails, trainingExercisesData } =
+    useTrainings();
   const route = useRoute();
   const { id } = route.params as { id: string };
   const { goBack } = useNavigation();
@@ -147,7 +56,7 @@ export function TrainingDetails() {
   });
   const trainingExercises = getValues('exercises');
 
-  const exercises = watch('exercises', []);
+  const exercisesListener = watch('exercises', []);
 
   const onSubmit = (data: TrainingDetailsFormData) => {
     try {
@@ -169,49 +78,50 @@ export function TrainingDetails() {
     }
   };
 
-  const defineBorderColor = () => {
-    const exercises = getValues().exercises;
-    const updatedBorderColors = exercises.reduce((borderColors, exercise) => {
-      const series = exercise.series;
-      const isAllSeriesChecked = series.every(
-        (serie: Serie) => serie.isChecked,
-      );
-      const isSomeSeriesChecked = series.some(
-        (serie: Serie) => serie.isChecked,
-      );
+  // const defineBorderColor = () => {
+  //   const exercises = getValues().exercises;
+  //   const updatedBorderColors = exercises.reduce((borderColors, exercise) => {
+  //     const series = exercise.series;
+  //     const isAllSeriesChecked = series.every(
+  //       (serie: Serie) => serie.isChecked,
+  //     );
+  //     const isSomeSeriesChecked = series.some(
+  //       (serie: Serie) => serie.isChecked,
+  //     );
 
-      let exerciseBorderColor = 'transparent';
+  //     let exerciseBorderColor = 'transparent';
 
-      if (isAllSeriesChecked) {
-        exerciseBorderColor = 'green';
-      } else if (isSomeSeriesChecked) {
-        exerciseBorderColor = 'yellow';
-      }
+  //     if (isAllSeriesChecked) {
+  //       exerciseBorderColor = 'green';
+  //     } else if (isSomeSeriesChecked) {
+  //       exerciseBorderColor = 'yellow';
+  //     }
 
-      if (exercise.id) {
-        return {
-          ...borderColors,
-          [exercise.id]: exerciseBorderColor,
-        };
-      } else {
-        return {
-          ...borderColors,
-        };
-      }
-    }, {});
+  //     if (exercise.id) {
+  //       return {
+  //         ...borderColors,
+  //         [exercise.id]: exerciseBorderColor,
+  //       };
+  //     } else {
+  //       return {
+  //         ...borderColors,
+  //       };
+  //     }
+  //   }, {});
 
-    setExerciseBorderColors(updatedBorderColors);
-  };
+  //   setExerciseBorderColors(updatedBorderColors);
+  // };
 
   useEffect(() => {
     getTrainingDetails(id).then(() => {
+      setValue('exercises', trainingExercisesData);
       setIsLoading(false);
     });
   }, []);
 
-  useEffect(() => {
-    defineBorderColor();
-  }, [exercises]);
+  // useEffect(() => {
+  //   defineBorderColor();
+  // }, [exercises]);
 
   if (isLoading) {
     return <Loading />;
@@ -305,7 +215,9 @@ export function TrainingDetails() {
                                 <Checkbox.Input
                                   onBlur={onBlur}
                                   label="Repetições"
-                                  onChangeText={onChange}
+                                  onChangeText={(text) =>
+                                    onChange(Number(text))
+                                  }
                                   value={value?.toString()}
                                   lastTraining={`${serie.repetitions.lastTraining}x`}
                                   error={
@@ -326,7 +238,9 @@ export function TrainingDetails() {
                                 <Checkbox.Input
                                   onBlur={onBlur}
                                   label="Peso"
-                                  onChangeText={onChange}
+                                  onChangeText={(text) =>
+                                    onChange(Number(text))
+                                  }
                                   value={value?.toString()}
                                   lastTraining={`${serie.weight.lastTraining}kg`}
                                   error={
