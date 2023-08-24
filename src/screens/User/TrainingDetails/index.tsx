@@ -12,6 +12,7 @@ import { Loading } from '../../../components/Loading';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { useExercises } from '../../../hooks/useExercises';
 import { useTrainings } from '../../../hooks/useTrainings';
 import {
   TrainingDetailsFormData,
@@ -20,7 +21,7 @@ import {
 
 export function TrainingDetails() {
   const [isLoading, setIsLoading] = useState(true);
-
+  const { allExercises } = useExercises();
   const { getTrainingDetails, trainingDetails, trainingExercisesData } =
     useTrainings();
   const route = useRoute();
@@ -44,22 +45,29 @@ export function TrainingDetails() {
   const trainingExercises = getValues('exercises');
 
   const onSubmit = (data: TrainingDetailsFormData) => {
+    console.log('data', data);
+    console.log('trainingDetails', trainingDetails);
+    console.log('allExercises', allExercises);
+
     try {
       const payload = {
-        exercises: data.exercises.map((exercise) => ({
-          id: exercise.id,
-          series: exercise.series.map((serie) => ({
-            repetitions: serie.repetitions.actual,
-            weight: serie.weight.actual,
-          })),
-        })),
+        // exercises: data.exercises.map((exercise) => ({
+        //   id: exercise.id,
+        //   series: exercise.series.map((serie) => ({
+        //     repetitions: serie.repetitions.actual,
+        //     weight: serie.weight.actual,
+        //   })),
+        // })),
+        actual_training: trainingDetails.actual_training + 1,
+        last_training: new Date().toISOString(),
+        // exercises:
       };
-      Alert.alert('Treino finalizado com sucesso!');
+      console.log('payload', payload);
     } catch (error: any) {
       Alert.alert('Erro ao finalizar treino', error.message);
     } finally {
-      reset();
-      goBack();
+      // reset();
+      // goBack();
     }
   };
 
@@ -110,7 +118,7 @@ export function TrainingDetails() {
         ItemSeparatorComponent={() => <View className="h-4" />}
         showsVerticalScrollIndicator={false}
         data={trainingExercises}
-        keyExtractor={(item) => String(item.id)}
+        keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
           return (
             <View
