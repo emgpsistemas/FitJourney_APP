@@ -5,7 +5,6 @@ import { FIRESTORE_DB } from '../../lib/firebase/config';
 import {
   CompleteTraining,
   ExerciseCollectionData,
-  FinalSeriesData,
   TrainingCollectionData,
   TrainingDetailsInfo,
   TrainingExercisesData,
@@ -94,10 +93,16 @@ export const TrainingProvider = ({
     return trainingsCollectionDataWithExercises as CompleteTraining[];
   }
 
-  const formatExercisesSeries = (
+  const formatExercises = async (
     trainingData: TrainingDetailsInfo,
-  ): FinalSeriesData[] => {
+  ): Promise<any> => {
+    const exercisesCollection = await getExercisesFromFirestore();
+
     const formattedExercises = trainingData.exercises.map((exercise) => {
+      const exerciseData = exercisesCollection.find(
+        (exerciseData) => exerciseData.docId === exercise.reference.id,
+      )?.data;
+
       let exerciseSeries = [];
       for (let index = 0; index < exercise.series; index++) {
         exerciseSeries.push({
@@ -112,10 +117,21 @@ export const TrainingProvider = ({
           },
         });
       }
-      return exerciseSeries;
+      return { series: exerciseSeries, exerciseData: exerciseData };
     });
 
-    return formattedExercises[0];
+    const result = formattedExercises.map((exercise) => {
+      return {
+        series: exercise.series,
+        id: String(exercise.exerciseData?.id) ?? '',
+        name: exercise.exerciseData?.name ?? '',
+        description: exercise.exerciseData?.description ?? '',
+        observations: '',
+        // observations: exercise.exerciseData?.observations ?? '',
+      };
+    });
+
+    return result;
   };
 
   const getTrainingDetails = async (trainingId: string) => {
@@ -127,19 +143,8 @@ export const TrainingProvider = ({
       const trainingData =
         filteredTrainingsCollectionData[0].data() as TrainingDetailsInfo;
       setTrainingDetails(trainingData);
-      const formattedSeries = formatExercisesSeries(trainingData);
-
-      const exercises = [
-        {
-          series: formattedSeries,
-          id: filteredTrainingsCollectionData[0].id,
-          name: 'Teste',
-          description: '',
-          observations: '',
-        },
-      ];
-
-      setTrainingExercisesData(exercises);
+      const formatedExercises = await formatExercises(trainingData);
+      setTrainingExercisesData(formatedExercises);
     } catch (error: any) {
       console.error('Error getting documents: ', error);
     } finally {

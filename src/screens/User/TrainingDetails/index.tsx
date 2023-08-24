@@ -56,8 +56,6 @@ export function TrainingDetails() {
   });
   const trainingExercises = getValues('exercises');
 
-  const exercisesListener = watch('exercises', []);
-
   const onSubmit = (data: TrainingDetailsFormData) => {
     try {
       const payload = {
@@ -112,12 +110,19 @@ export function TrainingDetails() {
   //   setExerciseBorderColors(updatedBorderColors);
   // };
 
+  watch('exercises', []);
+
   useEffect(() => {
-    getTrainingDetails(id).then(() => {
-      setValue('exercises', trainingExercisesData);
-      setIsLoading(false);
-    });
+    getTrainingDetails(id).then(() =>
+      setValue('exercises', trainingExercisesData),
+    );
   }, []);
+
+  useEffect(() => {
+    if (trainingExercises.length > 0) {
+      setIsLoading(false);
+    }
+  }, [trainingExercises]);
 
   // useEffect(() => {
   //   defineBorderColor();
@@ -160,7 +165,7 @@ export function TrainingDetails() {
         renderItem={({ item, index }) => {
           return (
             <View
-              className={clsx('rounded-[8px] border-2', {
+              className={clsx('rounded-[8px] border-2 border-transparent', {
                 'border-transparent':
                   exerciseBorderColors[item.id] === 'transparent',
                 'border-yellow-400': exerciseBorderColors[item.id] === 'yellow',
@@ -175,14 +180,17 @@ export function TrainingDetails() {
                       {item.description}
                     </Accordion.ContentText>
                   </View>
-                  <View className="mb-4 flex flex-col">
-                    <Accordion.ContentTitle>
-                      OBSERVAÇÕES:{' '}
-                    </Accordion.ContentTitle>
-                    <Accordion.ContentText>
-                      {item.observations}
-                    </Accordion.ContentText>
-                  </View>
+                  {item.observations ? (
+                    <View className="mb-4 flex flex-col">
+                      <Accordion.ContentTitle>
+                        OBSERVAÇÕES:{' '}
+                      </Accordion.ContentTitle>
+                      <Accordion.ContentText>
+                        {item.observations}
+                      </Accordion.ContentText>
+                    </View>
+                  ) : null}
+
                   {item.series.map((serie, serieIndex) => (
                     <View className="flex flex-col" key={serieIndex}>
                       <Accordion.ContentTitle>
