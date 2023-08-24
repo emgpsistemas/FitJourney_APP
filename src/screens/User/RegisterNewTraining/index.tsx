@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { addDoc, collection, doc } from 'firebase/firestore';
 import { Check, Minus, Plus, Trash } from 'phosphor-react-native';
 import { useEffect, useReducer, useState } from 'react';
@@ -78,6 +79,7 @@ const trainingRegisterReducer = (
 };
 
 export function RegisterNewTraining() {
+  const { goBack } = useNavigation();
   const { fitJourneyUser } = useFirebaseAuth();
   const { getTrainingsCollection } = useTrainings();
   const { allExercises } = useExercises();
@@ -157,10 +159,13 @@ export function RegisterNewTraining() {
 
   async function createTraining(training: PayloadCreateTraining) {
     try {
+      console.log('try');
       await addDoc(collection(FIRESTORE_DB, 'trainings'), training);
     } catch (error) {
+      console.log('error');
       console.error('createTraining function error:', error);
     } finally {
+      console.log('finally');
       getTrainingsCollection();
     }
   }
@@ -202,7 +207,18 @@ export function RegisterNewTraining() {
           };
         }),
       };
-      createTraining(payload);
+      createTraining(payload).then(() => {
+        Toast.show({
+          type: 'success',
+          text1: 'Treino cadastrado com sucesso!',
+          position: 'bottom',
+          visibilityTime: 2000,
+          autoHide: true,
+        });
+        setTimeout(() => {
+          goBack();
+        }, 2000);
+      });
     }
   };
 

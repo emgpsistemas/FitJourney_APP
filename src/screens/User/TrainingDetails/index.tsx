@@ -18,21 +18,8 @@ import {
   trainingDetailsSchema,
 } from '../../../validations/User/TrainingDetails';
 
-interface Serie {
-  isChecked: boolean;
-  repetitions: {
-    actual: string;
-    lastTraining: string;
-  };
-  weight: {
-    actual: string;
-    lastTraining: string;
-  };
-}
-
 export function TrainingDetails() {
   const [isLoading, setIsLoading] = useState(true);
-  const [exerciseBorderColors, setExerciseBorderColors] = useState<any>({});
 
   const { getTrainingDetails, trainingDetails, trainingExercisesData } =
     useTrainings();
@@ -76,41 +63,9 @@ export function TrainingDetails() {
     }
   };
 
-  // const defineBorderColor = () => {
-  //   const exercises = getValues().exercises;
-  //   const updatedBorderColors = exercises.reduce((borderColors, exercise) => {
-  //     const series = exercise.series;
-  //     const isAllSeriesChecked = series.every(
-  //       (serie: Serie) => serie.isChecked,
-  //     );
-  //     const isSomeSeriesChecked = series.some(
-  //       (serie: Serie) => serie.isChecked,
-  //     );
-
-  //     let exerciseBorderColor = 'transparent';
-
-  //     if (isAllSeriesChecked) {
-  //       exerciseBorderColor = 'green';
-  //     } else if (isSomeSeriesChecked) {
-  //       exerciseBorderColor = 'yellow';
-  //     }
-
-  //     if (exercise.id) {
-  //       return {
-  //         ...borderColors,
-  //         [exercise.id]: exerciseBorderColor,
-  //       };
-  //     } else {
-  //       return {
-  //         ...borderColors,
-  //       };
-  //     }
-  //   }, {});
-
-  //   setExerciseBorderColors(updatedBorderColors);
-  // };
-
   watch('exercises', []);
+
+  console.log(trainingExercises);
 
   useEffect(() => {
     getTrainingDetails(id).then(() =>
@@ -123,10 +78,6 @@ export function TrainingDetails() {
       setIsLoading(false);
     }
   }, [trainingExercises]);
-
-  // useEffect(() => {
-  //   defineBorderColor();
-  // }, [exercises]);
 
   if (isLoading) {
     return <Loading />;
@@ -165,12 +116,7 @@ export function TrainingDetails() {
         renderItem={({ item, index }) => {
           return (
             <View
-              className={clsx('rounded-[8px] border-2 border-transparent', {
-                'border-transparent':
-                  exerciseBorderColors[item.id] === 'transparent',
-                'border-yellow-400': exerciseBorderColors[item.id] === 'yellow',
-                'border-green-500': exerciseBorderColors[item.id] === 'green',
-              })}
+              className={clsx('rounded-[8px] border-2 border-transparent', {})}
             >
               <Accordion.Root title={item.name ? item.name : ''}>
                 <Accordion.Content>

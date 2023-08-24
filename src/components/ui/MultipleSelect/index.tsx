@@ -47,7 +47,7 @@ export function MultipleSelect({
           multiple={true}
           stickyHeader
           min={0}
-          max={5}
+          max={10}
           open={open}
           value={selected}
           items={options}
