@@ -23,6 +23,5 @@ export const exerciseFormSchema = z.object({
 });
 
 export const trainingDetailsSchema = z.object({
-  name: z.string(),
   exercises: z.array(exerciseFormSchema),
 });

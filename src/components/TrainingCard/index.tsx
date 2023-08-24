@@ -6,7 +6,7 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native';
-import { CompleteTraining } from '../../contexts/Trainings';
+import { CompleteTraining } from '../../contexts/Trainings/Trainings';
 import { MuscleGroupTag } from '../MuscleGroupTag';
 
 interface TrainingCardProps extends TouchableOpacityProps {

@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import clsx from 'clsx';
-import { collection, getDocs } from 'firebase/firestore';
 import { Check } from 'phosphor-react-native';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,12 +12,11 @@ import { Loading } from '../../../components/Loading';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 import { FitButton } from '../../../components/ui/FitButton';
-import { FIRESTORE_DB } from '../../../lib/firebase/config';
+import { useTrainings } from '../../../hooks/useTrainings';
 import {
   TrainingDetailsFormData,
   trainingDetailsSchema,
 } from '../../../validations/User/TrainingDetails';
-import { TrainingDetailsInfo } from './interface.interface';
 
 // const training = {
 //   name: 'Treino A',
@@ -126,14 +124,12 @@ interface Serie {
 
 export function TrainingDetails() {
   const [isLoading, setIsLoading] = useState(true);
-  const [trainingData, setTrainingData] = useState<TrainingDetailsInfo>(
-    {} as TrainingDetailsInfo,
-  );
   const [exerciseBorderColors, setExerciseBorderColors] = useState<any>({});
 
+  const { getTrainingDetails, trainingDetails } = useTrainings();
   const route = useRoute();
-  const { goBack } = useNavigation();
   const { id } = route.params as { id: string };
+  const { goBack } = useNavigation();
 
   const {
     control,
@@ -145,7 +141,6 @@ export function TrainingDetails() {
     setValue,
   } = useForm<TrainingDetailsFormData>({
     defaultValues: {
-      name: '',
       exercises: [],
     },
     resolver: zodResolver(trainingDetailsSchema),
@@ -153,25 +148,6 @@ export function TrainingDetails() {
   const trainingExercises = getValues('exercises');
 
   const exercises = watch('exercises', []);
-
-  const getTrainingDetailsFromFirestore = async () => {
-    try {
-      const trainingsCollectionRef = collection(FIRESTORE_DB, 'trainings');
-      const trainingsCollectionSnapshot = await getDocs(trainingsCollectionRef);
-      const filteredTrainingsCollectionData =
-        trainingsCollectionSnapshot.docs.filter((doc) => doc.id === id);
-      const trainingData =
-        filteredTrainingsCollectionData[0].data() as TrainingDetailsInfo;
-      setTrainingData(trainingData);
-      setValue('name', trainingData.name);
-
-      console.log('trainingData', trainingData);
-    } catch (error: any) {
-      Alert.alert('Erro ao buscar treino', error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const onSubmit = (data: TrainingDetailsFormData) => {
     try {
@@ -228,7 +204,9 @@ export function TrainingDetails() {
   };
 
   useEffect(() => {
-    getTrainingDetailsFromFirestore();
+    getTrainingDetails(id).then(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -245,23 +223,23 @@ export function TrainingDetails() {
         <ScreenTitle.GoBackButton />
         <View
           className={clsx('mr-3 h-4 w-4 rounded-full bg-gray-500', {
-            'bg-yellow-400': trainingData.name === 'Treino A',
-            'bg-rose-500': trainingData.name === 'Treino B',
-            'bg-lime-500': trainingData.name === 'Treino C',
-            'bg-cyan-500': trainingData.name === 'Treino D',
-            'bg-purple-500': trainingData.name === 'Treino E',
+            'bg-yellow-400': trainingDetails.name === 'Treino A',
+            'bg-rose-500': trainingDetails.name === 'Treino B',
+            'bg-lime-500': trainingDetails.name === 'Treino C',
+            'bg-cyan-500': trainingDetails.name === 'Treino D',
+            'bg-purple-500': trainingDetails.name === 'Treino E',
           })}
         />
-        <ScreenTitle.Text>{trainingData.name}</ScreenTitle.Text>
-        <ScreenTitle.TrainProgress>{`${trainingData.actual_training}/${trainingData.training_repetitions}`}</ScreenTitle.TrainProgress>
+        <ScreenTitle.Text>{trainingDetails.name}</ScreenTitle.Text>
+        <ScreenTitle.TrainProgress>{`${trainingDetails.actual_training}/${trainingDetails.training_repetitions}`}</ScreenTitle.TrainProgress>
       </ScreenTitle.Root>
       <FlatList
         className="flex flex-1 pt-10"
         ListHeaderComponent={() => (
           <TrainingInfo
             trainingDates={{
-              startDate: trainingData.created_at,
-              lastTrainingDate: trainingData.last_training,
+              startDate: trainingDetails.created_at,
+              lastTrainingDate: trainingDetails.last_training,
             }}
           />
         )}

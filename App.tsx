@@ -17,7 +17,7 @@ import colors from 'tailwindcss/colors';
 import { Loading } from './src/components/Loading';
 import { ExercisesProvider } from './src/contexts/Exercises';
 import { FirebaseAuthProvider } from './src/contexts/FirebaseAuth';
-import { TrainingProvider } from './src/contexts/Trainings';
+import { TrainingProvider } from './src/contexts/Trainings/Trainings';
 import Routes from './src/routes';
 
 export default function App() {
