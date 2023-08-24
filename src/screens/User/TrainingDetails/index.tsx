@@ -65,8 +65,6 @@ export function TrainingDetails() {
 
   watch('exercises', []);
 
-  console.log(trainingExercises);
-
   useEffect(() => {
     getTrainingDetails(id).then(() =>
       setValue('exercises', trainingExercisesData),

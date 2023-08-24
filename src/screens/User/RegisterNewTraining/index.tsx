@@ -159,13 +159,10 @@ export function RegisterNewTraining() {
 
   async function createTraining(training: PayloadCreateTraining) {
     try {
-      console.log('try');
       await addDoc(collection(FIRESTORE_DB, 'trainings'), training);
     } catch (error) {
-      console.log('error');
       console.error('createTraining function error:', error);
     } finally {
-      console.log('finally');
       getTrainingsCollection();
     }
   }
