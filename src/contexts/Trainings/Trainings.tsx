@@ -181,6 +181,7 @@ export const TrainingProvider = ({
     } catch (error: any) {
       console.error('Error getting documents: ', error);
     } finally {
+      getTrainingsCollection();
     }
   };
 
