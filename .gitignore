@@ -20,7 +20,7 @@ web-build/
 .env
 
 # Google Play
-# service-account.json
+service-account.json
 
 # Google Firebase
 # google-services.json
