@@ -5,7 +5,7 @@ import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import { FIRESTORE_DB } from '../lib/firebase/config';
 import { FitJourneyUser } from '../utils/FormatUserToAddToFirestore';
 
-export type Gender = 'Masculino' | 'Feminino';
+export type Gender = 'Masculino' | 'Feminino' | 'Não binário';
 export type Goal = 'Emagrecimento' | 'Resistência' | 'Hipertrofia' | 'Saúde';
 export type FitnessLevel =
   | 'Iniciante'

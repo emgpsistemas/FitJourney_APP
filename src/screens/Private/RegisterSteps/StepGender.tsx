@@ -3,6 +3,7 @@ import {
   CaretRight,
   GenderFemale,
   GenderMale,
+  GenderNonbinary,
 } from 'phosphor-react-native';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -44,10 +45,10 @@ function StepGender() {
       <View className="mt-8 flex-1">
         <View className="space-y-3">
           <Text className="text-center font-openBold text-lg text-zinc-900">
-            Qual é o seu gênero?
+            Com qual gênero você se identifica?
           </Text>
         </View>
-        <View className="flex-1 items-center justify-center space-y-10">
+        <View className="flex-1 items-center justify-center space-y-8">
           <View>
             <GenderButton.Root
               onPress={() =>
@@ -68,6 +69,17 @@ function StepGender() {
             >
               <GenderButton.Icon icon={GenderFemale} />
               <GenderButton.Text>Feminino</GenderButton.Text>
+            </GenderButton.Root>
+          </View>
+          <View>
+            <GenderButton.Root
+              onPress={() =>
+                dispatchUserInfo({ type: 'SET_GENDER', payload: 'Não binário' })
+              }
+              isActive={gender === 'Não binário' ? true : false}
+            >
+              <GenderButton.Icon icon={GenderNonbinary} />
+              <GenderButton.Text>Não binário</GenderButton.Text>
             </GenderButton.Root>
           </View>
         </View>

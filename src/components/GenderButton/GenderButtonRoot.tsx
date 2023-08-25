@@ -14,7 +14,7 @@ export function GenderButtonRoot({
   return (
     <TouchableOpacity
       className={clsx(
-        'flex h-[140px] w-[140px] items-center justify-center rounded-full transition-all',
+        'flex h-[130px] w-[130px] items-center justify-center rounded-full transition-all',
         {
           'bg-yellow-400': isActive,
           'border-4 border-yellow-400': !isActive,
