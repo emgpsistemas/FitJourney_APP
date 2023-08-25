@@ -2,7 +2,7 @@
   "expo": {
     "name": "Fit Journey",
     "slug": "fit-journey",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,9 +11,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#FACC15"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.emgp.fitjourney"
@@ -24,7 +22,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FACC15"
       },
-      "package": "com.emgp.fitjourney"
+      "package": "com.emgp.fitjourney",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,8 +33,6 @@
         "projectId": "507d71c3-fd53-4582-99b3-bb0b84fe5d50"
       }
     },
-    "plugins": [
-      "@react-native-google-signin/google-signin"
-    ]
+    "plugins": ["@react-native-google-signin/google-signin"]
   }
 }
