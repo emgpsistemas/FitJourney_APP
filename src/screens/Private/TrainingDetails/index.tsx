@@ -1,8 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import clsx from 'clsx';
 import { Check } from 'phosphor-react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,6 +22,7 @@ import { UpdateExercisesKeyPayload } from '../../../contexts/Trainings/interface
 import { useExercises } from '../../../hooks/useExercises';
 import { useTrainings } from '../../../hooks/useTrainings';
 import { toastConfig } from '../../../lib/toast/config';
+import { uniqueID } from '../../../utils/uniqueID';
 import {
   TrainingDetailsFormData,
   trainingDetailsSchema,
@@ -34,6 +40,7 @@ export function TrainingDetails() {
   const route = useRoute();
   const { id } = route.params as { id: string };
   const { navigate } = useNavigation();
+  const isFocused = useIsFocused();
 
   const {
     control,
@@ -106,16 +113,22 @@ export function TrainingDetails() {
   watch('exercises');
 
   useEffect(() => {
-    getTrainingDetails(id).then(() =>
-      setValue('exercises', trainingExercisesData),
-    );
-  }, []);
-
-  useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   }, [getValues('exercises')]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getTrainingDetails(id).then(() =>
+        setValue('exercises', trainingExercisesData),
+      );
+    }, []),
+  );
+
+  if (!isFocused) {
+    return <></>;
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -176,7 +189,7 @@ export function TrainingDetails() {
                   ) : null}
 
                   {item.series.map((serie, serieIndex) => (
-                    <View className="flex flex-col" key={serieIndex}>
+                    <View className="flex flex-col" key={uniqueID()}>
                       <Accordion.ContentTitle>
                         SÉRIE {serieIndex + 1}:
                       </Accordion.ContentTitle>

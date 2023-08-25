@@ -17,7 +17,7 @@ function CheckboxInput({
 }: CheckboxInputProps) {
   return (
     <View className="flex flex-1 flex-col">
-      <Input label={label} required={required} maxLength={3} {...rest} />
+      <Input label={label} required={required} maxLength={4} {...rest} />
       <Text className="font-openNormal text-xs text-zinc-900">
         Último Treino: {lastTraining}
       </Text>

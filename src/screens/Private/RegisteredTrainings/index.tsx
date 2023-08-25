@@ -1,8 +1,12 @@
 import { Plus } from 'phosphor-react-native';
 import { FlatList, Text, View } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
+import { useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TrainingCard } from '../../../components/TrainingCard';
 import { FitButton } from '../../../components/ui/FitButton';
@@ -11,10 +15,17 @@ import { useTrainings } from '../../../hooks/useTrainings';
 export default function RegisteredTrainings() {
   const navigation = useNavigation();
   const { allTrainings, getTrainingsCollection } = useTrainings();
+  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    getTrainingsCollection();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getTrainingsCollection();
+    }, []),
+  );
+
+  if (!isFocused) {
+    return <></>;
+  }
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
