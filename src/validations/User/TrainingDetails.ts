@@ -3,7 +3,7 @@ import { z } from 'zod';
 export type TrainingDetailsFormData = z.infer<typeof trainingDetailsSchema>;
 
 export const exerciseFormSchema = z.object({
-  id: z.number().optional(),
+  id: z.string(),
   name: z.string().optional(),
   description: z.string().optional(),
   observations: z.string().optional(),
@@ -11,18 +11,17 @@ export const exerciseFormSchema = z.object({
     z.object({
       isChecked: z.boolean(),
       repetitions: z.object({
-        actual: z.string(),
-        lastTraining: z.string(),
+        actual: z.number(),
+        lastTraining: z.number(),
       }),
       weight: z.object({
-        actual: z.string(),
-        lastTraining: z.string(),
+        actual: z.number(),
+        lastTraining: z.number(),
       }),
     }),
   ),
 });
 
 export const trainingDetailsSchema = z.object({
-  name: z.string(),
   exercises: z.array(exerciseFormSchema),
 });

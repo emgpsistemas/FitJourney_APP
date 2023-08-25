@@ -12,7 +12,7 @@ interface AccordionExerciseProps {
 
 function AccordionExercise({ exercise }: AccordionExerciseProps) {
   return (
-    <View className="flex flex-row space-x-2">
+    <View className="flex flex-1 flex-row space-x-2">
       <Text className="font-openSemibold text-base text-zinc-900">
         {exercise.name}
       </Text>

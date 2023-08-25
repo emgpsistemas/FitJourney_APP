@@ -1,12 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RegisterUserInfoProvider } from '../contexts/RegisterUserInfo';
-import StepAge from '../screens/User/RegisterSteps/StepAge';
-import StepFitnessLevel from '../screens/User/RegisterSteps/StepFitnessLevel';
-import StepGender from '../screens/User/RegisterSteps/StepGender';
-import StepGoal from '../screens/User/RegisterSteps/StepGoal';
-import StepHeight from '../screens/User/RegisterSteps/StepHeight';
-import StepName from '../screens/User/RegisterSteps/StepName';
-import StepWeight from '../screens/User/RegisterSteps/StepWeight';
+import StepAge from '../screens/Private/RegisterSteps/StepAge';
+import StepFitnessLevel from '../screens/Private/RegisterSteps/StepFitnessLevel';
+import StepGender from '../screens/Private/RegisterSteps/StepGender';
+import StepGoal from '../screens/Private/RegisterSteps/StepGoal';
+import StepHeight from '../screens/Private/RegisterSteps/StepHeight';
+import StepName from '../screens/Private/RegisterSteps/StepName';
+import StepWeight from '../screens/Private/RegisterSteps/StepWeight';
 
 const Stack = createNativeStackNavigator();
 

@@ -1,8 +1,8 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { RegisterNewTraining } from "../screens/User/RegisterNewTraining";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { RegisterNewTraining } from '../screens/Private/RegisterNewTraining';
 
-import RegisteredTrainings from "../screens/User/RegisteredTrainings";
-import { TrainingDetails } from "../screens/User/TrainingDetails";
+import RegisteredTrainings from '../screens/Private/RegisteredTrainings';
+import { TrainingDetails } from '../screens/Private/TrainingDetails';
 
 const Stack = createNativeStackNavigator();
 

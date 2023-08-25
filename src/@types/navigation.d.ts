@@ -20,7 +20,7 @@ export declare global {
 
       // Exercises
       Exercises: unknown;
-      RegisteredExercices: unknown;
+      RegisteredExercises: unknown;
 
       // Profile
       Profile: unknown;
@@ -28,7 +28,7 @@ export declare global {
 
       // Training
       RegisteredTrainings: unknown;
-      TrainingDetails: { id: number };
+      TrainingDetails: { id: string };
       RegisterExercise: unknown;
       RegisterNewTraining: unknown;
     }

@@ -1,131 +1,46 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import clsx from 'clsx';
 import { Check } from 'phosphor-react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, FlatList, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { Accordion } from '../../../components/Accordion';
 import { Checkbox } from '../../../components/Checkbox';
+import { Loading } from '../../../components/Loading';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { UpdateExercisesKeyPayload } from '../../../contexts/Trainings/interface';
+import { useExercises } from '../../../hooks/useExercises';
+import { useTrainings } from '../../../hooks/useTrainings';
+import { toastConfig } from '../../../lib/toast/config';
+import { uniqueID } from '../../../utils/uniqueID';
 import {
   TrainingDetailsFormData,
   trainingDetailsSchema,
 } from '../../../validations/User/TrainingDetails';
 
-const training = {
-  name: 'Treino A',
-  exercises: [
-    {
-      id: 1,
-      name: 'Supino Reto',
-      description:
-        'Deite-se em um banco reto, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-      observations:
-        '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-      series: [
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Supino Declinado',
-      description:
-        'Deite-se em um banco declinado, segure a barra com as mãos na largura dos ombros e afaste os cotovelos até que estejam alinhados com os ombros. Desça a barra até o peito e volte à posição inicial.',
-      observations:
-        '4 séries de 10 repetições com 1 minuto de descanso entre as séries.',
-      series: [
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-        {
-          isChecked: false,
-          repetitions: {
-            actual: '0',
-            lastTraining: '0',
-          },
-          weight: {
-            actual: '0',
-            lastTraining: '0',
-          },
-        },
-      ],
-    },
-  ],
-};
-
-interface Serie {
-  isChecked: boolean;
-  repetitions: {
-    actual: string;
-    lastTraining: string;
-  };
-  weight: {
-    actual: string;
-    lastTraining: string;
-  };
-}
-
 export function TrainingDetails() {
-  const [exerciseBorderColors, setExerciseBorderColors] = useState<any>({});
-
+  const [isLoading, setIsLoading] = useState(true);
+  const { allExercises } = useExercises();
+  const {
+    getTrainingDetails,
+    trainingDetails,
+    trainingExercisesData,
+    updateTraining,
+  } = useTrainings();
   const route = useRoute();
-  const { goBack } = useNavigation();
-  const { id } = route.params as { id: number };
+  const { id } = route.params as { id: string };
+  const { navigate } = useNavigation();
+  const isFocused = useIsFocused();
 
   const {
     control,
@@ -134,73 +49,90 @@ export function TrainingDetails() {
     reset,
     getValues,
     watch,
+    setValue,
   } = useForm<TrainingDetailsFormData>({
     defaultValues: {
-      name: training.name,
-      exercises: training.exercises,
+      exercises: [],
     },
     resolver: zodResolver(trainingDetailsSchema),
   });
+  const trainingExercises = getValues('exercises');
 
-  const exercises = watch('exercises', []);
-
-  const onSubmit = (data: TrainingDetailsFormData) => {
+  const onSubmit = async (data: TrainingDetailsFormData) => {
     try {
+      const trainingExercisesInfo = data.exercises.map((exercise) => {
+        const exerciseReference = allExercises.find(
+          (allExercise) => allExercise.name === exercise.name,
+        );
+        return exerciseReference;
+      });
+      const trainingExercisesPayload = trainingExercisesInfo.map(
+        (exerciseInfo, index) => {
+          const exercisePayload: UpdateExercisesKeyPayload = {
+            last_training: data.exercises[index].series.map((serie) => {
+              return {
+                repetitions: serie.repetitions.actual,
+                weight: serie.weight.actual,
+              };
+            }),
+            reference: exerciseInfo?.docReference,
+            repetitions: trainingDetails.exercises[index].repetitions,
+            series: trainingDetails.exercises[index].series,
+            observations: trainingDetails.exercises[index].observations,
+          };
+          return exercisePayload;
+        },
+      );
       const payload = {
-        exercises: data.exercises.map((exercise) => ({
-          id: exercise.id,
-          series: exercise.series.map((serie) => ({
-            repetitions: serie.repetitions.actual,
-            weight: serie.weight.actual,
-          })),
-        })),
+        actual_training: trainingDetails.actual_training + 1,
+        last_training: new Date().toISOString(),
+        exercises: trainingExercisesPayload,
+        series: trainingDetails.training_repetitions,
       };
-      Alert.alert('Treino finalizado com sucesso!');
+      await updateTraining(id, payload);
+      Toast.show({
+        type: 'success',
+        text1: 'Treino finalizado com sucesso!',
+        position: 'bottom',
+      });
     } catch (error: any) {
-      Alert.alert('Erro ao finalizar treino', error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao finalizar treino!',
+        text2: 'Tente novamente',
+        position: 'bottom',
+      });
     } finally {
       reset();
-      goBack();
+      setTimeout(() => {
+        navigate('RegisteredTrainings');
+      }, 2000);
     }
   };
 
-  const defineBorderColor = () => {
-    const exercises = getValues().exercises;
-    const updatedBorderColors = exercises.reduce((borderColors, exercise) => {
-      const series = exercise.series;
-      const isAllSeriesChecked = series.every(
-        (serie: Serie) => serie.isChecked,
-      );
-      const isSomeSeriesChecked = series.some(
-        (serie: Serie) => serie.isChecked,
-      );
-
-      let exerciseBorderColor = 'transparent';
-
-      if (isAllSeriesChecked) {
-        exerciseBorderColor = 'green';
-      } else if (isSomeSeriesChecked) {
-        exerciseBorderColor = 'yellow';
-      }
-
-      if (exercise.id) {
-        return {
-          ...borderColors,
-          [exercise.id]: exerciseBorderColor,
-        };
-      } else {
-        return {
-          ...borderColors,
-        };
-      }
-    }, {});
-
-    setExerciseBorderColors(updatedBorderColors);
-  };
+  watch('exercises');
 
   useEffect(() => {
-    defineBorderColor();
-  }, [exercises]);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, [getValues('exercises')]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getTrainingDetails(id).then(() =>
+        setValue('exercises', trainingExercisesData),
+      );
+    }, []),
+  );
+
+  if (!isFocused) {
+    return <></>;
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <SafeAreaView className="flex flex-1 flex-col bg-neutral-50 px-5 pt-5">
@@ -208,34 +140,36 @@ export function TrainingDetails() {
         <ScreenTitle.GoBackButton />
         <View
           className={clsx('mr-3 h-4 w-4 rounded-full bg-gray-500', {
-            'bg-yellow-400': training.name === 'Treino A',
-            'bg-rose-500': training.name === 'Treino B',
-            'bg-lime-500': training.name === 'Treino C',
-            'bg-cyan-500': training.name === 'Treino D',
-            'bg-purple-500': training.name === 'Treino E',
+            'bg-yellow-400': trainingDetails.name === 'Treino A',
+            'bg-rose-500': trainingDetails.name === 'Treino B',
+            'bg-lime-500': trainingDetails.name === 'Treino C',
+            'bg-cyan-500': trainingDetails.name === 'Treino D',
+            'bg-purple-500': trainingDetails.name === 'Treino E',
           })}
         />
-        <ScreenTitle.Text>Treino {id}</ScreenTitle.Text>
-        <ScreenTitle.TrainProgress>0/10</ScreenTitle.TrainProgress>
+        <ScreenTitle.Text>{trainingDetails.name}</ScreenTitle.Text>
+        <ScreenTitle.TrainProgress>{`${trainingDetails.actual_training}/${trainingDetails.training_repetitions}`}</ScreenTitle.TrainProgress>
       </ScreenTitle.Root>
       <FlatList
         className="flex flex-1 pt-10"
-        ListHeaderComponent={() => <TrainingInfo />}
+        ListHeaderComponent={() => (
+          <TrainingInfo
+            trainingDates={{
+              startDate: trainingDetails.created_at,
+              lastTrainingDate: trainingDetails.last_training,
+            }}
+          />
+        )}
         ItemSeparatorComponent={() => <View className="h-4" />}
         showsVerticalScrollIndicator={false}
-        data={training.exercises}
-        keyExtractor={(item) => String(item.id)}
+        data={trainingExercises}
+        keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
           return (
             <View
-              className={clsx('rounded-[8px] border-2', {
-                'border-transparent':
-                  exerciseBorderColors[item.id] === 'transparent',
-                'border-yellow-400': exerciseBorderColors[item.id] === 'yellow',
-                'border-green-500': exerciseBorderColors[item.id] === 'green',
-              })}
+              className={clsx('rounded-[8px] border-2 border-transparent', {})}
             >
-              <Accordion.Root title={item.name}>
+              <Accordion.Root title={item.name ? item.name : ''}>
                 <Accordion.Content>
                   <View className="mb-4 flex flex-col">
                     <Accordion.ContentTitle>DESCRIÇÃO: </Accordion.ContentTitle>
@@ -243,16 +177,19 @@ export function TrainingDetails() {
                       {item.description}
                     </Accordion.ContentText>
                   </View>
-                  <View className="mb-4 flex flex-col">
-                    <Accordion.ContentTitle>
-                      OBSERVAÇÕES:{' '}
-                    </Accordion.ContentTitle>
-                    <Accordion.ContentText>
-                      {item.observations}
-                    </Accordion.ContentText>
-                  </View>
+                  {item.observations ? (
+                    <View className="mb-4 flex flex-col">
+                      <Accordion.ContentTitle>
+                        OBSERVAÇÕES:{' '}
+                      </Accordion.ContentTitle>
+                      <Accordion.ContentText>
+                        {item.observations}
+                      </Accordion.ContentText>
+                    </View>
+                  ) : null}
+
                   {item.series.map((serie, serieIndex) => (
-                    <View className="flex flex-col" key={serieIndex}>
+                    <View className="flex flex-col" key={uniqueID()}>
                       <Accordion.ContentTitle>
                         SÉRIE {serieIndex + 1}:
                       </Accordion.ContentTitle>
@@ -283,7 +220,9 @@ export function TrainingDetails() {
                                 <Checkbox.Input
                                   onBlur={onBlur}
                                   label="Repetições"
-                                  onChangeText={onChange}
+                                  onChangeText={(text) =>
+                                    onChange(Number(text))
+                                  }
                                   value={value?.toString()}
                                   lastTraining={`${serie.repetitions.lastTraining}x`}
                                   error={
@@ -304,7 +243,9 @@ export function TrainingDetails() {
                                 <Checkbox.Input
                                   onBlur={onBlur}
                                   label="Peso"
-                                  onChangeText={onChange}
+                                  onChangeText={(text) =>
+                                    onChange(Number(text))
+                                  }
                                   value={value?.toString()}
                                   lastTraining={`${serie.weight.lastTraining}kg`}
                                   error={
@@ -344,6 +285,7 @@ export function TrainingDetails() {
           </View>
         )}
       />
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }

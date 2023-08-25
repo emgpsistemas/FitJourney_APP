@@ -1,4 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
+import { doc, updateDoc } from 'firebase/firestore';
 import { Check } from 'phosphor-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
@@ -9,12 +11,18 @@ import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
 import { Select } from '../../../components/ui/Select';
 import { TextArea } from '../../../components/ui/Textarea';
+import { useFirebaseAuth } from '../../../hooks/useFirebaseAuth';
+import { FIRESTORE_DB } from '../../../lib/firebase/config';
+import { FitJourneyUser } from '../../../utils/FormatUserToAddToFirestore';
 import {
   EditProfileFormData,
   editProfileSchema,
 } from '../../../validations/User/EditProfile';
 
 function EditProfile() {
+  const { fitJourneyUser, getUserFirebaseCollection, getUserFromFirestore } =
+    useFirebaseAuth();
+  const { goBack } = useNavigation();
   const {
     control,
     handleSubmit,
@@ -22,26 +30,53 @@ function EditProfile() {
     reset,
   } = useForm<EditProfileFormData>({
     defaultValues: {
-      name: '',
-      email: '',
-      age: '',
-      weight: '',
-      height: '',
-      gender: '',
-      objective: '',
-      activityLevel: '',
-      observations: '',
+      displayName: fitJourneyUser.displayName || '',
+      age: fitJourneyUser.age || '',
+      weight: fitJourneyUser.weight || '',
+      height: fitJourneyUser.height || '',
+      gender: fitJourneyUser.gender || '',
+      goal: fitJourneyUser.goal || '',
+      fitnessLevel: fitJourneyUser.fitnessLevel || '',
+      observations: fitJourneyUser.observations || '',
     },
     resolver: zodResolver(editProfileSchema),
   });
 
+  async function onConfirmEditProfile(payload: FitJourneyUser) {
+    const collectionFounded = await getUserFirebaseCollection(payload.uid);
+    if (collectionFounded) {
+      const userDocRef = doc(
+        FIRESTORE_DB,
+        'users',
+        collectionFounded.documentId,
+      );
+      const fieldsToUpdate = {
+        ...payload,
+      };
+      await updateDoc(userDocRef, fieldsToUpdate);
+    }
+  }
+
   const onSubmit = (data: EditProfileFormData) => {
     try {
-      console.log('PAYLOAD =>', data);
+      const fieldsToUpdate: FitJourneyUser = {
+        ...fitJourneyUser,
+        age: String(data.age),
+        weight: String(data.weight),
+        height: String(data.height),
+        gender: data.gender,
+        goal: data.goal,
+        fitnessLevel: data.fitnessLevel,
+        displayName: data.displayName,
+        observations: data.observations || null,
+      };
+      onConfirmEditProfile(fieldsToUpdate);
+      getUserFromFirestore(fieldsToUpdate);
     } catch (error: any) {
       console.log('ERROR =>', error);
     } finally {
       reset();
+      goBack();
     }
   };
 
@@ -66,13 +101,13 @@ function EditProfile() {
                 value={value}
               />
             )}
-            name={'name'}
+            name={'displayName'}
           />
-          {errors.name?.message ? (
-            <ErrorText>{errors.name?.message}</ErrorText>
+          {errors.displayName?.message ? (
+            <ErrorText>{errors.displayName?.message}</ErrorText>
           ) : null}
         </View>
-        <View className="mb-3 flex flex-col">
+        {/* <View className="mb-3 flex flex-col">
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -88,7 +123,7 @@ function EditProfile() {
           {errors.email?.message ? (
             <ErrorText>{errors.email?.message}</ErrorText>
           ) : null}
-        </View>
+        </View> */}
         <View className="mb-3 flex flex-col">
           <Controller
             control={control}
@@ -177,11 +212,9 @@ function EditProfile() {
                 setSelected={onChange}
               />
             )}
-            name="objective"
+            name="goal"
           />
-          {errors.objective ? (
-            <ErrorText>{errors.objective.message}</ErrorText>
-          ) : null}
+          {errors.goal ? <ErrorText>{errors.goal.message}</ErrorText> : null}
         </View>
         <View className="mb-3 flex flex-col">
           <Controller
@@ -201,10 +234,10 @@ function EditProfile() {
                 setSelected={onChange}
               />
             )}
-            name="activityLevel"
+            name="fitnessLevel"
           />
-          {errors.activityLevel ? (
-            <ErrorText>{errors.activityLevel.message}</ErrorText>
+          {errors.fitnessLevel ? (
+            <ErrorText>{errors.fitnessLevel.message}</ErrorText>
           ) : null}
         </View>
         <View className="flex flex-col">

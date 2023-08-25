@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import colors from 'tailwindcss/colors';
+import { useExercises } from '../../hooks/useExercises';
 import {
   EditExerciseModalFormData,
   editExerciseModalSchema,
@@ -19,7 +20,7 @@ import { TextArea } from '../ui/Textarea';
 interface Exercise {
   id: number;
   name: string;
-  category: string;
+  muscle_group: string;
   description: string;
 }
 
@@ -28,9 +29,14 @@ interface EditExerciseModalProps {
 }
 
 export function EditExerciseModal({
-  exercise: { category, description, name },
+  exercise: { muscle_group, description, name, id },
 }: EditExerciseModalProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { updateExercise, allMuscleGroups } = useExercises();
+
+  const muscleGroupsNames = allMuscleGroups
+    .map((muscleGroup) => muscleGroup.name)
+    .sort((a, b) => a.localeCompare(b));
 
   const {
     control,
@@ -39,8 +45,9 @@ export function EditExerciseModal({
     reset,
   } = useForm<EditExerciseModalFormData>({
     defaultValues: {
+      id: id,
       name: name,
-      category: category,
+      muscle_group: muscle_group,
       description: description,
     },
     resolver: zodResolver(editExerciseModalSchema),
@@ -48,9 +55,9 @@ export function EditExerciseModal({
 
   const onSubmit = (data: EditExerciseModalFormData) => {
     try {
-      console.log('PAYLOAD =>', data);
+      updateExercise(data);
     } catch (error: any) {
-      console.log('ERROR =>', error);
+      console.error('ERROR =>', error);
     } finally {
       reset();
       setIsModalVisible(false);
@@ -96,16 +103,16 @@ export function EditExerciseModal({
               control={control}
               render={({ field: { onChange, value } }) => (
                 <Select
-                  label="Categoria"
-                  options={['Selecione', 'Peito', 'Ombros', 'Pernas']}
+                  label="Grupo Muscular"
+                  options={['Selecione', ...muscleGroupsNames]}
                   selected={value}
                   setSelected={onChange}
                 />
               )}
-              name="category"
+              name="muscle_group"
             />
-            {errors.category?.message ? (
-              <ErrorText>{errors.category?.message}</ErrorText>
+            {errors.muscle_group?.message ? (
+              <ErrorText>{errors.muscle_group?.message}</ErrorText>
             ) : null}
           </View>
           <View className="mb-3 flex flex-col">

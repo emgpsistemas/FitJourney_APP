@@ -47,7 +47,7 @@ export function MultipleSelect({
           multiple={true}
           stickyHeader
           min={0}
-          max={5}
+          max={10}
           open={open}
           value={selected}
           items={options}
@@ -61,7 +61,7 @@ export function MultipleSelect({
           }}
           style={{
             zIndex: 50,
-            backgroundColor: '#F8F9FA',
+            backgroundColor: '#f5f5f5',
             height: 56,
             borderRadius: 8,
             borderWidth: 0,

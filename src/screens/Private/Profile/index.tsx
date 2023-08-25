@@ -45,6 +45,11 @@ export default function Profile() {
             title: 'Condicionamento Físico',
             content: value,
           };
+        if (key === 'observations')
+          return {
+            title: 'Observações',
+            content: value,
+          };
         else return;
       },
     );
@@ -106,17 +111,25 @@ export default function Profile() {
         </View>
 
         <UserInfo.Root>
-          {userInfo.registerInfo.map((item, index) => (
-            <View key={`${item?.title}-${index}`}>
-              <UserInfo.Card>
-                <UserInfo.CardTitle>{item?.title}</UserInfo.CardTitle>
-                <UserInfo.CardContent>{item?.content}</UserInfo.CardContent>
-              </UserInfo.Card>
-              {index !== userInfo.registerInfo.length - 1 ? (
-                <UserInfo.Divider />
-              ) : null}
-            </View>
-          ))}
+          {userInfo.registerInfo.map((item, index) => {
+            return (
+              <View key={`${item?.title}-${index}`}>
+                {item?.content !== null ? (
+                  <>
+                    <UserInfo.Card>
+                      <UserInfo.CardTitle>{item?.title}</UserInfo.CardTitle>
+                      <UserInfo.CardContent>
+                        {item?.content}
+                      </UserInfo.CardContent>
+                    </UserInfo.Card>
+                    {index !== userInfo.registerInfo.length - 1 ? (
+                      <UserInfo.Divider />
+                    ) : null}
+                  </>
+                ) : null}
+              </View>
+            );
+          })}
         </UserInfo.Root>
 
         <View className="py-7">

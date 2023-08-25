@@ -2,30 +2,31 @@ import { Check, Trash, X } from 'phosphor-react-native';
 import { useState } from 'react';
 import { Text } from 'react-native';
 import colors from 'tailwindcss/colors';
+import { useExercises } from '../../hooks/useExercises';
 import { FitButton } from '../ui/FitButton';
 import { IconButton } from '../ui/IconButton';
 import { CustomModal } from '../ui/Modal';
 
-interface DeleteExerciseModalProps {
-  categoryId: number;
-  exerciseId: number;
+interface Exercise {
+  id: number;
+  name: string;
+  muscle_group: string;
+  description: string;
 }
 
-export function DeleteExerciseModal({
-  categoryId,
-  exerciseId,
-}: DeleteExerciseModalProps) {
+interface DeleteExerciseModalProps {
+  exercise: Exercise;
+}
+
+export function DeleteExerciseModal({ exercise }: DeleteExerciseModalProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { deleteExercise } = useExercises();
 
   const onSubmit = () => {
-    const payload = {
-      categoryId,
-      exerciseId,
-    };
     try {
-      console.log('PAYLOAD =>', payload);
+      deleteExercise(exercise);
     } catch (error: any) {
-      console.log('ERROR =>', error);
+      console.error('ERROR =>', error);
     } finally {
       setIsModalVisible(false);
     }
