@@ -110,8 +110,6 @@ export function TrainingDetails() {
     }
   };
 
-  watch('exercises');
-
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);

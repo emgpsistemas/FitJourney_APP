@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretRight, Eye, EyeSlash } from 'phosphor-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   GestureResponderEvent,
+  Keyboard,
   Text,
   TouchableOpacity,
   View,
@@ -13,6 +14,7 @@ import LogoSVG from '../../../assets/brand/Logo.svg';
 import GoogleSVG from '../../../assets/google-logo.svg';
 
 import { useNavigation } from '@react-navigation/native';
+import Animated, { FadeIn, FadeOutUp } from 'react-native-reanimated';
 import { ErrorText } from '../../../components/ErrorText';
 import { FitButton } from '../../../components/ui/FitButton';
 import { Input } from '../../../components/ui/Input';
@@ -55,6 +57,36 @@ function UserRegister() {
     signUpWithEmail(data);
   };
 
+  const [isKeyboardActive, setIsKeyboardActive] = useState(false);
+
+  const keyboardDidShow = () => {
+    setIsKeyboardActive(true);
+  };
+
+  const keyboardDidHide = () => {
+    setIsKeyboardActive(false);
+  };
+
+  function handleKeyboard() {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      keyboardDidShow,
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      keyboardDidHide,
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }
+
+  useEffect(() => {
+    handleKeyboard();
+  }, [Keyboard]);
+
   return (
     <SafeAreaView className="relative flex flex-1 flex-col bg-yellow-400">
       <View className="flex-1 px-6">
@@ -75,9 +107,15 @@ function UserRegister() {
             <View className="h-1 w-fit bg-zinc-900" />
           </View>
         </View>
-        <View className="flex-1 items-center justify-center">
-          <LogoSVG width={'70%'} />
-        </View>
+        {isKeyboardActive ? null : (
+          <Animated.View
+            className="flex-1 items-center justify-center"
+            entering={FadeIn}
+            exiting={FadeOutUp}
+          >
+            <LogoSVG width={'70%'} />
+          </Animated.View>
+        )}
       </View>
 
       <View className="h-fit flex-col items-center justify-between rounded-t-xl bg-neutral-50 px-6 pb-8 pt-10">
