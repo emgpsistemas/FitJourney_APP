@@ -12,8 +12,6 @@ export default function Profile() {
   const { navigate } = useNavigation();
   const { fitJourneyUser } = useFirebaseAuth();
 
-  console.log('fitJourneyUser', fitJourneyUser);
-
   function makeFitJourneyUserArray() {
     const fitJourneyUserArray = Object.entries(fitJourneyUser).map(
       ([key, value]) => {

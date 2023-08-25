@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RegisterExercise } from '../screens/Common/RegisterExercise';
-import RegisteredExercises from '../screens/Common/RegisteredExercises';
+import { RegisterExercise } from '../screens/Private/RegisterExercise';
+import RegisteredExercises from '../screens/Private/RegisteredExercises';
 
 const Stack = createNativeStackNavigator();
 
