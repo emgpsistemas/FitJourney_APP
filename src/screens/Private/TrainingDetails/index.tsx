@@ -4,16 +4,19 @@ import clsx from 'clsx';
 import { Check } from 'phosphor-react-native';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, FlatList, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { Accordion } from '../../../components/Accordion';
 import { Checkbox } from '../../../components/Checkbox';
 import { Loading } from '../../../components/Loading';
 import { ScreenTitle } from '../../../components/ScreenTitle';
 import { TrainingInfo } from '../../../components/TrainingInfo';
 import { FitButton } from '../../../components/ui/FitButton';
+import { UpdateExercisesKeyPayload } from '../../../contexts/Trainings/interface';
 import { useExercises } from '../../../hooks/useExercises';
 import { useTrainings } from '../../../hooks/useTrainings';
+import { toastConfig } from '../../../lib/toast/config';
 import {
   TrainingDetailsFormData,
   trainingDetailsSchema,
@@ -22,11 +25,15 @@ import {
 export function TrainingDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const { allExercises } = useExercises();
-  const { getTrainingDetails, trainingDetails, trainingExercisesData } =
-    useTrainings();
+  const {
+    getTrainingDetails,
+    trainingDetails,
+    trainingExercisesData,
+    updateTraining,
+  } = useTrainings();
   const route = useRoute();
   const { id } = route.params as { id: string };
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
 
   const {
     control,
@@ -44,34 +51,59 @@ export function TrainingDetails() {
   });
   const trainingExercises = getValues('exercises');
 
-  const onSubmit = (data: TrainingDetailsFormData) => {
-    console.log('data', data);
-    console.log('trainingDetails', trainingDetails);
-    console.log('allExercises', allExercises);
-
+  const onSubmit = async (data: TrainingDetailsFormData) => {
     try {
+      const trainingExercisesInfo = data.exercises.map((exercise) => {
+        const exerciseReference = allExercises.find(
+          (allExercise) => allExercise.name === exercise.name,
+        );
+        return exerciseReference;
+      });
+      const trainingExercisesPayload = trainingExercisesInfo.map(
+        (exerciseInfo, index) => {
+          const exercisePayload: UpdateExercisesKeyPayload = {
+            last_training: data.exercises[index].series.map((serie) => {
+              return {
+                repetitions: serie.repetitions.actual,
+                weight: serie.weight.actual,
+              };
+            }),
+            reference: exerciseInfo?.docReference,
+            repetitions: trainingDetails.exercises[index].repetitions,
+            series: trainingDetails.exercises[index].series,
+            observations: trainingDetails.exercises[index].observations,
+          };
+          return exercisePayload;
+        },
+      );
       const payload = {
-        // exercises: data.exercises.map((exercise) => ({
-        //   id: exercise.id,
-        //   series: exercise.series.map((serie) => ({
-        //     repetitions: serie.repetitions.actual,
-        //     weight: serie.weight.actual,
-        //   })),
-        // })),
         actual_training: trainingDetails.actual_training + 1,
         last_training: new Date().toISOString(),
-        // exercises:
+        exercises: trainingExercisesPayload,
+        series: trainingDetails.training_repetitions,
       };
-      console.log('payload', payload);
+      await updateTraining(id, payload);
+      Toast.show({
+        type: 'success',
+        text1: 'Treino finalizado com sucesso!',
+        position: 'bottom',
+      });
     } catch (error: any) {
-      Alert.alert('Erro ao finalizar treino', error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao finalizar treino!',
+        text2: 'Tente novamente',
+        position: 'bottom',
+      });
     } finally {
-      // reset();
-      // goBack();
+      reset();
+      setTimeout(() => {
+        navigate('RegisteredTrainings');
+      }, 2000);
     }
   };
 
-  watch('exercises', []);
+  watch('exercises');
 
   useEffect(() => {
     getTrainingDetails(id).then(() =>
@@ -80,10 +112,10 @@ export function TrainingDetails() {
   }, []);
 
   useEffect(() => {
-    if (trainingExercises.length > 0) {
+    setTimeout(() => {
       setIsLoading(false);
-    }
-  }, [trainingExercises]);
+    }, 1000);
+  }, [getValues('exercises')]);
 
   if (isLoading) {
     return <Loading />;
@@ -240,6 +272,7 @@ export function TrainingDetails() {
           </View>
         )}
       />
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }

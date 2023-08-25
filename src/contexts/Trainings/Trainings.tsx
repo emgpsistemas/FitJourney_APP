@@ -1,4 +1,4 @@
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 import { FIRESTORE_DB } from '../../lib/firebase/config';
@@ -8,14 +8,18 @@ import {
   TrainingCollectionData,
   TrainingDetailsInfo,
   TrainingExercisesData,
+  UpdateExercisesPayload,
 } from './interface';
-
 interface TrainingsContextData {
   allTrainings: CompleteTraining[];
   trainingDetails: TrainingDetailsInfo;
   trainingExercisesData: TrainingExercisesData[];
   getTrainingsCollection: () => Promise<CompleteTraining[]>;
   getTrainingDetails: (trainingId: string) => Promise<void>;
+  updateTraining: (
+    id: string,
+    training: Omit<UpdateExercisesPayload, 'docId'>,
+  ) => Promise<void>;
 }
 
 export const TrainingsContext = createContext<TrainingsContextData>(
@@ -151,6 +155,35 @@ export const TrainingProvider = ({
     }
   };
 
+  const updateTraining = async (
+    id: string,
+    training: Omit<UpdateExercisesPayload, 'docId'>,
+  ) => {
+    try {
+      const trainingsCollectionRef = collection(FIRESTORE_DB, 'trainings');
+      const trainingsCollectionSnapshot = await getDocs(trainingsCollectionRef);
+      const filteredTrainingsCollectionData =
+        trainingsCollectionSnapshot.docs.filter((doc) => doc.id === id);
+      const trainingData =
+        filteredTrainingsCollectionData[0].data() as TrainingDetailsInfo;
+      const trainingToUpdate = {
+        ...trainingData,
+        exercises: training.exercises,
+        last_training: training.last_training,
+        actual_training: training.actual_training,
+      };
+      const trainingToUpdateRef = doc(
+        FIRESTORE_DB,
+        'trainings',
+        filteredTrainingsCollectionData[0].id,
+      );
+      await updateDoc(trainingToUpdateRef, trainingToUpdate);
+    } catch (error: any) {
+      console.error('Error getting documents: ', error);
+    } finally {
+    }
+  };
+
   useEffect(() => {
     getTrainingsCollection();
   }, []);
@@ -163,6 +196,7 @@ export const TrainingProvider = ({
         trainingExercisesData,
         getTrainingsCollection,
         getTrainingDetails,
+        updateTraining,
       }}
     >
       {children}

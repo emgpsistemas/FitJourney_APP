@@ -90,3 +90,21 @@ export interface TrainingExercisesData {
   observations: string;
   series: FinalSeriesData[];
 }
+
+export interface UpdateExercisesKeyPayload {
+  last_training: {
+    repetitions: number;
+    weight: number;
+  }[];
+  reference: DocumentReference | undefined;
+  repetitions: number;
+  series: number;
+  observations: string;
+}
+
+export interface UpdateExercisesPayload {
+  docId: string;
+  actual_training: number;
+  last_training: string;
+  exercises: UpdateExercisesKeyPayload[];
+}

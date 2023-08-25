@@ -1,4 +1,5 @@
 import {
+  DocumentReference,
   addDoc,
   collection,
   deleteDoc,
@@ -17,6 +18,7 @@ interface MuscleGroup {
 
 interface ExercisesWithReference extends NewExerciseFormData {
   docId: string;
+  docReference: DocumentReference;
 }
 
 interface ExercisesContextData {
@@ -48,7 +50,7 @@ export const ExercisesProvider = ({
     const exercisesCollectionSnapshot = await getDocs(exercisesCollectionRef);
     const exercisesCollectionData = exercisesCollectionSnapshot.docs.map(
       (doc) => {
-        return { ...doc.data(), docId: doc.id };
+        return { ...doc.data(), docId: doc.id, docReference: doc.ref };
       },
     );
     setAllExercises(exercisesCollectionData as ExercisesWithReference[]);
