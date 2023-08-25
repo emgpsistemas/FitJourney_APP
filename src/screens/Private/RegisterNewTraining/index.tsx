@@ -182,7 +182,7 @@ export function RegisterNewTraining() {
         user_id: fitJourneyUser.uid,
         name: trainingRegisterState.name,
         training_repetitions: trainingRegisterState.training_repetitions,
-        actual_training: 1,
+        actual_training: 0,
         created_at: new Date().toISOString(),
         last_training: null,
         exercises: trainingRegisterState.exercises.map((exercise) => {
