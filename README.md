@@ -58,4 +58,4 @@ Agradecemos por fazer parte da jornada do Fit Journey e esperamos ajudá-lo a at
 
 ---
 
-**Equipe Fit Journey** 🏋️‍♂️📈
+**Equipe EMGP Sistemas** 🏋️‍♂️📈
